@@ -9,93 +9,86 @@
 body{
 margin:0;
 font-family:Arial,sans-serif;
-background:#0b1020;
-color:white;
+background:#0f172a;
+color:#fff;
 }
 
 header{
-background:#111827;
-padding:20px;
+background:#182235;
+padding:25px;
 text-align:center;
-font-size:32px;
+font-size:34px;
 font-weight:bold;
 }
 
 .container{
-max-width:1000px;
-margin:auto;
-padding:30px;
+padding:20px;
 }
 
 .card{
-background:#1f2937;
+background:#1e293b;
 padding:20px;
-border-radius:12px;
+border-radius:14px;
 margin-bottom:20px;
 }
 
+h2{
+margin-top:0;
+}
+
 .button{
-display:inline-block;
-padding:15px 25px;
-font-size:18px;
+display:block;
+text-align:center;
 background:#2563eb;
 color:white;
 text-decoration:none;
-border-radius:8px;
+padding:16px;
+border-radius:10px;
+margin-top:15px;
+font-size:20px;
+}
+
+.button:hover{
+background:#1d4ed8;
 }
 </style>
-
 </head>
 
 <body>
 
-<header>
-🔥 Forge Dashboard
-</header>
+<header>🔥 Forge Dashboard</header>
 
 <div class="container">
 
 <div class="card">
 <h2>Current Project</h2>
-
-<p><strong>Project:</strong></p>
-<p id="projectName"></p>
-
-<p><strong>Description:</strong></p>
-<p id="projectDescription"></p>
-
+<p><strong>AI Motorcycle Shop Manager</strong></p>
+<p>Customer tracking, inventory, invoices, appointments, and AI mechanic assistant.</p>
 </div>
 
 <div class="card">
 <h2>Status</h2>
-
-<p id="status">✅ Build Complete</p>
-
+<p>✅ Build Complete</p>
 </div>
 
 <div class="card">
-
-<h2>Launch Project</h2>
-
-<p>Your first Forge-built application is ready.</p>
+<h2>Launch</h2>
 
 <a class="button" href="playground.html">
-Open Phantom Playground
+🎮 Open Phantom Playground
+</a>
+
+<a class="button" href="projects.html">
+🚀 View Projects
+</a>
+
+<a class="button" href="builder.html">
+🛠 New Project
 </a>
 
 </div>
 
 </div>
-
-<script>
-
-document.getElementById("projectName").innerText =
-localStorage.getItem("forgeProject") || "No Project";
-
-document.getElementById("projectDescription").innerText =
-localStorage.getItem("forgeDescription") || "No description.";
-
-</script>
 
 </body>
 </html>
