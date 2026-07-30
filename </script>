@@ -1,0 +1,40 @@
+<script>
+function generateIdea() {
+  const idea = document.getElementById("idea").value.trim();
+  const output = document.getElementById("output");
+
+  if (!idea) {
+    alert("Please enter an idea.");
+    return;
+  }
+
+  output.style.display = "block";
+  output.innerHTML = `
+    <div style="padding:20px;background:#1b2435;border-radius:12px;margin-top:20px;">
+      <h2>🚀 Forge Project Plan</h2>
+
+      <p><strong>Project:</strong> ${idea}</p>
+
+      <h3>Phase 1</h3>
+      <ul>
+        <li>Design the user interface</li>
+        <li>Create the project structure</li>
+        <li>Build the core features</li>
+      </ul>
+
+      <h3>Phase 2</h3>
+      <ul>
+        <li>Add responsive design</li>
+        <li>Store project data</li>
+        <li>Test all functionality</li>
+      </ul>
+
+      <h3>Technology</h3>
+      <p>HTML • CSS • JavaScript • Cloudflare Pages</p>
+
+      <h3>Status</h3>
+      <p>✅ Project plan generated successfully.</p>
+    </div>
+  `;
+}
+</script>
