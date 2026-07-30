@@ -34,20 +34,17 @@ border-radius:12px;
 margin-bottom:20px;
 }
 
-button{
+.button{
+display:inline-block;
 padding:15px 25px;
 font-size:18px;
 background:#2563eb;
 color:white;
-border:none;
+text-decoration:none;
 border-radius:8px;
-cursor:pointer;
-}
-
-button:hover{
-background:#1d4ed8;
 }
 </style>
+
 </head>
 
 <body>
@@ -71,24 +68,20 @@ background:#1d4ed8;
 
 <div class="card">
 <h2>Status</h2>
-<p id="status">🟢 Ready to Build</p>
-</div>
 
-<div class="card">
-<h2>Forge AI</h2>
-
-<p>Press the button to begin building your application.</p>
-
-<button onclick="startBuild()">Start AI Build</button>
+<p id="status">✅ Build Complete</p>
 
 </div>
 
 <div class="card">
-<h2>Deployment</h2>
 
-<p>Deployment tools coming soon.</p>
+<h2>Launch Project</h2>
 
-<button>Deploy</button>
+<p>Your first Forge-built application is ready.</p>
+
+<a class="button" href="playground.html">
+Open Phantom Playground
+</a>
 
 </div>
 
@@ -101,20 +94,6 @@ localStorage.getItem("forgeProject") || "No Project";
 
 document.getElementById("projectDescription").innerText =
 localStorage.getItem("forgeDescription") || "No description.";
-
-function startBuild(){
-
-document.getElementById("status").innerText =
-"🟡 Building Phantom Playground...";
-
-setTimeout(function(){
-
-document.getElementById("status").innerText =
-"✅ Build Complete";
-
-},3000);
-
-}
 
 </script>
 
