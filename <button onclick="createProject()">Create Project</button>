@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forge Builder</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#0b1020;
+color:white;
+padding:40px;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+text-align:center;
+}
+
+h1{
+margin-bottom:20px;
+}
+
+p{
+margin-bottom:25px;
+color:#d1d5db;
+}
+
+input,
+textarea{
+width:100%;
+padding:15px;
+margin:15px 0;
+border:none;
+border-radius:10px;
+font-size:18px;
+}
+
+button{
+padding:15px 40px;
+font-size:20px;
+background:#2563eb;
+color:white;
+border:none;
+border-radius:10px;
+cursor:pointer;
+}
+
+#result{
+display:none;
+margin-top:30px;
+background:#111827;
+padding:25px;
+border-radius:12px;
+text-align:left;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🔥 Forge Builder</h1>
+
+<p>Describe what you want Forge to build.</p>
+
+<input id="project" type="text" placeholder="Project Name">
+
+<textarea id="description" rows="8" placeholder="Describe your project here..."></textarea>
+
+<button onclick="createProject()">Create Project</button>
+
+<div id="result">
+<h2>✅ Project Created</h2>
+
+<p><strong>Project:</strong> <span id="projectName"></span></p>
+
+<p><strong>Description:</strong></p>
+
+<p id="projectDescription"></p>
+
+<p><strong>Status:</strong> Ready for AI generation.</p>
+</div>
+
+</div>
+
+<script>
+function createProject(){
+
+const project=document.getElementById("project").value.trim();
+const description=document.getElementById("description").value.trim();
+
+if(project===""||description===""){
+alert("Please enter both a project name and description.");
+return;
+}
+
+document.getElementById("projectName").innerText=project;
+document.getElementById("projectDescription").innerText=description;
+document.getElementById("result").style.display="block";
+
+window.scrollTo({
+top:document.body.scrollHeight,
+behavior:"smooth"
+});
+
+}
+</script>
+
+</body>
+</html>
