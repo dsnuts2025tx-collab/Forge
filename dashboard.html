@@ -10,7 +10,7 @@ body{
 margin:0;
 font-family:Arial,sans-serif;
 background:#0b1020;
-color:#fff;
+color:white;
 }
 
 header{
@@ -35,12 +35,12 @@ margin-bottom:20px;
 }
 
 button{
+padding:15px 25px;
+font-size:18px;
 background:#2563eb;
 color:white;
 border:none;
-padding:14px 24px;
 border-radius:8px;
-font-size:18px;
 cursor:pointer;
 }
 
@@ -60,27 +60,64 @@ background:#1d4ed8;
 
 <div class="card">
 <h2>Current Project</h2>
-<p>No active project.</p>
+
+<p><strong>Project:</strong></p>
+
+<p id="projectName"></p>
+
+<p><strong>Description:</strong></p>
+
+<p id="projectDescription"></p>
+
 </div>
 
 <div class="card">
-<h2>Build Status</h2>
-<p>🟢 Ready</p>
+<h2>Status</h2>
+
+<p id="status">🟢 Ready to Build</p>
+
 </div>
 
 <div class="card">
-<h2>AI Builder</h2>
-<p>Forge AI will generate your application here.</p>
-<button>Start AI Build</button>
+
+<h2>Forge AI</h2>
+
+<p>Your AI software factory will build applications from your description.</p>
+
+<button onclick="startBuild()">Start AI Build</button>
+
 </div>
 
 <div class="card">
+
 <h2>Deployment</h2>
-<p>No deployments yet.</p>
+
+<p>Deploy your finished application.</p>
+
 <button>Deploy</button>
+
 </div>
 
 </div>
+
+<script>
+
+document.getElementById("projectName").innerText =
+localStorage.getItem("forgeProject") || "No Project";
+
+document.getElementById("projectDescription").innerText =
+localStorage.getItem("forgeDescription") || "No description.";
+
+function startBuild(){
+
+document.getElementById("status").innerText =
+"🟡 AI Build Started";
+
+alert("Forge AI build engine coming next.");
+
+}
+
+</script>
 
 </body>
 </html>
