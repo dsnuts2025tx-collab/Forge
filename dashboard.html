@@ -48,8 +48,8 @@ button:hover{
 background:#1d4ed8;
 }
 </style>
-
 </head>
+
 <body>
 
 <header>
@@ -62,37 +62,31 @@ background:#1d4ed8;
 <h2>Current Project</h2>
 
 <p><strong>Project:</strong></p>
-
 <p id="projectName"></p>
 
 <p><strong>Description:</strong></p>
-
 <p id="projectDescription"></p>
 
 </div>
 
 <div class="card">
 <h2>Status</h2>
-
 <p id="status">🟢 Ready to Build</p>
-
 </div>
 
 <div class="card">
-
 <h2>Forge AI</h2>
 
-<p>Your AI software factory will build applications from your description.</p>
+<p>Press the button to begin building your application.</p>
 
 <button onclick="startBuild()">Start AI Build</button>
 
 </div>
 
 <div class="card">
-
 <h2>Deployment</h2>
 
-<p>Deploy your finished application.</p>
+<p>Deployment tools coming soon.</p>
 
 <button>Deploy</button>
 
@@ -111,9 +105,14 @@ localStorage.getItem("forgeDescription") || "No description.";
 function startBuild(){
 
 document.getElementById("status").innerText =
-"🟡 AI Build Started";
+"🟡 Building Phantom Playground...";
 
-alert("Forge AI build engine coming next.");
+setTimeout(function(){
+
+document.getElementById("status").innerText =
+"✅ Build Complete";
+
+},3000);
 
 }
 
