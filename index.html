@@ -6,81 +6,144 @@
 <title>Forge AI</title>
 
 <style>
-body{
+*{
 margin:0;
-font-family:Arial,Helvetica,sans-serif;
-background:#0b0f19;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#0b1020;
 color:white;
+}
+
+nav{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:20px 40px;
+background:#111827;
+}
+
+nav h2{
+color:#4F8DFF;
+}
+
+nav a{
+color:white;
+text-decoration:none;
+margin-left:20px;
+}
+
+.hero{
+padding:80px 20px;
 text-align:center;
 }
 
-header{
-padding:80px 20px;
-background:linear-gradient(135deg,#111827,#1d4ed8);
-}
-
-h1{
+.hero h1{
 font-size:56px;
-margin:0;
+margin-bottom:20px;
 }
 
-p{
-font-size:20px;
-max-width:700px;
-margin:20px auto;
+.hero p{
+font-size:22px;
 color:#d1d5db;
+max-width:700px;
+margin:auto;
+margin-bottom:40px;
 }
 
 button{
+padding:18px 40px;
+font-size:20px;
+border:none;
+border-radius:10px;
 background:#2563eb;
 color:white;
-border:none;
-padding:16px 36px;
-font-size:18px;
-border-radius:10px;
 cursor:pointer;
 }
 
-section{
-padding:70px 20px;
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+gap:30px;
+padding:60px 30px;
 }
 
 .card{
-max-width:900px;
-margin:auto;
 background:#111827;
+padding:30px;
+border-radius:15px;
+}
+
+.card h3{
+margin-bottom:15px;
+}
+
+footer{
+text-align:center;
 padding:40px;
-border-radius:18px;
+color:#aaa;
 }
 </style>
+
 </head>
 
 <body>
 
-<header>
-<h1>FORGE</h1>
+<nav>
+<h2>🔥 Forge</h2>
+
+<div>
+<a href="#">Features</a>
+<a href="#">Pricing</a>
+<a href="#">Contact</a>
+</div>
+</nav>
+
+<section class="hero">
+
+<h1>Autonomous AI Software Factory</h1>
 
 <p>
-Build websites, mobile apps, AI agents, SaaS platforms, and complete businesses with AI.
+Build websites, mobile apps, AI agents, SaaS platforms,
+and business software in minutes.
 </p>
 
 <button>Start Building →</button>
 
-</header>
+</section>
 
-<section>
+<section class="cards">
 
 <div class="card">
+<h3>🌐 Websites</h3>
+<p>Create beautiful business websites automatically.</p>
+</div>
 
-<h2>Autonomous AI Software Factory</h2>
+<div class="card">
+<h3>📱 Mobile Apps</h3>
+<p>Generate Android and iPhone apps with AI.</p>
+</div>
 
-<p>
-Forge is designed to help entrepreneurs, startups, and creators transform ideas into production-ready software with AI assistance.
-</p>
+<div class="card">
+<h3>🤖 AI Agents</h3>
+<p>Launch intelligent assistants for your business.</p>
+</div>
 
+<div class="card">
+<h3>☁ SaaS Platforms</h3>
+<p>Build complete online software products.</p>
 </div>
 
 </section>
+
+<footer>
+
+© 2026 Forge AI • Powered by AI
+
+</footer>
 
 </body>
 </html>
