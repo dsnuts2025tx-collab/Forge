@@ -1,69 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Forge Builder</title>
+<script>
+function createProject() {
 
-<style>
-body{
-background:#0b1020;
-color:white;
-font-family:Arial,sans-serif;
-padding:40px;
-text-align:center;
+const project = document.getElementById("project").value.trim();
+const description = document.getElementById("description").value.trim();
+
+if (project === "" || description === "") {
+    alert("Please enter both a project name and description.");
+    return;
 }
 
-input,textarea{
-width:90%;
-max-width:700px;
-padding:15px;
-margin:15px;
-border-radius:8px;
-border:none;
-font-size:18px;
+localStorage.setItem("forgeProject", project);
+localStorage.setItem("forgeDescription", description);
+
+window.location.href = "dashboard.html";
+
 }
-
-button{
-padding:15px 40px;
-background:#2563eb;
-color:white;
-border:none;
-border-radius:8px;
-font-size:20px;
-cursor:pointer;
-}
-
-.container{
-max-width:900px;
-margin:auto;
-}
-</style>
-</head>
-
-<body>
-
-<div class="container">
-
-<h1>🔥 Forge Builder</h1>
-
-<p>Describe what you want Forge to build.</p>
-
-<input
-type="text"
-placeholder="Project Name">
-
-<br>
-
-<textarea
-rows="8"
-placeholder="Example: Build me an AI-powered motorcycle repair website with appointments and online payments."></textarea>
-
-<br>
-
-<button>Create Project</button>
-
-</div>
-
-</body>
-</html>
+</script>
