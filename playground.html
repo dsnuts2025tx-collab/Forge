@@ -11,37 +11,55 @@ margin:0;
 font-family:Arial,sans-serif;
 background:#0b1020;
 color:white;
-text-align:center;
 }
 
 header{
 background:#111827;
 padding:20px;
+text-align:center;
 font-size:32px;
 font-weight:bold;
 }
 
 .container{
-max-width:900px;
+max-width:1000px;
 margin:auto;
-padding:40px 20px;
+padding:30px;
 }
 
 .card{
 background:#1f2937;
-padding:25px;
+padding:20px;
 border-radius:12px;
-margin-top:20px;
+margin-bottom:20px;
+}
+
+textarea{
+width:100%;
+height:150px;
+padding:15px;
+font-size:16px;
+border:none;
+border-radius:8px;
 }
 
 button{
+margin-top:15px;
+padding:15px 25px;
+font-size:18px;
 background:#2563eb;
 color:white;
 border:none;
-padding:15px 30px;
-font-size:18px;
 border-radius:8px;
 cursor:pointer;
+}
+
+#output{
+margin-top:20px;
+padding:15px;
+background:#111827;
+border-radius:8px;
+display:none;
 }
 </style>
 </head>
@@ -55,20 +73,38 @@ cursor:pointer;
 <div class="container">
 
 <div class="card">
-<h2>Welcome</h2>
 
-<p>
-Welcome to Phantom Playground. This is where Forge-built apps,
-games, and AI experiences will come to life.
-</p>
+<h2>What would you like to build?</h2>
 
-<button onclick="alert('First feature coming next!')">
-Launch Playground
-</button>
+<textarea id="idea" placeholder="Example: Build a racing game..."></textarea>
+
+<button onclick="generateIdea()">Generate Project Plan</button>
+
+<div id="output"></div>
 
 </div>
 
 </div>
+
+<script>
+
+function generateIdea(){
+
+const idea=document.getElementById("idea").value;
+
+if(idea===""){
+alert("Please enter an idea.");
+return;
+}
+
+document.getElementById("output").style.display="block";
+
+document.getElementById("output").innerHTML=
+"<h3>Forge Project Plan</h3><p>"+idea+"</p><p>Status: Ready for AI generation.</p>";
+
+}
+
+</script>
 
 </body>
 </html>
