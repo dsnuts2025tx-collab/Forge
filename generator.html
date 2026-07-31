@@ -7,47 +7,55 @@
 
 <style>
 body{
-    background:#0f172a;
-    color:white;
-    font-family:Arial,sans-serif;
-    padding:30px;
     margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#111;
+    color:#fff;
+}
+
+.container{
+    max-width:900px;
+    margin:auto;
+    padding:25px;
 }
 
 h1{
     text-align:center;
+    color:#ff9800;
 }
 
 textarea{
     width:100%;
-    height:200px;
-    border-radius:10px;
+    height:180px;
     padding:15px;
-    font-size:18px;
-    box-sizing:border-box;
+    font-size:16px;
+    border-radius:8px;
+    border:none;
+    margin-top:20px;
+    resize:vertical;
 }
 
 button{
-    width:100%;
     margin-top:20px;
+    width:100%;
     padding:15px;
-    font-size:20px;
-    background:#2563eb;
-    color:white;
+    font-size:18px;
     border:none;
-    border-radius:10px;
+    border-radius:8px;
+    background:#ff9800;
+    color:white;
     cursor:pointer;
 }
 
 button:hover{
-    background:#1d4ed8;
+    opacity:.9;
 }
 
-pre{
+#output{
     margin-top:25px;
-    background:#1e293b;
+    background:#222;
     padding:20px;
-    border-radius:10px;
+    border-radius:8px;
     white-space:pre-wrap;
 }
 </style>
@@ -55,50 +63,51 @@ pre{
 
 <body>
 
+<div class="container">
+
 <h1>⚒ Forge AI Generator</h1>
 
-<textarea id="prompt" placeholder="Describe the software you want Forge to build..."></textarea>
+<textarea id="prompt" placeholder="Describe the app you want Forge to build..."></textarea>
 
-<button onclick="generate()">
-Generate Code
+<button onclick="generateProject()">
+Generate Project
 </button>
 
-<pre id="output">
-Waiting for project description...
-</pre>
+<div id="output">
+Waiting for prompt...
+</div>
 
-<script>
-function generate() {
+    <script>
+async function generateProject(){
 
-    const prompt = document.getElementById("prompt").value.trim();
-    const output = document.getElementById("output");
+const prompt=document.getElementById("prompt").value;
+const output=document.getElementById("output");
 
-    if (prompt === "") {
-        output.textContent = "Please enter a project description.";
-        return;
-    }
+if(prompt.trim()===""){
+output.textContent="Please enter a project description.";
+return;
+}
 
-    output.textContent =
-`PROJECT GENERATED
+output.textContent="Generating...";
 
-Project:
-${prompt}
+try{
 
-Files:
-• index.html
-• style.css
-• app.js
-• README.md
+const response=await fetch("https://shiny-mode-bff8.dsnuts2025tx.workers.dev");
 
-Suggested Stack:
-• HTML
-• CSS
-• JavaScript
-• Node.js
-• Supabase
+const data=await response.json();
 
-Status:
-Ready for AI backend integration.`;
+output.textContent=
+"Status: "+data.status+
+"\nMessage: "+data.message+
+"\nVersion: "+data.version+
+"\n\nPrompt:\n"+prompt;
+
+}catch(err){
+
+output.textContent="Connection failed.\n\n"+err;
+
+}
+
 }
 </script>
 
