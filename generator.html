@@ -7,56 +7,53 @@
 
 <style>
 body{
-    margin:0;
-    font-family:Arial,Helvetica,sans-serif;
-    background:#111;
-    color:#fff;
+margin:0;
+font-family:Arial,sans-serif;
+background:#111;
+color:#fff;
 }
 
 .container{
-    max-width:900px;
-    margin:auto;
-    padding:25px;
+max-width:900px;
+margin:auto;
+padding:25px;
 }
 
 h1{
-    text-align:center;
-    color:#ff9800;
+text-align:center;
+color:#ff9800;
 }
 
 textarea{
-    width:100%;
-    height:180px;
-    padding:15px;
-    font-size:16px;
-    border-radius:8px;
-    border:none;
-    margin-top:20px;
-    resize:vertical;
+width:100%;
+height:220px;
+padding:15px;
+font-size:18px;
+border:none;
+border-radius:10px;
+resize:vertical;
+box-sizing:border-box;
 }
 
 button{
-    margin-top:20px;
-    width:100%;
-    padding:15px;
-    font-size:18px;
-    border:none;
-    border-radius:8px;
-    background:#ff9800;
-    color:white;
-    cursor:pointer;
-}
-
-button:hover{
-    opacity:.9;
+width:100%;
+margin-top:20px;
+padding:16px;
+font-size:20px;
+background:#ff9800;
+color:#fff;
+border:none;
+border-radius:10px;
+cursor:pointer;
 }
 
 #output{
-    margin-top:25px;
-    background:#222;
-    padding:20px;
-    border-radius:8px;
-    white-space:pre-wrap;
+margin-top:20px;
+padding:20px;
+background:#222;
+border-radius:10px;
+white-space:pre-wrap;
+min-height:120px;
 }
 </style>
 </head>
@@ -67,7 +64,9 @@ button:hover{
 
 <h1>⚒ Forge AI Generator</h1>
 
-<textarea id="prompt" placeholder="Describe the app you want Forge to build..."></textarea>
+<textarea
+id="prompt"
+placeholder="Describe the app you want Forge to build..."></textarea>
 
 <button onclick="generateProject()">
 Generate Project
@@ -75,41 +74,44 @@ Generate Project
 
 <div id="output">
 Waiting for prompt...
-</div>
-
-    <script>
+</div><script>
 async function generateProject(){
 
-const prompt=document.getElementById("prompt").value;
+const prompt=document.getElementById("prompt").value.trim();
 const output=document.getElementById("output");
 
-if(prompt.trim()===""){
+if(!prompt){
 output.textContent="Please enter a project description.";
 return;
 }
 
-output.textContent="Generating...";
+output.textContent="Connecting to Forge AI...";
 
 try{
 
 const response=await fetch("https://shiny-mode-bff8.dsnuts2025tx.workers.dev");
 
+if(!response.ok){
+throw new Error("Server returned "+response.status);
+}
+
 const data=await response.json();
 
 output.textContent=
-"Status: "+data.status+
-"\nMessage: "+data.message+
-"\nVersion: "+data.version+
+"✅ Forge Connected\n\n"+
+"Status: "+(data.status||"Unknown")+
 "\n\nPrompt:\n"+prompt;
 
-}catch(err){
+}catch(error){
 
-output.textContent="Connection failed.\n\n"+err;
+output.textContent=
+"❌ Connection failed.\n\n"+
+error.message+
+"\n\nMake sure your Cloudflare Worker is deployed and online.";
 
 }
 
 }
 </script>
-
 </body>
 </html>
