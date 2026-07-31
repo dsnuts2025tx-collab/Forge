@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Forge Generator</title>
+
+<style>
+body{
+background:#0f172a;
+color:white;
+font-family:Arial;
+padding:30px;
+}
+
+textarea{
+width:100%;
+height:220px;
+padding:15px;
+font-size:18px;
+border-radius:10px;
+}
+
+button{
+margin-top:20px;
+padding:15px;
+width:100%;
+font-size:22px;
+background:#2563eb;
+color:white;
+border:none;
+border-radius:10px;
+cursor:pointer;
+}
+
+pre{
+margin-top:30px;
+background:#1e293b;
+padding:20px;
+border-radius:10px;
+white-space:pre-wrap;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>⚒ Forge AI Generator</h1>
+
+<textarea id="prompt"
+placeholder="Describe the software you want Forge to build..."></textarea>
+
+<button onclick="generate()">
+Generate Code
+</button>
+
+<pre id="output">
+Waiting...
+</pre>
+
+<script>
+function generate(){
+
+const prompt=document.getElementById("prompt").value;
+
+document.getElementById("output").innerHTML=
+"Generating project...\\n\\n"+
+"Project:\\n"+
+prompt+
+"\\n\\nStatus: Ready for AI backend.";
+
+}
+</script>
+
+</body>
+</html>
