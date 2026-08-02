@@ -88,7 +88,48 @@ Enter a project description above and tap <b>Generate Project Plan</b>.
 
 <script>
 
-function generatePlan(){
+async function generatePlan() {
+
+const prompt = document.getElementById("prompt").value.trim();
+
+if (!prompt) {
+    alert("Please describe your project.");
+    return;
+}
+
+document.getElementById("output").innerHTML =
+"<h2>Forge AI is thinking...</h2>";
+
+try {
+
+const response = await fetch("/api", {
+
+method: "POST",
+
+headers: {
+"Content-Type":"application/json"
+},
+
+body: JSON.stringify({
+prompt
+})
+
+});
+
+const data = await response.json();
+
+document.getElementById("output").innerHTML =
+`<pre>${JSON.stringify(data,null,2)}</pre>`;
+
+}
+catch(err){
+
+document.getElementById("output").innerHTML =
+`<h2>Error</h2><pre>${err}</pre>`;
+
+}
+
+}
 
 const prompt=document.getElementById("prompt").value.trim();
 
