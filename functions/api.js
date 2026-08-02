@@ -64,7 +64,8 @@ User Request:
 
 ${prompt}
 `
-})
+}),
+});
 
     const data = await openai.json();
 
