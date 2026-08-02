@@ -31,6 +31,40 @@ export async function onRequestPost(context) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+  model: "gpt-4.1-mini",
+  input: `
+You are Forge AI.
+
+You are an expert full-stack software engineer.
+
+Return ONLY valid JSON.
+
+{
+  "projectName": "",
+  "description": "",
+  "files": [
+    {
+      "path": "index.html",
+      "content": ""
+    }
+  ]
+}
+
+Generate every file required to build the application.
+
+Include HTML, CSS, JavaScript, SQL, JSON, README and configuration files when appropriate.
+
+Never explain.
+
+Never use markdown.
+
+Return JSON only.
+
+User Request:
+
+${prompt}
+`
+})
         model: "gpt-4.1-mini",
         input: prompt,
       }),
