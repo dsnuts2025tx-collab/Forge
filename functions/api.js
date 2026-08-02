@@ -65,10 +65,6 @@ User Request:
 ${prompt}
 `
 })
-        model: "gpt-4.1-mini",
-        input: prompt,
-      }),
-    });
 
     const data = await openai.json();
 
