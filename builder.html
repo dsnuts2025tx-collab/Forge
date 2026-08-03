@@ -68,7 +68,23 @@ overflow:auto;
 <h1>🔥 Forge AI Builder</h1>
 
 <p>Describe the application you want Forge to build.</p>
+<label for="provider"><strong>AI Provider</strong></label>
 
+<select id="provider" style="
+width:100%;
+padding:15px;
+margin:15px 0;
+font-size:18px;
+border-radius:10px;
+">
+
+<option value="openai">OpenAI</option>
+<option value="claude">Claude</option>
+<option value="gemini">Gemini</option>
+<option value="grok">Grok</option>
+<option value="openrouter">OpenRouter</option>
+
+</select>
 <input
 id="project"
 placeholder="Project Name">
@@ -87,7 +103,14 @@ Build with AI
 </div>
 
 <script>
+window.onload = function () {
 
+const provider =
+localStorage.getItem("forge_provider") || "openai";
+
+document.getElementById("provider").value = provider;
+
+}
 async function createProject(){
 
 const project=document.getElementById("project").value.trim();
