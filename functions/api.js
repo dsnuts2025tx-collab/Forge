@@ -48,20 +48,22 @@ export async function onRequestPost(context) {
         },
         body: JSON.stringify({
           model: "openai/gpt-4.1-mini",
+          max_tokens: 4000,
+          temperature: 0.7,
           messages: [
             {
               role: "system",
               content: `You are Forge AI.
 
-Return ONLY valid JSON in this format:
+Return ONLY valid JSON.
 
 {
-  "projectName": "",
-  "description": "",
-  "files": [
+  "projectName":"",
+  "description":"",
+  "files":[
     {
-      "path": "",
-      "content": ""
+      "path":"",
+      "content":""
     }
   ]
 }`
@@ -77,23 +79,8 @@ Return ONLY valid JSON in this format:
 
     const text = await response.text();
 
-    if (!response.ok) {
-      return new Response(
-        JSON.stringify({
-          error: "OpenRouter API Error",
-          details: text
-        }),
-        {
-          status: response.status,
-          headers: {
-            "Content-Type": "application/json",
-            ...corsHeaders
-          }
-        }
-      );
-    }
-
     return new Response(text, {
+      status: response.status,
       headers: {
         "Content-Type": "application/json",
         ...corsHeaders
