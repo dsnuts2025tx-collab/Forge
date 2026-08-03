@@ -1,1 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forge Settings</title>
 
+<style>
+
+body{
+background:#0b1020;
+color:white;
+font-family:Arial,sans-serif;
+margin:0;
+padding:40px;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+}
+
+h1{
+margin-bottom:10px;
+}
+
+.card{
+background:#111827;
+padding:20px;
+border-radius:12px;
+margin-top:20px;
+}
+
+label{
+display:block;
+margin-top:20px;
+font-weight:bold;
+}
+
+input{
+width:100%;
+padding:14px;
+margin-top:8px;
+border:none;
+border-radius:8px;
+font-size:16px;
+box-sizing:border-box;
+}
+
+button{
+margin-top:25px;
+padding:15px 25px;
+font-size:18px;
+background:#2563eb;
+color:white;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+
+button:hover{
+background:#1d4ed8;
+}
+
+.success{
+margin-top:20px;
+color:#22c55e;
+font-weight:bold;
+display:none;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>⚙ Forge Settings</h1>
+
+<p>Connect your preferred AI provider.</p>
+
+<div class="card">
+
+<label>OpenAI API Key</label>
+<input id="openai" type="password" placeholder="sk-...">
+
+<label>Claude API Key</label>
+<input id="claude" type="password">
+
+<label>Gemini API Key</label>
+<input id="gemini" type="password">
+
+<label>Grok API Key</label>
+<input id="grok" type="password">
+
+<label>OpenRouter API Key</label>
+<input id="openrouter" type="password">
+
+<button onclick="saveKeys()">
+Save Keys
+</button>
+
+<div id="saved" class="success">
+✅ Keys saved on this device.
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+function saveKeys(){
+
+localStorage.setItem("forge_openai",
+document.getElementById("openai").value);
+
+localStorage.setItem("forge_claude",
+document.getElementById("claude").value);
+
+localStorage.setItem("forge_gemini",
+document.getElementById("gemini").value);
+
+localStorage.setItem("forge_grok",
+document.getElementById("grok").value);
+
+localStorage.setItem("forge_openrouter",
+document.getElementById("openrouter").value);
+
+document.getElementById("saved").style.display="block";
+
+}
+
+window.onload=function(){
+
+document.getElementById("openai").value=
+localStorage.getItem("forge_openai")||"";
+
+document.getElementById("claude").value=
+localStorage.getItem("forge_claude")||"";
+
+document.getElementById("gemini").value=
+localStorage.getItem("forge_gemini")||"";
+
+document.getElementById("grok").value=
+localStorage.getItem("forge_grok")||"";
+
+document.getElementById("openrouter").value=
+localStorage.getItem("forge_openrouter")||"";
+
+}
+
+</script>
+
+</body>
+</html>
