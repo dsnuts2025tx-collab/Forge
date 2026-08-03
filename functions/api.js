@@ -99,15 +99,18 @@ let data;
 try {
   data = JSON.parse(text);
 } catch {
-  data = text;
+  data = { response: text };
 }
 
-output.textContent =
-  typeof data === "string"
-    ? data
-    : JSON.stringify(data, null, 2);
-
-    return new Response(
+return new Response(
+  JSON.stringify(data),
+  {
+    headers: {
+      "Content-Type": "application/json",
+      ...corsHeaders
+    }
+  }
+);
       JSON.stringify(data),
       {
         headers: {
