@@ -6,32 +6,21 @@
 <title>Forge Builder</title>
 
 <style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
-}
-
 body{
 background:#0b1020;
 color:white;
+font-family:Arial,sans-serif;
 padding:40px;
+margin:0;
 }
 
 .container{
 max-width:900px;
 margin:auto;
-text-align:center;
 }
 
 h1{
 margin-bottom:20px;
-}
-
-p{
-margin-bottom:25px;
-color:#d1d5db;
 }
 
 input,
@@ -39,13 +28,14 @@ textarea{
 width:100%;
 padding:15px;
 margin:15px 0;
-border:none;
-border-radius:10px;
 font-size:18px;
+border-radius:10px;
+border:none;
+box-sizing:border-box;
 }
 
 button{
-padding:15px 40px;
+padding:15px 30px;
 font-size:20px;
 background:#2563eb;
 color:white;
@@ -54,44 +44,106 @@ border-radius:10px;
 cursor:pointer;
 }
 
+button:hover{
+background:#1d4ed8;
+}
+
 #result{
 display:none;
 margin-top:30px;
 background:#111827;
-padding:25px;
+padding:20px;
 border-radius:12px;
-text-align:left;
+white-space:pre-wrap;
+overflow:auto;
 }
 </style>
+
 </head>
 
 <body>
 
 <div class="container">
 
-<h1>🔥 Forge Builder</h1>
+<h1>🔥 Forge AI Builder</h1>
 
-<p>Describe what you want Forge to build.</p>
+<p>Describe the application you want Forge to build.</p>
 
-<input id="project" type="text" placeholder="Project Name">
+<input
+id="project"
+placeholder="Project Name">
 
-<textarea id="description" rows="8" placeholder="Describe your project here..."></textarea>
+<textarea
+id="description"
+rows="10"
+placeholder="Describe your application..."></textarea>
 
-<button onclick="createProject()">Create Project</button>
+<button onclick="createProject()">
+Build with AI
+</button>
 
-<div id="result">
-<h2>✅ Project Created</h2>
-
-<p><strong>Project:</strong> <span id="projectName"></span></p>
-
-<p><strong>Description:</strong></p>
-
-<p id="projectDescription"></p>
-
-<p><strong>Status:</strong> Redirecting to Dashboard...</p>
-</div>
+<div id="result"></div>
 
 </div>
 
 <script>
-async 
+
+async function createProject(){
+
+const project=document.getElementById("project").value.trim();
+const description=document.getElementById("description").value.trim();
+
+if(!project||!description){
+alert("Please complete both fields.");
+return;
+}
+
+const result=document.getElementById("result");
+
+result.style.display="block";
+result.innerHTML="<h2>Forge AI is thinking...</h2>";
+
+try{
+
+const response=await fetch("/api",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+prompt:`Project: ${project}
+
+${description}`
+
+})
+
+});
+
+const data=await response.json();
+
+result.innerHTML=`
+<h2>✅ AI Response</h2>
+<pre>${JSON.stringify(data,null,2)}</pre>
+`;
+
+}
+
+catch(err){
+
+result.innerHTML=`
+<h2>❌ Error</h2>
+<pre>${err}</pre>
+`;
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
