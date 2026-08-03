@@ -1,5 +1,4 @@
 export async function onRequestPost(context) {
-
   const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
@@ -7,7 +6,6 @@ export async function onRequestPost(context) {
   };
 
   try {
-
     const { request, env } = context;
 
     const { provider = "openrouter", prompt } = await request.json();
@@ -25,103 +23,84 @@ export async function onRequestPost(context) {
       );
     }
 
-    let response;
+    if (provider !== "openrouter") {
+      return new Response(
+        JSON.stringify({ error: "Unsupported provider" }),
+        {
+          status: 400,
+          headers: {
+            "Content-Type": "application/json",
+            ...corsHeaders
+          }
+        }
+      );
+    }
 
-    switch (provider) {
+    const response = await fetch(
+      "https://openrouter.ai/api/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${env.OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json",
+          "HTTP-Referer": "https://forgeii.pages.dev",
+          "X-Title": "Forge AI"
+        },
+        body: JSON.stringify({
+          model: "openai/gpt-4.1-mini",
+          messages: [
+            {
+              role: "system",
+              content: `You are Forge AI.
 
-      case "openrouter":
-
-        response = await fetch(
-          "https://openrouter.ai/api/v1/chat/completions",
-          {
-            method: "POST",
-            headers: {
-              "Authorization": `Bearer ${env.OPENROUTER_API_KEY}`,
-              "Content-Type": "application/json",
-              "HTTP-Referer": "https://forgeii.pages.dev",
-              "X-Title": "Forge AI"
-            },
-            body: JSON.stringify({
-              model: "openai/gpt-4.1-mini",
-              messages: [
-                {
-                  role: "system",
-                  content: `You are Forge AI.
-
-Return ONLY valid JSON.
+Return ONLY valid JSON in this format:
 
 {
-  "projectName":"",
-  "description":"",
-  "files":[
+  "projectName": "",
+  "description": "",
+  "files": [
     {
-      "path":"",
-      "content":""
+      "path": "",
+      "content": ""
     }
   ]
 }`
-                },
-                {
-                  role: "user",
-                  content: prompt
-                }
-              ]
-            })
-          }
-        );
-
-        break;
-
-      default:
-
-        return new Response(
-          JSON.stringify({
-            error: "Unsupported provider"
-          }),
-          {
-            status: 400,
-            headers: {
-              "Content-Type": "application/json",
-              ...corsHeaders
+            },
+            {
+              role: "user",
+              content: prompt
             }
-          }
-        );
-
-    }
-
-    const text = await response.text();
-
-if (!response.ok) {
-  throw new Error(text);
-}
-
-let data;
-try {
-  data = JSON.parse(text);
-} catch {
-  data = { response: text };
-}
-
-return new Response(
-  JSON.stringify(data),
-  {
-    headers: {
-      "Content-Type": "application/json",
-      ...corsHeaders
-    }
-  }
-);
-      JSON.stringify(data),
-      {
-        headers: {
-          "Content-Type": "application/json",
-          ...corsHeaders
-        }
+          ]
+        })
       }
     );
 
-  } catch (err) {
+    const text = await response.text();
 
+    if (!response.ok) {
+      return new Response(
+        JSON.stringify({
+          error: "OpenRouter API Error",
+          details: text
+        }),
+        {
+          status: response.status,
+          headers: {
+            "Content-Type": "application/json",
+            ...corsHeaders
+          }
+        }
+      );
+    }
+
+    return new Response(text, {
+      headers: {
+        "Content-Type": "application/json",
+        ...corsHeaders
+      }
+    });
+
+  } catch (err) {
     return new Response(
       JSON.stringify({
         error: err.message,
@@ -135,13 +114,10 @@ return new Response(
         }
       }
     );
-
   }
-
 }
 
 export async function onRequestOptions() {
-
   return new Response(null, {
     status: 204,
     headers: {
@@ -150,5 +126,4 @@ export async function onRequestOptions() {
       "Access-Control-Allow-Headers": "Content-Type"
     }
   });
-
 }
