@@ -67,7 +67,7 @@ async function createProject(){
  status.textContent="Forge AI is thinking...";
 
  try{
-   const response=await fetch("/api",{
+   const response=await fetch("/functions/api",{
      method:"POST",
      headers:{"Content-Type":"application/json"},
      body:JSON.stringify({
