@@ -3,24 +3,18 @@ export async function onRequestPost(context) {
   const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Headers": "Content-Type"
   };
 
   try {
 
     const { request, env } = context;
 
-    const body = await request.json();
-
-    const provider = body.provider || "openai";
-    const prompt = body.prompt;
+    const { provider = "openrouter", prompt } = await request.json();
 
     if (!prompt) {
-
       return new Response(
-        JSON.stringify({
-          error: "Missing prompt"
-        }),
+        JSON.stringify({ error: "Missing prompt" }),
         {
           status: 400,
           headers: {
@@ -29,38 +23,30 @@ export async function onRequestPost(context) {
           }
         }
       );
-
     }
 
     let response;
 
-    switch(provider){
+    switch (provider) {
 
-      case "openai":
+      case "openrouter":
 
         response = await fetch(
-          "https://api.openai.com/v1/responses",
+          "https://openrouter.ai/api/v1/chat/completions",
           {
-
-            method:"POST",
-
-            headers:{
-
-              Authorization:`Bearer ${env.OPENAI_API_KEY}`,
-
-              "Content-Type":"application/json"
-
+            method: "POST",
+            headers: {
+              "Authorization": `Bearer ${env.OPENROUTER_API_KEY}`,
+              "Content-Type": "application/json",
+              "HTTP-Referer": "https://forgeii.pages.dev",
+              "X-Title": "Forge AI"
             },
-
-            body:JSON.stringify({
-
-              model:"gpt-4.1-mini",
-
-              input:`
-
-You are Forge AI.
-
-You are an expert software engineer.
+            body: JSON.stringify({
+              model: "openai/gpt-4.1-mini",
+              messages: [
+                {
+                  role: "system",
+                  content: `You are Forge AI.
 
 Return ONLY valid JSON.
 
@@ -73,40 +59,11 @@ Return ONLY valid JSON.
       "content":""
     }
   ]
-}
-
-Generate every required file.
-
-User Request:
-
-${prompt}
-
-`
-
-            })
-
-          }
-
-        );
-
-        break;
-            case "gemini":
-
-        response = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${env.GEMINI_API_KEY}`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              contents: [
+}`
+                },
                 {
-                  parts: [
-                    {
-                      text: prompt
-                    }
-                  ]
+                  role: "user",
+                  content: prompt
                 }
               ]
             })
@@ -114,6 +71,7 @@ ${prompt}
         );
 
         break;
+
       default:
 
         return new Response(
@@ -143,7 +101,7 @@ ${prompt}
       }
     );
 
-  } catch(err) {
+  } catch (err) {
 
     return new Response(
       JSON.stringify({
@@ -165,12 +123,12 @@ ${prompt}
 
 export async function onRequestOptions() {
 
-  return new Response(null,{
-    status:204,
-    headers:{
-      "Access-Control-Allow-Origin":"*",
-      "Access-Control-Allow-Methods":"POST, OPTIONS",
-      "Access-Control-Allow-Headers":"Content-Type"
+  return new Response(null, {
+    status: 204,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type"
     }
   });
 
