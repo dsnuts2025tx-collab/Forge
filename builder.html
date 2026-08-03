@@ -123,7 +123,11 @@ ${description}`
 
 });
 
-const data=await response.json();
+if (!response.ok) {
+    throw new Error(await response.text());
+}
+
+const data = await response.json();
 
 result.innerHTML=`
 <h2>✅ AI Response</h2>
