@@ -94,7 +94,36 @@ text-align:left;
 </div>
 
 <script>
-function createProject() {
+async function createProject() {
+
+const project = document.getElementById("project").value.trim();
+const description = document.getElementById("description").value.trim();
+
+if (!project || !description) {
+    alert("Please enter both a project name and description.");
+    return;
+}
+
+const response = await fetch("/functions/api", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        prompt: `${project}\n\n${description}`
+    })
+});
+
+const data = await response.json();
+
+console.log(data);
+
+document.getElementById("projectName").innerText = project;
+document.getElementById("projectDescription").innerText =
+JSON.stringify(data, null, 2);
+
+document.getElementById("result").style.display = "block";
+}
 
 const project = document.getElementById("project").value.trim();
 const description = document.getElementById("description").value.trim();
