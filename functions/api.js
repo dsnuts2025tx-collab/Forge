@@ -89,7 +89,23 @@ Return ONLY valid JSON.
 
     }
 
-    const data = await response.json();
+    const text = await response.text();
+
+if (!response.ok) {
+  throw new Error(text);
+}
+
+let data;
+try {
+  data = JSON.parse(text);
+} catch {
+  data = text;
+}
+
+output.textContent =
+  typeof data === "string"
+    ? data
+    : JSON.stringify(data, null, 2);
 
     return new Response(
       JSON.stringify(data),
