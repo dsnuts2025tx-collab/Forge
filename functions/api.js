@@ -1,95 +1,177 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Forge AI Builder</title>
-<style>
-body{margin:0;background:#0b1020;color:#fff;font-family:Arial,sans-serif}
-.container{max-width:1000px;margin:auto;padding:40px}
-input,textarea,select{width:100%;padding:14px;margin:12px 0;border:none;border-radius:10px;box-sizing:border-box;font-size:16px}
-button{padding:14px 22px;border:none;border-radius:10px;background:#2563eb;color:#fff;font-size:18px;cursor:pointer}
-button:hover{background:#1d4ed8}
-#status,#result{display:none;margin-top:20px;background:#111827;padding:20px;border-radius:10px}
-pre{white-space:pre-wrap;word-break:break-word}
-</style>
-</head>
-<body>
-<div class="container">
-<h1>🔥 Forge AI Builder</h1>
-<p>Describe the application you want Forge to build.</p>
+export async function onRequestPost(context) {
 
-<label>AI Provider</label>
-<select id="provider">
-<option value="openai">OpenAI</option>
-<option value="claude">Claude</option>
-<option value="gemini">Gemini</option>
-<option value="grok">Grok</option>
-<option value="openrouter">OpenRouter</option>
-</select>
+  const corsHeaders = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+  };
 
-<input id="project" placeholder="Project Name">
-<textarea id="description" rows="10" placeholder="Describe your application..."></textarea>
+  try {
 
-<button onclick="createProject()">🚀 Build with AI</button>
+    const { request, env } = context;
 
-<div id="status">Forge AI is thinking...</div>
-<div id="result">
-<h2>Result</h2>
-<pre id="output"></pre>
-</div>
-</div>
+    const body = await request.json();
 
-<script>
-window.onload=function(){
- const p=localStorage.getItem("forge_provider")||"openai";
- document.getElementById("provider").value=p;
+    const provider = body.provider || "openai";
+    const prompt = body.prompt;
+
+    if (!prompt) {
+
+      return new Response(
+        JSON.stringify({
+          error: "Missing prompt"
+        }),
+        {
+          status: 400,
+          headers: {
+            "Content-Type": "application/json",
+            ...corsHeaders
+          }
+        }
+      );
+
+    }
+
+    let response;
+
+    switch(provider){
+
+      case "openai":
+
+        response = await fetch(
+          "https://api.openai.com/v1/responses",
+          {
+
+            method:"POST",
+
+            headers:{
+
+              Authorization:`Bearer ${env.OPENAI_API_KEY}`,
+
+              "Content-Type":"application/json"
+
+            },
+
+            body:JSON.stringify({
+
+              model:"gpt-4.1-mini",
+
+              input:`
+
+You are Forge AI.
+
+You are an expert software engineer.
+
+Return ONLY valid JSON.
+
+{
+  "projectName":"",
+  "description":"",
+  "files":[
+    {
+      "path":"",
+      "content":""
+    }
+  ]
 }
 
-async function createProject(){
- const provider=document.getElementById("provider").value;
- localStorage.setItem("forge_provider",provider);
+Generate every required file.
 
- const project=document.getElementById("project").value.trim();
- const description=document.getElementById("description").value.trim();
+User Request:
 
- if(!project||!description){
-   alert("Please complete both fields.");
-   return;
- }
+${prompt}
 
- const status=document.getElementById("status");
- const result=document.getElementById("result");
- const output=document.getElementById("output");
+`
 
- status.style.display="block";
- result.style.display="none";
- status.textContent="Forge AI is thinking...";
+            })
 
- try{
-   const response=await fetch("/api",{
-     method:"POST",
-     headers:{"Content-Type":"application/json"},
-     body:JSON.stringify({
-       provider:provider,
-       prompt:`Project: ${project}\n\n${description}`
-     })
-   });
+          }
 
-   const text=await response.text();
-   let data;
-   try{ data=JSON.parse(text);}catch{ data=text; }
+        );
 
-   status.style.display="none";
-   result.style.display="block";
-   output.textContent=typeof data==="string" ? data : JSON.stringify(data,null,2);
+        break;
+            case "gemini":
 
- }catch(err){
-   status.style.display="none";
-   result.style.display="block";
-   output.textContent="Error: "+err.message;
- }
+        response = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${env.GEMINI_API_KEY}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              contents: [
+                {
+                  parts: [
+                    {
+                      text: prompt
+                    }
+                  ]
+                }
+              ]
+            })
+          }
+        );
+
+        break;
+      default:
+
+        return new Response(
+          JSON.stringify({
+            error: "Unsupported provider"
+          }),
+          {
+            status: 400,
+            headers: {
+              "Content-Type": "application/json",
+              ...corsHeaders
+            }
+          }
+        );
+
+    }
+
+    const data = await response.json();
+
+    return new Response(
+      JSON.stringify(data),
+      {
+        headers: {
+          "Content-Type": "application/json",
+          ...corsHeaders
+        }
+      }
+    );
+
+  } catch(err) {
+
+    return new Response(
+      JSON.stringify({
+        error: err.message,
+        stack: err.stack
+      }),
+      {
+        status: 500,
+        headers: {
+          "Content-Type": "application/json",
+          ...corsHeaders
+        }
+      }
+    );
+
+  }
+
 }
-</script>
-</body>
-</html>
+
+export async function onRequestOptions() {
+
+  return new Response(null,{
+    status:204,
+    headers:{
+      "Access-Control-Allow-Origin":"*",
+      "Access-Control-Allow-Methods":"POST, OPTIONS",
+      "Access-Control-Allow-Headers":"Content-Type"
+    }
+  });
+
+}
