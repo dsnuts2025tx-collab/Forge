@@ -47,7 +47,7 @@ export async function onRequestPost(context) {
           "X-Title": "Forge AI"
         },
         body: JSON.stringify({
-          model: "openai/gpt-4.1-mini",
+          model: "deepseek/deepseek-r1:free",
           max_tokens: 4000,
           temperature: 0.7,
           messages: [
