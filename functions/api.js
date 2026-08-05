@@ -7,7 +7,6 @@ export async function onRequestPost(context) {
 
   try {
     const { request, env } = context;
-
     const { provider = "openrouter", prompt } = await request.json();
 
     if (!prompt) {
@@ -55,15 +54,15 @@ export async function onRequestPost(context) {
               role: "system",
               content: `You are Forge AI.
 
-Return ONLY valid JSON.
+Return ONLY valid JSON in this format:
 
 {
-  "projectName":"",
-  "description":"",
-  "files":[
+  "projectName": "",
+  "description": "",
+  "files": [
     {
-      "path":"",
-      "content":""
+      "path": "",
+      "content": ""
     }
   ]
 }`
@@ -78,9 +77,23 @@ Return ONLY valid JSON.
     );
 
     const text = await response.text();
+        if (!response.ok) {
+      return new Response(
+        JSON.stringify({
+          error: "OpenRouter Error",
+          details: text
+        }),
+        {
+          status: response.status,
+          headers: {
+            "Content-Type": "application/json",
+            ...corsHeaders
+          }
+        }
+      );
+    }
 
     return new Response(text, {
-      status: response.status,
       headers: {
         "Content-Type": "application/json",
         ...corsHeaders
@@ -88,6 +101,7 @@ Return ONLY valid JSON.
     });
 
   } catch (err) {
+
     return new Response(
       JSON.stringify({
         error: err.message,
@@ -101,6 +115,7 @@ Return ONLY valid JSON.
         }
       }
     );
+
   }
 }
 
