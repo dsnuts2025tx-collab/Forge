@@ -29,6 +29,12 @@ color:#cbd5e1;
 margin-bottom:20px;
 }
 
+label{
+display:block;
+margin-top:15px;
+font-size:16px;
+}
+
 input,
 textarea,
 select{
@@ -39,6 +45,10 @@ border:none;
 border-radius:10px;
 font-size:16px;
 box-sizing:border-box;
+}
+
+textarea{
+resize:vertical;
 }
 
 button{
@@ -55,6 +65,11 @@ button:hover{
 background:#1d4ed8;
 }
 
+button:disabled{
+opacity:.6;
+cursor:not-allowed;
+}
+
 #status,
 #result{
 display:none;
@@ -64,9 +79,18 @@ padding:20px;
 border-radius:12px;
 }
 
+#status{
+color:#93c5fd;
+}
+
+#result h2{
+margin-top:0;
+}
+
 pre{
 white-space:pre-wrap;
 word-break:break-word;
+font-family:monospace;
 }
 </style>
 
@@ -80,27 +104,33 @@ word-break:break-word;
 
 <p>Describe the application you want Forge AI to build.</p>
 
-<label>AI Provider</label>
+<label for="provider">AI Provider</label>
 
 <select id="provider">
 <option value="openrouter" selected>OpenRouter</option>
 </select>
 
+<label for="project">Project Name</label>
+
 <input
 id="project"
-placeholder="Project Name">
+type="text"
+placeholder="Project Name"
+autocomplete="off">
+
+<label for="description">Application Description</label>
 
 <textarea
 id="description"
 rows="10"
 placeholder="Describe your application..."></textarea>
 
-<button onclick="createProject()">
+<button id="buildButton" onclick="createProject()">
 🚀 Build with AI
 </button>
 
 <div id="status">
-Forge AI is thinking...
+🔥 Forge AI is thinking...
 </div>
 
 <div id="result">
@@ -117,15 +147,28 @@ Forge AI is thinking...
 
 async function createProject(){
 
-const provider=document.getElementById("provider").value;
-const project=document.getElementById("project").value.trim();
-const description=document.getElementById("description").value.trim();
+const provider =
+document.getElementById("provider").value;
 
-const status=document.getElementById("status");
-const result=document.getElementById("result");
-const output=document.getElementById("output");
+const project =
+document.getElementById("project").value.trim();
 
-if(!project||!description){
+const description =
+document.getElementById("description").value.trim();
+
+const status =
+document.getElementById("status");
+
+const result =
+document.getElementById("result");
+
+const output =
+document.getElementById("output");
+
+const buildButton =
+document.getElementById("buildButton");
+
+if(!project || !description){
 
 alert("Please complete both fields.");
 
@@ -135,14 +178,16 @@ return;
 
 status.style.display="block";
 result.style.display="none";
-status.innerHTML="🔥 Forge AI is thinking...";
+
+status.textContent="🔥 Forge AI is thinking...";
+
+buildButton.disabled=true;
 
 try{
 
-const response=await fetch(
+const response = await fetch(
 "/api",
 {
-
 method:"POST",
 
 headers:{
@@ -151,10 +196,9 @@ headers:{
 
 body:JSON.stringify({
 
-provider,
+provider:provider,
 
 prompt:
-
 `Project:
 
 ${project}
@@ -164,22 +208,34 @@ Description:
 ${description}`
 
 })
-
 }
-
 );
 
-const text=await response.text();
+const text = await response.text();
 
 let data;
 
 try{
 
-data=JSON.parse(text);
+data = JSON.parse(text);
 
 }catch{
 
-data=text;
+data = text;
+
+}
+
+if(!response.ok){
+
+throw new Error(
+typeof data === "string"
+? data
+: (
+data.error ||
+data.message ||
+`API request failed with status ${response.status}`
+)
+);
 
 }
 
@@ -187,25 +243,24 @@ status.style.display="none";
 
 result.style.display="block";
 
-output.textContent=
+output.textContent =
+typeof data === "string"
+? data
+: JSON.stringify(data,null,2);
 
-typeof data==="string"
-
-?data
-
-:JSON.stringify(data,null,2);
-
-}
-
-catch(error){
+}catch(error){
 
 status.style.display="none";
 
 result.style.display="block";
 
-output.textContent=
+output.textContent =
+"❌ Forge API Error:\n\n" +
+error.message;
 
-"❌ "+error.message;
+}finally{
+
+buildButton.disabled=false;
 
 }
 
