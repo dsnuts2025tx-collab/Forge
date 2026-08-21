@@ -19,6 +19,7 @@ export class ProviderRegistry {
   async set(provider) {
     const providers = await this.list();
     if (!provider?.id || !["cellular", "satellite"].includes(provider.type)) throw new Error("invalid_provider");
+    if (!Array.isArray(provider.capabilities)) throw new Error("invalid_provider_capabilities");
     const next = providers.filter((p) => p.id !== provider.id).concat(provider);
     return this.store.put("providers", next);
   }
@@ -52,14 +53,14 @@ export class PhoneServiceDomain {
 
   async selectConnectivity(customerId, device = {}) {
     const providers = await this.providers.list();
-    const cellular = providers.find((p) => p.type === "cellular" && p.live === true && p.state === "LIVE");
+    const cellular = providers.find((p) => p.type === "cellular" && p.live === true && p.state === "LIVE" && p.capabilities.includes("voice") && p.capabilities.includes("sms"));
     if (cellular && device.cellular !== false) {
-      const state = { customerId, path: PATHS.CELLULAR, providerId: cellular.id, reason: "authorized_cellular_available", wifiRequired: false, observedAt: now() };
+      const state = { customerId, path: PATHS.CELLULAR, providerId: cellular.id, reason: "authorized_cellular_available", capabilities: cellular.capabilities, wifiRequired: false, observedAt: now() };
       await this.store.put(`connectivity:${customerId}`, state); return state;
     }
-    const satellite = providers.find((p) => p.type === "satellite" && p.live === true && p.state === "LIVE");
+    const satellite = providers.find((p) => p.type === "satellite" && p.live === true && p.state === "LIVE" && p.capabilities.includes("sms"));
     if (satellite && device.satellite === true) {
-      const state = { customerId, path: PATHS.SATELLITE, providerId: satellite.id, reason: "authorized_satellite_fallback", wifiRequired: false, observedAt: now() };
+      const state = { customerId, path: PATHS.SATELLITE, providerId: satellite.id, reason: "authorized_satellite_fallback", capabilities: satellite.capabilities, wifiRequired: false, observedAt: now() };
       await this.store.put(`connectivity:${customerId}`, state); return state;
     }
     return this.getStatus(customerId);
