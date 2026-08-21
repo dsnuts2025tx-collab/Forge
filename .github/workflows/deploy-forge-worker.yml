@@ -22,6 +22,11 @@ jobs:
           test -f wrangler.jsonc
           test -f index.html
           test -f builder.html
+          test -f dashboard.html
+          test -f projects.html
+          test -f settings.html
+          test -f generator.html
+          test -f playground.html
           echo "Forge runtime package validated"
 
   package:
@@ -41,3 +46,21 @@ jobs:
         with:
           name: forge-production-package
           path: dist/
+
+  deploy:
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Deploy Forge Engine to Cloudflare Workers
+        run: npx --yes wrangler@latest deploy --config wrangler.jsonc
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
