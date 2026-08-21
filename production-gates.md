@@ -2,6 +2,12 @@
 
 Forge Engine 6.0.0-PLATINUM remains the locked production architecture.
 
+## Priority: P0 — AI BUILD
+- Builder → `/api` request path hardened.
+- OpenRouter response is validated as JSON before Forge reports success.
+- Provider failures are surfaced as explicit Forge errors instead of being presented as successful builds.
+- `/api/status` now reports `aiConfigured` so production readiness is observable.
+
 ## Foundation built
 - Forge Power home screen restored.
 - Cloudflare deployment job exists on main.
@@ -27,4 +33,4 @@ Forge Engine 6.0.0-PLATINUM remains the locked production architecture.
 ## Proof standard
 Do not mark production proven until a real environment demonstrates: home load; checkout; successful Stripe payment; signed webhook entitlement update; signed customer session; server-side entitlement enforcement; AI build; persistent project across a fresh session; working preview/export/deployment; and correct cancellation/payment-failure access changes.
 
-**Status: foundation built and locked. Live proof remains gated on production configuration and a successful end-to-end deployment run.**
+**Status: P0 build path hardened and locked. Live proof remains gated on production configuration and a successful end-to-end deployment/build run.**
