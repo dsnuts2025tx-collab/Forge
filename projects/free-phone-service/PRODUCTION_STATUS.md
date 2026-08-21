@@ -3,7 +3,7 @@
 Date: 2026-08-21
 
 ## Current milestone
-Runnable Cloudflare Worker/Durable Object control-plane foundation exists on `feature/free-phone-service`, with an explicit provider-adapter runtime contract and regression tests.
+Runnable Cloudflare Worker/Durable Object control-plane foundation exists on `feature/free-phone-service`, with an explicit provider-adapter runtime contract, regression tests, and initial enrollment abuse/idempotency protections.
 
 ## Implemented
 - Persistent customer records via Durable Object storage.
@@ -16,6 +16,7 @@ Runnable Cloudflare Worker/Durable Object control-plane foundation exists on `fe
 - Funding coverage calculation and shortfall reporting.
 - Admin-token protected provider/funding/usage/audit endpoints.
 - Customer enrollment UI and health endpoint.
+- Enrollment rate limiting and 24-hour idempotency-key protection to reduce duplicate customer creation and basic abuse.
 - Node test suite covering entitlement, no-Wi-Fi state behavior, cellular priority, satellite fallback, usage persistence, funding shortfall, and provider-adapter truth gates.
 - GitHub Actions workflow definition for automated tests and Cloudflare deployment dry-run.
 
