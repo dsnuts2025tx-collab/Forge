@@ -7,38 +7,30 @@ export class PhoneServiceStore {
   constructor(storage) { this.storage = storage; }
   async get(key, fallback) { const value = await this.storage.get(key); return value ?? fallback; }
   async put(key, value) { await this.storage.put(key, value); return value; }
-  async append(key, value) {
-    const list = await this.get(key, []);
-    list.push(value);
-    await this.put(key, list);
-    return value;
-  }
+  async append(key, value) { const list = await this.get(key, []); list.push(value); await this.put(key, list); return value; }
 }
 
 export class ProviderRegistry {
   constructor(store) { this.store = store; }
-  async list() {
-    return this.store.get("providers", [
-      { id: "cellular-default", type: "cellular", state: "PENDING", capabilities: ["voice", "sms", "data"], live: false },
-      { id: "satellite-default", type: "satellite", state: "PENDING", capabilities: ["emergency", "sms"], live: false }
-    ]);
-  }
+  async list() { return this.store.get("providers", [
+    { id: "cellular-default", type: "cellular", state: "PENDING", capabilities: ["voice", "sms", "data"], live: false },
+    { id: "satellite-default", type: "satellite", state: "PENDING", capabilities: ["emergency", "sms"], live: false }
+  ]); }
   async set(provider) {
     const providers = await this.list();
+    if (!provider?.id || !["cellular", "satellite"].includes(provider.type)) throw new Error("invalid_provider");
     const next = providers.filter((p) => p.id !== provider.id).concat(provider);
     return this.store.put("providers", next);
   }
 }
 
 export class PhoneServiceDomain {
-  constructor(store) {
-    this.store = store;
-    this.providers = new ProviderRegistry(store);
-  }
+  constructor(store) { this.store = store; this.providers = new ProviderRegistry(store); }
 
   async createCustomer(input) {
     const customer = { id: id("cus"), name: input.name || "Customer", phone: input.phone || null, device: input.device || {}, createdAt: now() };
     await this.store.put(`customer:${customer.id}`, customer);
+    await this.store.append("customers:index", customer.id);
     await this.store.put(`entitlement:${customer.id}`, { customerId: customer.id, plan: "basic-free", state: "pending", price: 0, currency: "USD", createdAt: now() });
     await this.store.append("audit", { id: id("aud"), action: "customer.create", target: customer.id, at: now() });
     return customer;
@@ -56,18 +48,16 @@ export class PhoneServiceDomain {
     return entitlement;
   }
 
-  async getStatus(customerId) {
-    return this.store.get(`connectivity:${customerId}`, { customerId, path: PATHS.UNAVAILABLE, reason: "not_enrolled", wifiRequired: false, observedAt: now() });
-  }
+  async getStatus(customerId) { return this.store.get(`connectivity:${customerId}`, { customerId, path: PATHS.UNAVAILABLE, reason: "not_enrolled", wifiRequired: false, observedAt: now() }); }
 
   async selectConnectivity(customerId, device = {}) {
     const providers = await this.providers.list();
-    const cellular = providers.find((p) => p.type === "cellular" && p.live && p.state === "LIVE");
+    const cellular = providers.find((p) => p.type === "cellular" && p.live === true && p.state === "LIVE");
     if (cellular && device.cellular !== false) {
       const state = { customerId, path: PATHS.CELLULAR, providerId: cellular.id, reason: "authorized_cellular_available", wifiRequired: false, observedAt: now() };
       await this.store.put(`connectivity:${customerId}`, state); return state;
     }
-    const satellite = providers.find((p) => p.type === "satellite" && p.live && p.state === "LIVE");
+    const satellite = providers.find((p) => p.type === "satellite" && p.live === true && p.state === "LIVE");
     if (satellite && device.satellite === true) {
       const state = { customerId, path: PATHS.SATELLITE, providerId: satellite.id, reason: "authorized_satellite_fallback", wifiRequired: false, observedAt: now() };
       await this.store.put(`connectivity:${customerId}`, state); return state;
@@ -75,11 +65,10 @@ export class PhoneServiceDomain {
     return this.getStatus(customerId);
   }
 
-  async getUsage(customerId) {
-    return (await this.store.get("usage", [])).filter((event) => event.customerId === customerId);
-  }
+  async getUsage(customerId) { return (await this.store.get("usage", [])).filter((event) => event.customerId === customerId); }
 
   async addUsage(event) {
+    if (!event?.customerId || !event?.eventType) throw new Error("invalid_usage_event");
     const record = { id: id("use"), ...event, at: now() };
     await this.store.append("usage", record);
     if (event.cost !== undefined) await this.store.append("costs", { id: id("cost"), usageId: record.id, providerId: event.providerId || null, expected: Number(event.cost) || 0, actual: null, currency: event.currency || "USD", at: now() });
