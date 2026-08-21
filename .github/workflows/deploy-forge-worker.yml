@@ -27,6 +27,7 @@ jobs:
           test -f settings.html
           test -f generator.html
           test -f playground.html
+          test -f billing.html
           echo "Forge runtime package validated"
 
   package:
@@ -39,7 +40,7 @@ jobs:
       - name: Create deployable package
         run: |
           mkdir -p dist
-          cp worker.js wrangler.jsonc index.html builder.html dashboard.html projects.html settings.html generator.html playground.html dist/
+          cp worker.js wrangler.jsonc index.html builder.html dashboard.html projects.html settings.html generator.html playground.html billing.html dist/
           echo "Forge Engine 6.0.0-PLATINUM" > dist/BUILD.txt
       - name: Upload Forge package
         uses: actions/upload-artifact@v4
