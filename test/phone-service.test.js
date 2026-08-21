@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { PhoneServiceDomain } from "../src/phone-service.js";
+import { createProviderAdapter, ProviderAdapterError } from "../src/provider-adapters.js";
 
 class MemoryStorage {
   constructor() { this.data = new Map(); }
@@ -79,4 +80,17 @@ test("funding coverage reports a shortfall", async () => {
   const coverage = await domain.accounting();
   assert.equal(coverage.expectedCost, 10);
   assert.equal(coverage.shortfall, 6);
+});
+
+test("provider adapter contract refuses to impersonate a non-live provider", async () => {
+  const adapter = createProviderAdapter({ id: "cell-test", type: "cellular", state: "TEST_ONLY", live: false, capabilities: ["voice", "sms"] });
+  assert.equal(adapter.status().live, false);
+  await assert.rejects(() => adapter.health(), (error) => error instanceof ProviderAdapterError && error.code === "provider_not_live");
+});
+
+test("live provider adapter exposes health but leaves real provisioning to the authorized integration", async () => {
+  const adapter = createProviderAdapter({ id: "cell-live", type: "cellular", state: "LIVE", live: true, capabilities: ["voice", "sms", "data"] });
+  const health = await adapter.health();
+  assert.equal(health.ok, true);
+  await assert.rejects(() => adapter.provision(), (error) => error.code === "provisioning_not_implemented");
 });
