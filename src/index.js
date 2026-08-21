@@ -15,11 +15,11 @@ export class PhoneServiceDO {
       const customerMatch = path.match(/^\/phone\/v1\/customers\/([^/]+)(?:\/(enroll|connectivity|usage))?$/);
       if (customerMatch) {
         const [, customerId, action] = customerMatch;
-        if (request.method === "GET" && !action) return cors(json({ customer: await this.domain.getCustomer(customerId), entitlement: await this.store.get(`entitlement:${customerId}`, null), connectivity: await this.domain.getStatus(customerId) }));
+        if (request.method === "GET" && !action) return cors(json({ customer: await this.domain.getCustomer(customerId), entitlement: await this.store.get(`entitlement:${customerId}`, null), connectivity: await this.domain.getStatus(customerId), usage: await this.domain.getUsage(customerId) }));
         if (request.method === "POST" && action === "enroll") return cors(json(await this.domain.enroll(customerId)));
         if (request.method === "GET" && action === "connectivity") return cors(json(await this.domain.getStatus(customerId)));
         if (request.method === "POST" && action === "connectivity") return cors(json(await this.domain.selectConnectivity(customerId, (await this.domain.getCustomer(customerId))?.device || {})));
-        if (request.method === "GET" && action === "usage") return cors(json(await this.store.get(`usage:${customerId}`, [])));
+        if (request.method === "GET" && action === "usage") return cors(json(await this.domain.getUsage(customerId)));
       }
       if (path === "/phone/v1/providers" && request.method === "GET") return cors(json(await this.domain.providers.list()));
       if (path === "/phone/v1/usage/events" && request.method === "POST") return cors(json(await this.domain.addUsage(await request.json()), 201));
