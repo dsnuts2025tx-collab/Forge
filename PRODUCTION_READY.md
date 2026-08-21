@@ -2,6 +2,9 @@
 
 Forge Engine 6.0.0-PLATINUM is the production architecture.
 
+## Deployment authority — LOCKED
+Forge production deployment is **Cloudflare Workers**, not Vercel. The canonical deployment path is GitHub `main` → Cloudflare Worker (`phantom-forge-engine`) using `wrangler.jsonc`. Vercel is not a required production dependency.
+
 ## Customer path
 Home → Builder → Build → Project persistence → Billing → Entitlement → Preview/Export → Deployment.
 
