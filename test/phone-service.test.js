@@ -31,7 +31,7 @@ test("connectivity never requires Wi-Fi and does not fake unavailable providers"
   assert.equal(status.reason, "no_authorized_provider");
 });
 
-test("live cellular is preferred over live satellite", async () => {
+test("live cellular is preferred over live satellite when voice and SMS are available", async () => {
   const { domain } = domainFor();
   const customer = await domain.createCustomer({ name: "Test", device: { cellular: true, satellite: true } });
   await domain.enroll(customer.id);
@@ -41,6 +41,16 @@ test("live cellular is preferred over live satellite", async () => {
   assert.equal(status.path, "cellular");
   assert.equal(status.providerId, "cell");
   assert.equal(status.wifiRequired, false);
+});
+
+test("cellular provider without voice/SMS is rejected instead of being presented as phone service", async () => {
+  const { domain } = domainFor();
+  const customer = await domain.createCustomer({ name: "Test", device: { cellular: true, satellite: false } });
+  await domain.enroll(customer.id);
+  await domain.providers.set({ id: "data-only", type: "cellular", state: "LIVE", live: true, capabilities: ["data"] });
+  const status = await domain.selectConnectivity(customer.id, customer.device);
+  assert.equal(status.path, "unavailable");
+  assert.equal(status.reason, "no_authorized_provider");
 });
 
 test("satellite is selected only as fallback when cellular is unavailable", async () => {
