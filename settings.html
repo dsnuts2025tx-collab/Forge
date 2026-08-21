@@ -3,155 +3,43 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#050816">
 <title>Forge Settings</title>
-
 <style>
-
-body{
-background:#0b1020;
-color:white;
-font-family:Arial,sans-serif;
-margin:0;
-padding:40px;
-}
-
-.container{
-max-width:900px;
-margin:auto;
-}
-
-h1{
-margin-bottom:10px;
-}
-
-.card{
-background:#111827;
-padding:20px;
-border-radius:12px;
-margin-top:20px;
-}
-
-label{
-display:block;
-margin-top:20px;
-font-weight:bold;
-}
-
-input{
-width:100%;
-padding:14px;
-margin-top:8px;
-border:none;
-border-radius:8px;
-font-size:16px;
-box-sizing:border-box;
-}
-
-button{
-margin-top:25px;
-padding:15px 25px;
-font-size:18px;
-background:#2563eb;
-color:white;
-border:none;
-border-radius:8px;
-cursor:pointer;
-}
-
-button:hover{
-background:#1d4ed8;
-}
-
-.success{
-margin-top:20px;
-color:#22c55e;
-font-weight:bold;
-display:none;
-}
-
+:root{--bg:#03050b;--panel:#08101d;--line:rgba(130,170,255,.28);--text:#f7f9ff;--muted:#aeb8cc;--blue:#238cff;--violet:#6d4cff;--green:#47e0a3;--red:#ff6b7a}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 75% 15%,rgba(24,89,210,.2),transparent 35%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{width:min(900px,calc(100% - 32px));margin:0 auto;padding:42px 0}.brand{font-weight:900;font-size:26px;letter-spacing:.8px}.brand b{color:#278fff}.sub{color:var(--muted);margin:8px 0 28px}.card{background:linear-gradient(145deg,rgba(11,22,38,.94),rgba(5,11,20,.9));border:1px solid var(--line);border-radius:14px;padding:24px;margin-top:18px;box-shadow:inset 0 0 25px rgba(65,100,190,.04)}h2{margin-top:0}p{color:var(--muted);line-height:1.6}.status{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 16px;border:1px solid rgba(112,143,190,.25);border-radius:10px;margin-top:12px}.state{font-weight:800}.ok{color:var(--green)}.bad{color:var(--red)}button{border:1px solid #4eb2ff;border-radius:9px;padding:12px 18px;font-weight:800;color:white;background:linear-gradient(135deg,#248fff,#5747ff);cursor:pointer}a{color:#8db9ff;text-decoration:none}.note{font-size:13px}.lock{font-size:28px}
 </style>
 </head>
-
 <body>
-
-<div class="container">
-
-<h1>⚙ Forge Settings</h1>
-
-<p>Connect your preferred AI provider.</p>
-
+<div class="wrap">
+<div class="brand">FORGE <b>POWER</b></div>
+<p class="sub">Production configuration &amp; service health</p>
 <div class="card">
-
-<label>OpenAI API Key</label>
-<input id="openai" type="password" placeholder="sk-...">
-
-<label>Claude API Key</label>
-<input id="claude" type="password">
-
-<label>Gemini API Key</label>
-<input id="gemini" type="password">
-
-<label>Grok API Key</label>
-<input id="grok" type="password">
-
-<label>OpenRouter API Key</label>
-<input id="openrouter" type="password">
-
-<button onclick="saveKeys()">
-Save Keys
-</button>
-
-<div id="saved" class="success">
-✅ Keys saved on this device.
+<div class="lock">🔐</div>
+<h2>Provider secrets are server-side</h2>
+<p>Forge does not store AI provider API keys in browser storage. Production secrets belong in the Worker environment so customers cannot read or export them from their device.</p>
+<p class="note">The Builder uses the configured production provider secret automatically. This page intentionally contains no client-side API-key fields.</p>
 </div>
-
+<div class="card">
+<h2>Forge Runtime</h2>
+<div class="status"><span>Engine</span><span id="engine" class="state">Checking…</span></div>
+<div class="status"><span>Production API</span><span id="api" class="state">Checking…</span></div>
+<div class="status"><span>Persistent State</span><span id="state" class="state">Checking…</span></div>
+<p id="detail" class="note"></p>
+<button onclick="checkHealth()">Refresh Status</button>
 </div>
-
+<div class="card">
+<a href="/dashboard">← Back to Dashboard</a>
 </div>
-
+</div>
 <script>
-
-function saveKeys(){
-
-localStorage.setItem("forge_openai",
-document.getElementById("openai").value);
-
-localStorage.setItem("forge_claude",
-document.getElementById("claude").value);
-
-localStorage.setItem("forge_gemini",
-document.getElementById("gemini").value);
-
-localStorage.setItem("forge_grok",
-document.getElementById("grok").value);
-
-localStorage.setItem("forge_openrouter",
-document.getElementById("openrouter").value);
-
-document.getElementById("saved").style.display="block";
-
+function setStatus(id,ok,text){const el=document.getElementById(id);el.textContent=text;el.className='state '+(ok?'ok':'bad')}
+async function checkHealth(){
+setStatus('engine',false,'Checking…');setStatus('api',false,'Checking…');setStatus('state',false,'Checking…');
+try{const r=await fetch('/health',{cache:'no-store'});const d=await r.json();setStatus('engine',!!d.ok,d.ok?d.engine:'Unavailable');}catch(e){setStatus('engine',false,'Unavailable')}
+try{const r=await fetch('/api/status',{cache:'no-store'});const d=await r.json();setStatus('api',!!d.ok&&!!d.production,d.ok?'Production':'Unavailable');setStatus('state',!!d.durableState,d.durableState?'Connected':'Unavailable');document.getElementById('detail').textContent=d.ok?`Build: ${d.build?'ready':'not ready'} · Preview: ${d.preview?'ready':'not ready'} · Export: ${d.export?'ready':'not ready'} · Deployment: ${d.deployment?'ready':'not ready'}`:'Runtime status unavailable';}catch(e){setStatus('api',false,'Unavailable');setStatus('state',false,'Unavailable');document.getElementById('detail').textContent='Could not reach the Forge production API.'}
 }
-
-window.onload=function(){
-
-document.getElementById("openai").value=
-localStorage.getItem("forge_openai")||"";
-
-document.getElementById("claude").value=
-localStorage.getItem("forge_claude")||"";
-
-document.getElementById("gemini").value=
-localStorage.getItem("forge_gemini")||"";
-
-document.getElementById("grok").value=
-localStorage.getItem("forge_grok")||"";
-
-document.getElementById("openrouter").value=
-localStorage.getItem("forge_openrouter")||"";
-
-}
-
+checkHealth();
 </script>
-
 </body>
 </html>
