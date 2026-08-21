@@ -1,0 +1,11 @@
+.git
+.github/
+node_modules/
+worker.js
+wrangler.json
+wrangler.jsonc
+package.json
+README.md
+WORKFORCE.md
+WORKFORCE_ACTIVATION.md
+functions/
