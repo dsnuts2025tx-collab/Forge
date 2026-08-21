@@ -29,8 +29,9 @@ export class PhoneServiceDO {
       if (path === "/phone/v1/admin/providers" && request.method === "POST") return adminAuth(request, this.env) ? cors(json(await this.domain.providers.set(await request.json()))) : unauthorized();
       if (path === "/phone/v1/admin/customers" && request.method === "GET") {
         if (!adminAuth(request, this.env)) return unauthorized();
-        const customers = await this.store.get("customers:index", []);
-        return cors(json(customers.map((id) => ({ id, entitlement: null }))));
+        const customerIds = await this.store.get("customers:index", []);
+        const customers = await Promise.all(customerIds.map(async (id) => ({ id, customer: await this.domain.getCustomer(id), entitlement: await this.store.get(`entitlement:${id}`, null), connectivity: await this.domain.getStatus(id) })));
+        return cors(json(customers));
       }
       if (path === "/phone/v1/usage/events" && request.method === "POST") return adminAuth(request, this.env) ? cors(json(await this.domain.addUsage(await request.json()), 201)) : unauthorized();
       if (path === "/phone/v1/accounting/coverage" && request.method === "GET") return cors(json(await this.domain.accounting()));
