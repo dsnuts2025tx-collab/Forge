@@ -3,28 +3,25 @@
 Date: 2026-08-21
 
 ## Current milestone
-Runnable Cloudflare Worker control-plane foundation exists on `feature/free-phone-service`.
+Runnable Cloudflare Worker/Durable Object control-plane foundation exists on `feature/free-phone-service`, with a provider-adapter runtime contract, customer enrollment UI, persistent $0 entitlement, usage/cost accounting, funding coverage, and regression tests.
 
-## Verified by code inspection
-- Persistent customer records via Durable Object storage.
-- Persistent $0 basic entitlement.
-- Connectivity state model with `wifiRequired: false`.
-- Cellular-first selection and satellite fallback selection.
-- Provider selection is restricted to providers explicitly marked `LIVE`.
-- Usage and provider-cost records.
-- Funding coverage calculation and shortfall reporting.
-- Admin-token protected provider/funding/usage/audit endpoints.
-- Customer enrollment UI and health endpoint.
-- Node test suite covering entitlement, no-Wi-Fi state behavior, cellular priority, satellite fallback, usage persistence, and funding shortfall.
+## Meaningful progress
+- Customer enrollment and $0 entitlement persistence are implemented.
+- Connectivity policy enforces cellular-first selection and compatible satellite fallback without a Wi-Fi requirement.
+- Provider selection is restricted to explicitly `LIVE` integrations and cellular phone service requires voice + SMS capability.
+- Provider adapters refuse non-live integrations and expose an explicit failure until authorized provisioning is implemented.
+- Usage and provider-cost records plus funding coverage/shortfall calculation exist.
+- Protected admin operations exist for providers, funding, usage, and audit access.
+- Automated Node tests cover entitlement persistence, no-Wi-Fi behavior, cellular priority, satellite fallback, usage persistence, funding shortfall, and provider truth gates.
+- GitHub Actions workflow definition exists for tests and Cloudflare deployment dry-run.
 
-## Not yet verified
-- Successful CI run for the current head commit.
-- Live deployment smoke test.
-- Real carrier provisioning and live cellular traffic.
-- Real satellite provisioning and live satellite traffic.
-- Production-grade identity/authentication beyond the current admin token mechanism.
-- End-to-end phone calls/SMS/data over an authorized network.
-- Production funding source and carrier/satellite commercial agreements.
+## Current blockers
+- The current head has no verified CI result available through the connected GitHub workflow inspection, so automated build/deploy verification is not yet proven.
+- Real carrier provisioning/eSIM-SIM integration is not implemented.
+- Real satellite provisioning is not implemented.
+- Production customer authentication/identity is not yet hardened beyond the current basic control-plane mechanisms.
+- Full customer/operator portals and production security hardening remain.
+- No authorized carrier/satellite agreement, credential set, approved device path, or live traffic test is being represented as available.
 
 ## Release rule
-Do not call the product usable phone service until the software is deployed and the real connectivity path is verified with an authorized provider and compatible device. Wi-Fi must be disabled during the cellular acceptance test. Satellite is only a fallback when a compatible device and authorized satellite provider are genuinely available.
+Do not call this usable phone service until the software is deployed and real connectivity is verified with an authorized provider and compatible device. Wi-Fi must be disabled during the cellular acceptance test. Satellite is only a fallback when a compatible device and authorized satellite provider genuinely support it.
