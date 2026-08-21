@@ -39,7 +39,7 @@ export class PhoneServiceDomain {
   async createCustomer(input) {
     const customer = { id: id("cus"), name: input.name || "Customer", phone: input.phone || null, device: input.device || {}, createdAt: now() };
     await this.store.put(`customer:${customer.id}`, customer);
-    await this.store.put(`entitlement:${customer.id}`, { customerId: customer.id, plan: "basic-free", state: "pending", createdAt: now() });
+    await this.store.put(`entitlement:${customer.id}`, { customerId: customer.id, plan: "basic-free", state: "pending", price: 0, currency: "USD", createdAt: now() });
     await this.store.append("audit", { id: id("aud"), action: "customer.create", target: customer.id, at: now() });
     return customer;
   }
@@ -62,17 +62,21 @@ export class PhoneServiceDomain {
 
   async selectConnectivity(customerId, device = {}) {
     const providers = await this.providers.list();
-    const cellular = providers.find((p) => p.type === "cellular" && p.live);
+    const cellular = providers.find((p) => p.type === "cellular" && p.live && p.state === "LIVE");
     if (cellular && device.cellular !== false) {
       const state = { customerId, path: PATHS.CELLULAR, providerId: cellular.id, reason: "authorized_cellular_available", wifiRequired: false, observedAt: now() };
       await this.store.put(`connectivity:${customerId}`, state); return state;
     }
-    const satellite = providers.find((p) => p.type === "satellite" && p.live);
+    const satellite = providers.find((p) => p.type === "satellite" && p.live && p.state === "LIVE");
     if (satellite && device.satellite === true) {
       const state = { customerId, path: PATHS.SATELLITE, providerId: satellite.id, reason: "authorized_satellite_fallback", wifiRequired: false, observedAt: now() };
       await this.store.put(`connectivity:${customerId}`, state); return state;
     }
     return this.getStatus(customerId);
+  }
+
+  async getUsage(customerId) {
+    return (await this.store.get("usage", [])).filter((event) => event.customerId === customerId);
   }
 
   async addUsage(event) {
