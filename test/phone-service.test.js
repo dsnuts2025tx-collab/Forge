@@ -12,6 +12,7 @@ const domainFor = () => {
   const storage = new MemoryStorage();
   return { storage, domain: new PhoneServiceDomain({ get: async (k,f)=>{const v=await storage.get(k);return v??f}, put:(k,v)=>storage.put(k,v), append:async(k,v)=>{const a=(await storage.get(k))??[];a.push(v);return storage.put(k,a)} }) };
 };
+const liveProvider = (provider) => ({ ...provider, state: "LIVE", live: true, authorization: "VERIFIED", integrationId: "integration-test" });
 
 test("customer enrollment persists a $0 entitlement", async () => {
   const { domain } = domainFor();
@@ -36,19 +37,25 @@ test("live cellular is preferred over live satellite when voice and SMS are avai
   const { domain } = domainFor();
   const customer = await domain.createCustomer({ name: "Test", device: { cellular: true, satellite: true } });
   await domain.enroll(customer.id);
-  await domain.providers.set({ id: "cell", type: "cellular", state: "LIVE", live: true, capabilities: ["voice", "sms", "data"] });
-  await domain.providers.set({ id: "sat", type: "satellite", state: "LIVE", live: true, capabilities: ["emergency", "sms"] });
+  await domain.providers.set(liveProvider({ id: "cell", type: "cellular", capabilities: ["voice", "sms", "data"] }));
+  await domain.providers.set(liveProvider({ id: "sat", type: "satellite", capabilities: ["emergency", "sms"] }));
   const status = await domain.selectConnectivity(customer.id, customer.device);
   assert.equal(status.path, "cellular");
   assert.equal(status.providerId, "cell");
   assert.equal(status.wifiRequired, false);
 });
 
+test("LIVE provider state requires verified authorization and an integration", async () => {
+  const { domain } = domainFor();
+  await assert.rejects(() => domain.providers.set({ id: "unverified", type: "cellular", state: "LIVE", live: true, capabilities: ["voice", "sms"] }), /provider_authorization_required/);
+  await assert.rejects(() => domain.providers.set({ id: "no-integration", type: "cellular", state: "LIVE", live: true, authorization: "VERIFIED", capabilities: ["voice", "sms"] }), /provider_integration_required/);
+});
+
 test("cellular provider without voice/SMS is rejected instead of being presented as phone service", async () => {
   const { domain } = domainFor();
   const customer = await domain.createCustomer({ name: "Test", device: { cellular: true, satellite: false } });
   await domain.enroll(customer.id);
-  await domain.providers.set({ id: "data-only", type: "cellular", state: "LIVE", live: true, capabilities: ["data"] });
+  await domain.providers.set(liveProvider({ id: "data-only", type: "cellular", capabilities: ["data"] }));
   const status = await domain.selectConnectivity(customer.id, customer.device);
   assert.equal(status.path, "unavailable");
   assert.equal(status.reason, "no_authorized_provider");
@@ -58,7 +65,7 @@ test("satellite is selected only as fallback when cellular is unavailable", asyn
   const { domain } = domainFor();
   const customer = await domain.createCustomer({ name: "Test", device: { cellular: true, satellite: true } });
   await domain.enroll(customer.id);
-  await domain.providers.set({ id: "sat", type: "satellite", state: "LIVE", live: true, capabilities: ["emergency", "sms"] });
+  await domain.providers.set(liveProvider({ id: "sat", type: "satellite", capabilities: ["emergency", "sms"] }));
   const status = await domain.selectConnectivity(customer.id, customer.device);
   assert.equal(status.path, "satellite");
   assert.equal(status.providerId, "sat");
