@@ -4,12 +4,7 @@ on:
   push:
     branches: [main, feature/free-phone-service]
   pull_request:
-    paths:
-      - 'src/**'
-      - 'test/**'
-      - 'wrangler.toml'
-      - 'package.json'
-      - '.github/workflows/free-phone-service.yml'
+  workflow_dispatch:
 
 jobs:
   test:
@@ -19,7 +14,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
       - run: npm install
       - run: npm test
       - run: npx wrangler deploy --dry-run
