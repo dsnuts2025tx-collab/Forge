@@ -1,26 +1,31 @@
 # Production Status
 
 ## Current milestone
-Production architecture and acceptance requirements are defined. The repository currently contains the project foundation and architecture documents; the runnable customer/control-plane implementation has not yet been established in this branch.
+A runnable Cloudflare Worker/Durable Object control plane and basic customer enrollment experience are now present on the production branch. The control plane persists customers and $0 entitlements, reports connectivity state, records usage/costs, calculates funding coverage, maintains a provider registry, and exposes protected admin operations.
 
-## Required build gates
-- Customer enrollment and authentication
-- Persisted $0 service entitlement
-- Cellular-first operation with Wi-Fi disabled
-- Satellite fallback adapter for compatible networks/devices
-- Provider registry and provisioning interfaces
-- Connectivity health/status
-- Usage and provider-cost ledger
-- Funding coverage ledger
-- Customer portal
-- Operator/admin portal
-- Audit logging and access control
-- Automated tests
-- Repeatable deployment
+## Implemented
+- Customer enrollment and persisted $0 entitlement
+- Cellular-first connectivity policy with Wi-Fi-independent state
+- LIVE-only provider selection and compatible-device satellite fallback policy
+- Persistent usage and expected-cost records
+- Funding coverage and shortfall calculation
+- Audit event foundation
+- Basic customer page and JSON API
+- Protected admin provider/funding/audit operations
+- Automated test suite and deployment dry-run workflow definition
+
+## Remaining production gates
+- Production-grade customer authentication/identity
+- Real cellular provider adapter, credentials, provisioning, and device support
+- Real satellite provider/device integration
+- Live no-Wi-Fi connectivity smoke test
+- Full customer and operator dashboards
+- Hardened authorization, rate limiting, idempotency, secret management, and abuse controls
+- Verified CI execution and production deployment
 - End-to-end smoke test
 
 ## External dependency gate
-Live cellular or satellite service must not be represented as operational until the relevant provider agreements, credentials, provisioning capabilities, compatible devices, and regulatory/commercial requirements are actually available.
+Live cellular or satellite service must not be represented as operational until the relevant provider agreements, credentials, provisioning capabilities, compatible devices, emergency-service requirements, and regulatory/commercial requirements are actually available.
 
 ## Definition of usable
-A release is usable only when the software passes the internal gates above and a real supported connectivity path works with Wi-Fi disabled. The platform may be deployed before live provider integration, but that release must clearly identify provider integration as pending rather than presenting simulation as service.
+A release is usable only when the software passes the internal gates above and a real supported connectivity path works with Wi-Fi disabled. A control-plane deployment may exist before live provider integration, but it must clearly identify provider integration as pending rather than presenting simulation as service.
