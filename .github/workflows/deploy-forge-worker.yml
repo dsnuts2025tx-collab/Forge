@@ -1,4 +1,4 @@
-name: Deploy Forge Worker
+name: Deploy Forge Runtime
 
 on:
   push:
@@ -10,15 +10,34 @@ permissions:
   contents: read
 
 jobs:
-  deploy:
+  validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Validate Forge runtime
+        run: |
+          test -f worker.js
+          test -f wrangler.jsonc
+          test -f index.html
+          test -f builder.html
+          echo "Forge runtime package validated"
 
-      - name: Deploy to Cloudflare Workers
-        uses: cloudflare/wrangler-action@v3
+  package:
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Create deployable package
+        run: |
+          mkdir -p dist
+          cp worker.js wrangler.jsonc index.html builder.html dashboard.html projects.html settings.html generator.html playground.html dist/
+          echo "Forge Engine 6.0.0-PLATINUM" > dist/BUILD.txt
+      - name: Upload Forge package
+        uses: actions/upload-artifact@v4
         with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          name: forge-production-package
+          path: dist/
