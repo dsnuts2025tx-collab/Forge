@@ -1,4 +1,10 @@
 {
   "name": "forge",
-  "private": true
+  "private": true,
+  "scripts": {
+    "check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.2"
+  }
 }
