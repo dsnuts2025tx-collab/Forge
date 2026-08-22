@@ -7,6 +7,7 @@
  */
 
 import type { PromoteLedger, PromoteLedgerEntry } from './promote-ledger';
+import { verifyPromoteLedger } from './promote-ledger-integrity';
 
 export interface PromoteLedgerStore {
   load(): PromoteLedgerEntry[];
@@ -21,20 +22,35 @@ function cloneEntries(entries: PromoteLedgerEntry[]): PromoteLedgerEntry[] {
   return entries.map(cloneEntry);
 }
 
+function assertIntegrity(entries: PromoteLedgerEntry[], operation: 'load' | 'save'): void {
+  const report = verifyPromoteLedger(entries);
+  if (!report.valid) {
+    throw new Error(`Promote ledger integrity failure during ${operation}: ${report.errors.join('; ')}`);
+  }
+}
+
 /**
  * Durable adapter for any Phantom-controlled persistent store.
  * `load` and `save` are the only persistence boundary; the ledger semantics
  * remain entirely inside Phantom.
+ *
+ * Restored and persisted state is fail-closed: malformed or internally
+ * inconsistent entries are rejected before they enter or leave the control
+ * plane.
  */
 export class PersistentPromoteLedger implements PromoteLedger {
   private entries: PromoteLedgerEntry[];
 
   constructor(private readonly store: PromoteLedgerStore) {
-    this.entries = cloneEntries(store.load());
+    const restored = cloneEntries(store.load());
+    assertIntegrity(restored, 'load');
+    this.entries = restored;
   }
 
   append(entry: PromoteLedgerEntry): void {
-    this.entries.push(cloneEntry(entry));
+    const nextEntries = [...this.entries, cloneEntry(entry)];
+    assertIntegrity(nextEntries, 'save');
+    this.entries = nextEntries;
     this.store.save(cloneEntries(this.entries));
   }
 
@@ -50,7 +66,9 @@ export class PersistentPromoteLedger implements PromoteLedger {
   }
 
   reload(): void {
-    this.entries = cloneEntries(this.store.load());
+    const restored = cloneEntries(this.store.load());
+    assertIntegrity(restored, 'load');
+    this.entries = restored;
   }
 }
 
@@ -67,6 +85,8 @@ export class MemoryBackedPromoteLedgerStore implements PromoteLedgerStore {
   }
 
   save(entries: PromoteLedgerEntry[]): void {
-    this.entries = cloneEntries(entries);
+    const nextEntries = cloneEntries(entries);
+    assertIntegrity(nextEntries, 'save');
+    this.entries = nextEntries;
   }
 }
