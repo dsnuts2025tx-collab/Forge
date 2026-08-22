@@ -38,6 +38,22 @@ export interface PromoteExecutionResult {
   proofRequired: boolean;
 }
 
+let eventSequence = 0;
+
+/**
+ * Generates process-local monotonic entropy in addition to wall-clock time.
+ * This prevents same-millisecond collisions while keeping IDs portable and
+ * independent of a vendor UUID implementation. Durable ledgers still reject
+ * duplicate identities during integrity verification.
+ */
+function nextEventId(campaignId: string, type: PromoteEvent): string {
+  eventSequence = (eventSequence + 1) % 1_000_000_000;
+  const timestamp = Date.now().toString(36);
+  const sequence = eventSequence.toString(36).padStart(7, '0');
+  const entropy = Math.floor(Math.random() * 0x1000000).toString(36).padStart(5, '0');
+  return `${campaignId}:${type}:${timestamp}:${sequence}:${entropy}`;
+}
+
 function event(
   campaignId: string,
   type: PromoteEvent,
@@ -45,7 +61,7 @@ function event(
   metadata?: Record<string, string | number | boolean>,
 ): PromoteAuditEvent {
   return {
-    id: `${campaignId}:${type}:${Date.now()}`,
+    id: nextEventId(campaignId, type),
     campaignId,
     event: type,
     occurredAt: new Date().toISOString(),
