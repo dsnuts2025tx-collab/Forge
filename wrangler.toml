@@ -1,0 +1,15 @@
+name = "forge-free-phone-service"
+main = "src/index.js"
+compatibility_date = "2026-08-21"
+
+[vars]
+ENVIRONMENT = "production"
+
+[durable_objects]
+bindings = [
+  { name = "PHONE_SERVICE", class_name = "PhoneServiceDO" }
+]
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["PhoneServiceDO"]

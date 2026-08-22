@@ -1,0 +1,20 @@
+name: Free Phone Service Isolated
+
+on:
+  push:
+    branches: [feature/free-phone-service]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  phone-service:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install
+      - run: node --test test/phone-service.test.js
+      - run: npx wrangler deploy --dry-run
