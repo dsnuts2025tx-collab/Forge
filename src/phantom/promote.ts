@@ -1,5 +1,7 @@
 /** Phantom Promote domain primitives. Keeps advertising semantics provider-neutral. */
 
+import { evaluateCampaignProof, type CampaignProof } from './promote-proof';
+
 export const PROMOTE_CAPABILITIES = [
   'ads.strategy','ads.creative','ads.targeting','ads.budgeting','ads.delivery',
   'ads.analytics','ads.experimentation','ads.optimization','ads.compliance',
@@ -36,14 +38,14 @@ export interface CampaignMetric {
   attributedRevenueCents?: number;
 }
 
+export { evaluateCampaignProof };
+export type { CampaignProof };
+
 export function validateCampaign(campaign: PromoteCampaign): PromoteCampaign {
   if (!campaign.id || !campaign.advertiserId || !campaign.name) throw new Error('Campaign identity is required');
   if (!Number.isInteger(campaign.budgetCents) || campaign.budgetCents < 0) throw new Error('budgetCents must be a non-negative integer');
   if (!/^[A-Z]{3}$/.test(campaign.currency)) throw new Error('currency must be an ISO-style 3-letter code');
   if (!campaign.inventory.length) throw new Error('At least one inventory type is required');
-  if (campaign.inventory.includes('PHANTOM_OWNED') && campaign.inventory.includes('AUTHORIZED_PARTNER')) {
-    // Mixed inventory is permitted, but the delivery layer must preserve ownership metadata per impression.
-  }
   return campaign;
 }
 
@@ -52,11 +54,13 @@ export function calculateRoas(metric: CampaignMetric): number | null {
   return metric.attributedRevenueCents / metric.spendCents;
 }
 
-export function campaignCanClaimSuccess(campaign: PromoteCampaign, metric: CampaignMetric): boolean {
+export function campaignCanClaimSuccess(
+  campaign: PromoteCampaign,
+  metric: CampaignMetric,
+  proof?: CampaignProof,
+): boolean {
   if (campaign.status !== 'COMPLETED') return false;
   const criteria = campaign.objective.successCriteria ?? [];
-  if (!criteria.length) return false;
-  // The domain layer deliberately does not infer success from clicks/impressions alone.
-  // A proof engine must evaluate declared criteria and attach evidence.
-  return false;
+  if (!criteria.length || !proof) return false;
+  return evaluateCampaignProof(campaign, metric, proof).verified;
 }
