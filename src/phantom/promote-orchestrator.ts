@@ -10,6 +10,7 @@ import {
   campaignCanClaimSuccess,
   type CampaignProof,
 } from './promote';
+import type { PromoteLedger } from './promote-ledger';
 
 export type PromoteEvent =
   | 'CAMPAIGN_CREATED'
@@ -53,9 +54,17 @@ function event(
   };
 }
 
+function persist(events: PromoteAuditEvent[], ledger?: PromoteLedger, proof?: CampaignProof): void {
+  if (!ledger) return;
+  for (const auditEvent of events) {
+    ledger.append({ event: auditEvent, ...(proof ? { proof } : {}) });
+  }
+}
+
 export function prepareCampaign(
   campaign: PromoteCampaign,
   actor = 'phantom.promote',
+  ledger?: PromoteLedger,
 ): PromoteExecutionResult {
   const validated = validateCampaign(campaign);
   const events: PromoteAuditEvent[] = [
@@ -69,6 +78,7 @@ export function prepareCampaign(
     events.push(event(validated.id, 'CAMPAIGN_STARTED', actor));
   }
 
+  persist(events, ledger);
   return { campaign: validated, events, proofRequired: true };
 }
 
@@ -77,6 +87,7 @@ export function recordMetrics(
   campaign: PromoteCampaign,
   metric: CampaignMetric,
   actor = 'phantom.analytics',
+  ledger?: PromoteLedger,
 ): PromoteExecutionResult {
   const validated = validateCampaign(campaign);
   const metricMetadata = {
@@ -86,14 +97,12 @@ export function recordMetrics(
     spendCents: metric.spendCents ?? 0,
     attributedRevenueCents: metric.attributedRevenueCents ?? 0,
   };
-  return {
-    campaign: validated,
-    events: [
-      event(validated.id, 'METRICS_RECORDED', actor, metricMetadata),
-      event(validated.id, 'PROOF_REQUIRED', actor),
-    ],
-    proofRequired: true,
-  };
+  const events = [
+    event(validated.id, 'METRICS_RECORDED', actor, metricMetadata),
+    event(validated.id, 'PROOF_REQUIRED', actor),
+  ];
+  persist(events, ledger);
+  return { campaign: validated, events, proofRequired: true };
 }
 
 /**
@@ -105,6 +114,7 @@ export function recordVerifiedMetrics(
   metric: CampaignMetric,
   proof: CampaignProof,
   actor = 'phantom.proof',
+  ledger?: PromoteLedger,
 ): PromoteExecutionResult {
   const validated = validateCampaign(campaign);
   const proven = campaignCanClaimSuccess(validated, metric, proof);
@@ -116,14 +126,17 @@ export function recordVerifiedMetrics(
     attributedRevenueCents: metric.attributedRevenueCents ?? 0,
   };
 
+  const events = [
+    event(validated.id, 'METRICS_RECORDED', actor, metricMetadata),
+    ...(proven
+      ? [event(validated.id, 'CAMPAIGN_PROVEN', actor, { evidenceId: proof.evidenceId, source: proof.source })]
+      : [event(validated.id, 'PROOF_REQUIRED', actor)]),
+  ];
+  persist(events, ledger, proof);
+
   return {
     campaign: validated,
-    events: [
-      event(validated.id, 'METRICS_RECORDED', actor, metricMetadata),
-      ...(proven
-        ? [event(validated.id, 'CAMPAIGN_PROVEN', actor, { evidenceId: proof.evidenceId, source: proof.source })]
-        : [event(validated.id, 'PROOF_REQUIRED', actor)]),
-    ],
+    events,
     proofRequired: !proven,
   };
 }
