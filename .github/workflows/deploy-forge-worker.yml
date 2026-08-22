@@ -1,0 +1,67 @@
+name: Deploy Forge Runtime
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Validate Forge runtime
+        run: |
+          test -f worker.js
+          test -f wrangler.jsonc
+          test -f index.html
+          test -f builder.html
+          test -f dashboard.html
+          test -f projects.html
+          test -f settings.html
+          test -f generator.html
+          test -f playground.html
+          test -f billing.html
+          echo "Forge runtime package validated"
+
+  package:
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Create deployable package
+        run: |
+          mkdir -p dist
+          cp worker.js wrangler.jsonc index.html builder.html dashboard.html projects.html settings.html generator.html playground.html billing.html dist/
+          echo "Forge Engine 6.0.0-PLATINUM" > dist/BUILD.txt
+      - name: Upload Forge package
+        uses: actions/upload-artifact@v4
+        with:
+          name: forge-production-package
+          path: dist/
+
+  deploy:
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Deploy Forge Engine to Cloudflare Workers
+        run: npx --yes wrangler@latest deploy --config wrangler.jsonc
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

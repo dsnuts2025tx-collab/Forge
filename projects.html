@@ -1,33 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Forge Projects</title>
-<style>
-body{
-  background:#0f172a;
-  color:white;
-  font-family:Arial,sans-serif;
-  text-align:center;
-  padding:40px;
-}
-.card{
-  background:#1e293b;
-  padding:20px;
-  border-radius:12px;
-  margin:auto;
-  max-width:600px;
-}
-</style>
-</head>
-<body>
-
-<h1>🚀 Forge Projects</h1>
-
-<div class="card">
-<h2>AI Motorcycle Shop Manager</h2>
-<p>Status: Planning</p>
-<p>Customer tracking, inventory, invoices, appointments, AI mechanic assistant.</p>
-</div>
-
-</body>
-</html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Forge Projects</title><style>body{margin:0;background:#03050b;color:#fff;font-family:system-ui,-apple-system,Segoe UI,sans-serif}.wrap{max-width:900px;margin:auto;padding:42px 20px}.brand{font-weight:900;font-size:26px}.brand b{color:#278fff}.card{margin-top:24px;padding:24px;border:1px solid #29405f;border-radius:14px;background:#08101d}.muted{color:#aeb8cc}a{color:#8db9ff;text-decoration:none}</style></head><body><main class="wrap"><div class="brand">FORGE <b>POWER</b></div><h1>Projects</h1><p class="muted">Projects are loaded from Forge persistent state when available.</p><div id="projects"></div><p><a href="/builder">Build a new project →</a></p></main><script>
+async function load(){const root=document.getElementById('projects');try{const key=localStorage.getItem('forge_project_key')||'default';const r=await fetch('/api/state/'+encodeURIComponent(key),{cache:'no-store'});const d=await r.json();const items=d.snapshot?.projects||[];root.innerHTML=items.length?items.map(p=>`<div class="card"><h2>${escapeHtml(p.name||p.projectName||'Untitled Project')}</h2><p class="muted">${escapeHtml(p.description||'Forge project')}</p></div>`).join(''):'<div class="card"><h2>No projects yet</h2><p class="muted">Your persistent Forge projects will appear here after they are saved.</p></div>'}catch(e){root.innerHTML='<div class="card"><h2>Project service unavailable</h2><p class="muted">Forge persistent state could not be reached.</p></div>'}}
+function escapeHtml(s){return String(s).replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]))}load();
+</script></body></html>

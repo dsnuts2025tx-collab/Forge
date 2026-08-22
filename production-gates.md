@@ -1,0 +1,38 @@
+# Forge Production Gates — LOCKED
+
+Forge Engine 6.0.0-PLATINUM remains the locked production architecture.
+
+## Priority: P0 — AI BUILD
+- Builder → `/api` request path hardened.
+- OpenRouter response is validated as JSON before Forge reports success.
+- Provider failures are surfaced as explicit Forge errors instead of being presented as successful builds.
+- `/api/status` reports `aiConfigured` so production readiness is observable.
+- Builder now has a deterministic local scaffold fallback when the AI provider secret is unavailable, so the product can still create a real starter project rather than dead-ending.
+- Successful AI/local builds are persisted through the existing Durable Object project-state path.
+
+## Foundation built
+- Forge Power home screen restored.
+- Cloudflare deployment job exists on main.
+- Provider secrets are server-side; no browser API-key persistence.
+- Stripe checkout foundation exists.
+- Signed Forge session tokens exist.
+- Stripe webhook signature verification foundation exists.
+- Durable Object entitlement storage exists.
+- Server-side entitlement lookup exists.
+- Billing page exists.
+- Builder shows production access state.
+- Projects screen reads persistent state.
+
+## Required production configuration
+- OPENROUTER_API_KEY — required for full AI generation; local scaffold remains available as resilient fallback.
+- STRIPE_SECRET_KEY
+- STRIPE_WEBHOOK_SECRET
+- FORGE_PRICE_ID (authoritative Forge price only)
+- FORGE_SESSION_SECRET
+- CLOUDFLARE_API_TOKEN
+- CLOUDFLARE_ACCOUNT_ID
+
+## Proof standard
+Do not mark production proven until a real environment demonstrates: home load; checkout; successful Stripe payment; signed webhook entitlement update; signed customer session; server-side entitlement enforcement; AI build; persistent project across a fresh session; working preview/export/deployment; and correct cancellation/payment-failure access changes.
+
+**Status: P0 builder resilience + persistence locked. Live proof remains gated on production configuration and successful end-to-end AI/deployment runs.**
