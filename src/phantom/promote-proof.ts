@@ -22,6 +22,12 @@ export interface CampaignProofResult {
   reasons: string[];
 }
 
+function parseTimestamp(value: string): number | null {
+  if (!value) return null;
+  const parsed = Date.parse(value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
 function sameMetricSnapshot(expected: CampaignMetric, observed: CampaignMetric): boolean {
   const keys: (keyof CampaignMetric)[] = [
     'impressions', 'clicks', 'conversions', 'spendCents', 'attributedRevenueCents',
@@ -36,13 +42,19 @@ export function evaluateCampaignProof(
 ): CampaignProofResult {
   const reasons: string[] = [];
   const criteria = campaign.objective.successCriteria ?? [];
+  const observedAt = parseTimestamp(proof.observedAt);
+  const verifiedAt = parseTimestamp(proof.verifiedAt);
 
   if (campaign.status !== 'COMPLETED') reasons.push('campaign is not completed');
   if (!criteria.length) reasons.push('no declared success criteria');
   if (proof.attestation !== 'VERIFIED') reasons.push('evidence attestation is not verified');
   if (proof.campaignId !== campaign.id) reasons.push('evidence belongs to a different campaign');
   if (!proof.evidenceId || !proof.source) reasons.push('evidence identity/source is required');
-  if (!proof.observedAt || !proof.verifiedAt) reasons.push('evidence timestamps are required');
+  if (observedAt === null) reasons.push('observedAt must be a valid timestamp');
+  if (verifiedAt === null) reasons.push('verifiedAt must be a valid timestamp');
+  if (observedAt !== null && verifiedAt !== null && verifiedAt < observedAt) {
+    reasons.push('verifiedAt cannot precede observedAt');
+  }
   if (!sameMetricSnapshot(metric, proof.metricSnapshot)) reasons.push('evidence metric snapshot does not match reported metrics');
 
   const satisfied = new Set(proof.criteriaSatisfied);
