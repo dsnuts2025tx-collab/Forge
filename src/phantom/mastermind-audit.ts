@@ -8,6 +8,7 @@
 
 import type { InfrastructureRecoveryReceipt } from './infrastructure-recovery';
 import type { InfrastructureControllerReceipt } from './infrastructure-controller';
+import type { CapabilityHealthResult } from './capability-health';
 
 export type MastermindAuditEventType =
   | 'CAPABILITY_PLANNED'
@@ -16,7 +17,9 @@ export type MastermindAuditEventType =
   | 'INFRASTRUCTURE_RECOVERY'
   | 'DRIFT_DETECTED'
   | 'RECOVERY_VERIFIED'
-  | 'RECOVERY_FAILED';
+  | 'RECOVERY_FAILED'
+  | 'CAPABILITY_HEALTH_CHECKED'
+  | 'CAPABILITY_REVOKED';
 
 export interface MastermindAuditEvent {
   id: string;
@@ -208,6 +211,59 @@ export function recordInfrastructureRecovery(
         ? cloneControllerReceipt(receipt.controllerReceipt)
         : undefined,
       error: receipt.error,
+    },
+  };
+
+  sink.append(event);
+  return cloneEvent(event);
+}
+
+/** Record an active-capability health check and its current trust decision. */
+export function recordCapabilityHealthChecked(
+  sink: MastermindAuditSink,
+  result: CapabilityHealthResult,
+  context: MastermindControlAuditContext,
+): MastermindAuditEvent {
+  const event: MastermindAuditEvent = {
+    id: `mastermind-capability-health:${context.correlationId}:${result.capabilityId}:${result.checkedAt}`,
+    type: 'CAPABILITY_HEALTH_CHECKED',
+    occurredAt: result.checkedAt,
+    actor: context.actor,
+    authorizationId: context.authorizationId,
+    correlationId: context.correlationId,
+    status: result.status === 'HEALTHY' || result.status === 'NOT_ACTIVE' ? 'RECORDED' : 'FAILED',
+    evidence: {
+      capabilityId: result.capabilityId,
+      healthStatus: result.status,
+      reason: result.reason,
+      proofId: result.proofId,
+    },
+  };
+
+  sink.append(event);
+  return cloneEvent(event);
+}
+
+/** Record an authorized active-capability revocation as canonical evidence. */
+export function recordCapabilityRevoked(
+  sink: MastermindAuditSink,
+  result: CapabilityHealthResult,
+  context: MastermindControlAuditContext,
+): MastermindAuditEvent {
+  const event: MastermindAuditEvent = {
+    id: `mastermind-capability-revoked:${context.correlationId}:${result.capabilityId}:${result.checkedAt}`,
+    type: 'CAPABILITY_REVOKED',
+    occurredAt: result.checkedAt,
+    actor: context.actor,
+    authorizationId: context.authorizationId,
+    correlationId: context.correlationId,
+    status: 'RECORDED',
+    evidence: {
+      capabilityId: result.capabilityId,
+      healthStatus: result.status,
+      reason: result.reason,
+      proofId: result.proofId,
+      revocationAuthorizationId: result.authorizationId,
     },
   };
 
