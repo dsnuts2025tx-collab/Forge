@@ -38,7 +38,6 @@ export interface PromoteInventoryAdapter {
 
 /**
  * Guards a logical execution key against duplicate execution.
- *
  * `claim` must be atomic in a production implementation. `release` is only
  * used when execution fails before the operation has been committed.
  */
@@ -121,6 +120,18 @@ function persist(events: PromoteAuditEvent[], ledger?: PromoteLedger): void {
   for (const event of events) ledger.append({ event });
 }
 
+function failureMetadata(error: unknown): Record<string, string> {
+  return { error: error instanceof Error ? error.message : String(error) };
+}
+
+function persistFailure(campaignId: string, actor: string, error: unknown, ledger?: PromoteLedger): void {
+  try {
+    persist([audit(campaignId, 'CAMPAIGN_EXECUTION_FAILED', actor, failureMetadata(error))], ledger);
+  } catch {
+    // Preserve the original execution error if audit persistence itself fails.
+  }
+}
+
 function claimExecution(adapters: PromoteRuntimeAdapters, key: string): PromoteExecutionGuard {
   const guard = adapters.executionGuard ?? defaultExecutionGuard;
   if (!guard.claim(key)) {
@@ -140,10 +151,12 @@ export async function startCampaign(
   actor = 'phantom.promote.runtime',
   ledger?: PromoteLedger,
 ): Promise<PromoteRuntimeResult> {
-  const guard = claimExecution(adapters, `start:${campaign.id}`);
-  const ready = transition(campaign, 'READY');
-  await adapters.billing.authorize(ready);
+  const key = `start:${campaign.id}`;
+  const guard = claimExecution(adapters, key);
+  let ready: PromoteCampaign | undefined;
   try {
+    ready = transition(campaign, 'READY');
+    await adapters.billing.authorize(ready);
     await adapters.inventory.reserve(ready);
     const delivery = await adapters.delivery.start(ready);
     const active = transition(ready, 'ACTIVE');
@@ -162,9 +175,12 @@ export async function startCampaign(
     persist(events, ledger);
     return { campaign: active, receipt, events };
   } catch (error) {
-    await adapters.inventory.release(ready).catch(() => undefined);
-    await adapters.billing.release(ready).catch(() => undefined);
-    guard.release(`start:${campaign.id}`);
+    if (ready) {
+      await adapters.inventory.release(ready).catch(() => undefined);
+      await adapters.billing.release(ready).catch(() => undefined);
+    }
+    persistFailure(campaign.id, actor, error, ledger);
+    guard.release(key);
     throw error;
   }
 }
@@ -191,6 +207,7 @@ export async function pauseCampaign(
     persist(events, ledger);
     return { campaign: paused, receipt, events };
   } catch (error) {
+    persistFailure(campaign.id, actor, error, ledger);
     guard.release(key);
     throw error;
   }
@@ -220,6 +237,7 @@ export async function completeCampaign(
     persist(events, ledger);
     return { campaign: completed, receipt, events };
   } catch (error) {
+    persistFailure(campaign.id, actor, error, ledger);
     guard.release(key);
     throw error;
   }
