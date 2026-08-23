@@ -25,6 +25,12 @@ import {
   type DesiredStateResource,
   type ReconciliationPlan,
 } from './desired-state';
+import {
+  recordCapabilityPlanned,
+  recordDesiredStatePersisted,
+  type MastermindAuditSink,
+  type MastermindControlAuditContext,
+} from './mastermind-audit';
 
 export interface MastermindCapabilityRequest {
   intent: string;
@@ -111,6 +117,20 @@ export function planMastermindCapability(
   };
 }
 
+/** Audited planning variant: emits the canonical capability-planning receipt. */
+export function planMastermindCapabilityAudited(
+  request: MastermindCapabilityRequest,
+  graph: CapabilityGraph,
+  actual: ActualState,
+  revision: string,
+  audit: MastermindAuditSink,
+  auditContext: MastermindControlAuditContext,
+): MastermindControlPlan {
+  const plan = planMastermindCapability(request, graph, actual, revision);
+  recordCapabilityPlanned(audit, plan, auditContext);
+  return plan;
+}
+
 /**
  * Applies a newly compiled desired state to the Phantom-owned configuration
  * store. This is intentionally separate from infrastructure reconciliation.
@@ -120,6 +140,17 @@ export function persistMastermindDesiredState(
   store: MastermindDesiredStateStore,
 ): void {
   store.save(plan.desiredState);
+}
+
+/** Audited persistence variant: records the canonical desired-state receipt. */
+export function persistMastermindDesiredStateAudited(
+  plan: MastermindControlPlan,
+  store: MastermindDesiredStateStore,
+  audit: MastermindAuditSink,
+  auditContext: MastermindControlAuditContext,
+): void {
+  store.save(plan.desiredState);
+  recordDesiredStatePersisted(audit, plan.desiredState, auditContext);
 }
 
 /** Verify that a stored desired state is the exact state represented by a plan. */
