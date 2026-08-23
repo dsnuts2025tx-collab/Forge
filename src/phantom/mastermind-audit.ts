@@ -76,6 +76,70 @@ export interface MastermindRecoveryAuditContext {
   correlationId: string;
 }
 
+export interface MastermindControlAuditContext extends MastermindRecoveryAuditContext {
+  authorizationId?: string;
+}
+
+/** Record a capability compilation/planning decision as canonical audit evidence. */
+export function recordCapabilityPlanned(
+  sink: MastermindAuditSink,
+  plan: {
+    manifest: { id: string; intent: string; authorizationRequired: boolean; proofCriteria: string[] };
+    desiredState: { revision: string; resources: Array<{ id: string; kind: string; version: string }> };
+    reconciliation: { actions: Array<{ action: string; resourceId: string }> };
+  },
+  context: MastermindControlAuditContext,
+  occurredAt = new Date().toISOString(),
+): MastermindAuditEvent {
+  const event: MastermindAuditEvent = {
+    id: `mastermind-plan:${context.correlationId}:${plan.manifest.id}:${occurredAt}`,
+    type: 'CAPABILITY_PLANNED',
+    occurredAt,
+    actor: context.actor,
+    authorizationId: context.authorizationId,
+    correlationId: context.correlationId,
+    resourceRevision: plan.desiredState.revision,
+    status: 'RECORDED',
+    evidence: {
+      manifestId: plan.manifest.id,
+      intent: plan.manifest.intent,
+      authorizationRequired: plan.manifest.authorizationRequired,
+      proofCriteria: [...plan.manifest.proofCriteria],
+      desiredResourceIds: plan.desiredState.resources.map((resource) => ({ ...resource })),
+      reconciliationActions: plan.reconciliation.actions.map((action) => ({ ...action })),
+    },
+  };
+
+  sink.append(event);
+  return cloneEvent(event);
+}
+
+/** Record persistence of canonical desired state as a first-class control-plane event. */
+export function recordDesiredStatePersisted(
+  sink: MastermindAuditSink,
+  state: { revision: string; version: string; resources: Array<{ id: string; kind: string; version: string }> },
+  context: MastermindControlAuditContext,
+  occurredAt = new Date().toISOString(),
+): MastermindAuditEvent {
+  const event: MastermindAuditEvent = {
+    id: `mastermind-desired-state:${context.correlationId}:${state.revision}:${occurredAt}`,
+    type: 'DESIRED_STATE_PERSISTED',
+    occurredAt,
+    actor: context.actor,
+    authorizationId: context.authorizationId,
+    correlationId: context.correlationId,
+    resourceRevision: state.revision,
+    status: 'RECORDED',
+    evidence: {
+      desiredStateVersion: state.version,
+      resourceIds: state.resources.map((resource) => ({ ...resource })),
+    },
+  };
+
+  sink.append(event);
+  return cloneEvent(event);
+}
+
 /** Record a complete infrastructure recovery receipt as canonical audit evidence. */
 export function recordInfrastructureRecovery(
   sink: MastermindAuditSink,
