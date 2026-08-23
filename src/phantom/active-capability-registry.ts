@@ -69,6 +69,19 @@ export class ActiveCapabilityRegistry {
     persistence?.save(this.snapshot());
   }
 
+  deactivate(
+    capabilityId: string,
+    authorization: { authorized: boolean; authorizationId: string; actor: string; reason: string },
+    persistence?: ActiveCapabilityPersistence,
+  ): boolean {
+    if (!authorization.authorized || !authorization.authorizationId || !authorization.actor || !authorization.reason) {
+      throw new Error(`Explicit authorization is required to deactivate capability: ${capabilityId}`);
+    }
+    const existed = this.records.delete(capabilityId);
+    if (existed) persistence?.save(this.snapshot());
+    return existed;
+  }
+
   isActive(capabilityId: string): boolean {
     return this.records.has(capabilityId);
   }
