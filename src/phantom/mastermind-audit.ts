@@ -1,0 +1,131 @@
+/**
+ * Phantom Mastermind canonical audit/observability boundary.
+ *
+ * The control plane owns event semantics and evidence shape. Durable storage,
+ * telemetry, and external observability systems remain adapters behind this
+ * contract so the core does not become dependent on a vendor.
+ */
+
+import type { InfrastructureRecoveryReceipt } from './infrastructure-recovery';
+import type { InfrastructureControllerReceipt } from './infrastructure-controller';
+
+export type MastermindAuditEventType =
+  | 'CAPABILITY_PLANNED'
+  | 'DESIRED_STATE_PERSISTED'
+  | 'INFRASTRUCTURE_MUTATION'
+  | 'INFRASTRUCTURE_RECOVERY'
+  | 'DRIFT_DETECTED'
+  | 'RECOVERY_VERIFIED'
+  | 'RECOVERY_FAILED';
+
+export interface MastermindAuditEvent {
+  id: string;
+  type: MastermindAuditEventType;
+  occurredAt: string;
+  actor: string;
+  authorizationId?: string;
+  correlationId: string;
+  resourceRevision?: string;
+  status: 'RECORDED' | 'FAILED';
+  evidence: Record<string, unknown>;
+}
+
+export interface MastermindAuditSink {
+  append(event: MastermindAuditEvent): void;
+  list(correlationId?: string): MastermindAuditEvent[];
+}
+
+function cloneEvent(event: MastermindAuditEvent): MastermindAuditEvent {
+  return {
+    ...event,
+    evidence: JSON.parse(JSON.stringify(event.evidence)) as Record<string, unknown>,
+  };
+}
+
+function assertEvent(event: MastermindAuditEvent): void {
+  if (!event.id.trim()) throw new Error('Mastermind audit event id is required');
+  if (!event.type) throw new Error('Mastermind audit event type is required');
+  if (!event.occurredAt.trim() || Number.isNaN(Date.parse(event.occurredAt))) {
+    throw new Error('Mastermind audit event timestamp is invalid');
+  }
+  if (!event.actor.trim()) throw new Error('Mastermind audit actor is required');
+  if (!event.correlationId.trim()) throw new Error('Mastermind audit correlation id is required');
+}
+
+/** Phantom-controlled reference sink for tests and local control-plane operation. */
+export class InMemoryMastermindAuditSink implements MastermindAuditSink {
+  private readonly events: MastermindAuditEvent[] = [];
+
+  append(event: MastermindAuditEvent): void {
+    assertEvent(event);
+    if (this.events.some((existing) => existing.id === event.id)) {
+      throw new Error(`Duplicate Mastermind audit event id: ${event.id}`);
+    }
+    this.events.push(cloneEvent(event));
+  }
+
+  list(correlationId?: string): MastermindAuditEvent[] {
+    return this.events
+      .filter((event) => !correlationId || event.correlationId === correlationId)
+      .map(cloneEvent);
+  }
+}
+
+export interface MastermindRecoveryAuditContext {
+  actor: string;
+  correlationId: string;
+}
+
+/** Record a complete infrastructure recovery receipt as canonical audit evidence. */
+export function recordInfrastructureRecovery(
+  sink: MastermindAuditSink,
+  receipt: InfrastructureRecoveryReceipt,
+  context: MastermindRecoveryAuditContext,
+): MastermindAuditEvent {
+  const type: MastermindAuditEventType = receipt.status === 'DRIFT_DETECTED'
+    ? 'DRIFT_DETECTED'
+    : receipt.status === 'RECOVERED'
+      ? 'RECOVERY_VERIFIED'
+      : receipt.status === 'RECOVERY_FAILED'
+        ? 'RECOVERY_FAILED'
+        : 'INFRASTRUCTURE_RECOVERY';
+
+  const event: MastermindAuditEvent = {
+    id: `mastermind-recovery:${context.correlationId}:${receipt.observedAt}`,
+    type,
+    occurredAt: receipt.observedAt,
+    actor: context.actor,
+    authorizationId: receipt.authorizationId,
+    correlationId: context.correlationId,
+    resourceRevision: receipt.desiredRevision,
+    status: receipt.verified ? 'RECORDED' : 'FAILED',
+    evidence: {
+      recoveryVersion: receipt.recoveryVersion,
+      recoveryStatus: receipt.status,
+      verified: receipt.verified,
+      driftDetected: receipt.driftPlan.driftDetected,
+      driftActions: receipt.driftPlan.actions.map((action) => ({ ...action })),
+      controllerReceipt: receipt.controllerReceipt
+        ? cloneControllerReceipt(receipt.controllerReceipt)
+        : undefined,
+      error: receipt.error,
+    },
+  };
+
+  sink.append(event);
+  return cloneEvent(event);
+}
+
+function cloneControllerReceipt(receipt: InfrastructureControllerReceipt): InfrastructureControllerReceipt {
+  return {
+    ...receipt,
+    results: receipt.results.map((result) => ({ ...result })),
+    actualState: {
+      ...receipt.actualState,
+      resources: receipt.actualState.resources.map((resource) => ({
+        ...resource,
+        configuration: { ...resource.configuration },
+      })),
+    },
+  };
+}
