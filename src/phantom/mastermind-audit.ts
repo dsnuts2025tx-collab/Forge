@@ -12,6 +12,7 @@ import type { CapabilityHealthResult } from './capability-health';
 
 export type MastermindAuditEventType =
   | 'CAPABILITY_PLANNED'
+  | 'CAPABILITY_PROVISIONED'
   | 'DESIRED_STATE_PERSISTED'
   | 'INFRASTRUCTURE_MUTATION'
   | 'INFRASTRUCTURE_RECOVERY'
@@ -110,6 +111,44 @@ export function recordCapabilityPlanned(
       proofCriteria: [...plan.manifest.proofCriteria],
       desiredResourceIds: plan.desiredState.resources.map((resource) => ({ ...resource })),
       reconciliationActions: plan.reconciliation.actions.map((action) => ({ ...action })),
+    },
+  };
+
+  sink.append(event);
+  return cloneEvent(event);
+}
+
+/** Record a capability provisioning outcome as canonical evidence. */
+export function recordCapabilityProvisioned(
+  sink: MastermindAuditSink,
+  result: {
+    manifestId: string;
+    missingCapabilityWork: boolean;
+    infrastructureApplied: boolean;
+    infrastructureVerified: boolean;
+    activationStatus: string;
+    registered: boolean;
+  },
+  context: MastermindControlAuditContext,
+  resourceRevision: string,
+  occurredAt = new Date().toISOString(),
+): MastermindAuditEvent {
+  const event: MastermindAuditEvent = {
+    id: `mastermind-provision:${context.correlationId}:${result.manifestId}:${occurredAt}`,
+    type: 'CAPABILITY_PROVISIONED',
+    occurredAt,
+    actor: context.actor,
+    authorizationId: context.authorizationId,
+    correlationId: context.correlationId,
+    resourceRevision,
+    status: result.registered ? 'RECORDED' : 'FAILED',
+    evidence: {
+      manifestId: result.manifestId,
+      missingCapabilityWork: result.missingCapabilityWork,
+      infrastructureApplied: result.infrastructureApplied,
+      infrastructureVerified: result.infrastructureVerified,
+      activationStatus: result.activationStatus,
+      registered: result.registered,
     },
   };
 
