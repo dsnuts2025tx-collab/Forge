@@ -41,7 +41,11 @@ import type {
   CapabilityActivationSink,
 } from './capability-activation';
 import type { CapabilityGraph } from './capability-graph';
-import type { MastermindAuditSink, MastermindControlAuditContext } from './mastermind-audit';
+import {
+  recordCapabilityProvisioned,
+  type MastermindAuditSink,
+  type MastermindControlAuditContext,
+} from './mastermind-audit';
 
 export interface CapabilityProvisionAuthorization extends InfrastructureAuthorization {
   activationAuthorization: CapabilityActivationAuthorization;
@@ -143,19 +147,9 @@ export function provisionCapability(
   );
 
   if (audit && auditContext) {
-    // Audit integration remains deliberately injected so this command can be
-    // embedded in the canonical Mastermind audit pipeline without coupling the
-    // core command to a storage implementation.
-    const event = {
-      id: `mastermind-provision:${auditContext.correlationId}:${plan.manifest.id}:${now}`,
-      type: 'CAPABILITY_PLANNED' as const,
-      occurredAt: now,
-      actor: auditContext.actor,
-      authorizationId: auditContext.authorizationId,
-      correlationId: auditContext.correlationId,
-      resourceRevision: plan.desiredState.revision,
-      status: lifecycle.registered ? 'RECORDED' as const : 'FAILED' as const,
-      evidence: {
+    recordCapabilityProvisioned(
+      audit,
+      {
         manifestId: plan.manifest.id,
         missingCapabilityWork: hasMissingWork,
         infrastructureApplied,
@@ -163,8 +157,10 @@ export function provisionCapability(
         activationStatus: lifecycle.activation.status,
         registered: lifecycle.registered,
       },
-    };
-    audit.append(event);
+      auditContext,
+      plan.desiredState.revision,
+      now,
+    );
   }
 
   return {
