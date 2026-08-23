@@ -8,6 +8,9 @@
  */
 
 import {
+  ActiveCapabilityRegistry,
+} from './active-capability-registry';
+import {
   CapabilityGraph,
   type CapabilityGraphNode,
 } from './capability-graph';
@@ -51,21 +54,32 @@ export interface MastermindDesiredStateStore {
   save(state: CanonicalDesiredState): void;
 }
 
-function graphInventory(graph: CapabilityGraph): CapabilityInventory {
+function descriptorForNode(node: CapabilityGraphNode, graph: CapabilityGraph) {
   return {
-    list: () => graph.reusableCapabilities().map((node: CapabilityGraphNode) => ({
-      id: node.id,
-      name: node.name,
-      version: node.version,
-      capabilities: [node.name],
-      dependencies: graph
-        .related(node.id)
-        .filter((edge) => edge.from === node.id && edge.relationship === 'DEPENDS_ON')
-        .map((edge) => edge.to),
-      costClass: node.costClass,
-      reliability: node.reliability,
-      reproducible: node.reproducible,
-    })),
+    id: node.id,
+    name: node.name,
+    version: node.version,
+    capabilities: [node.name],
+    dependencies: graph
+      .related(node.id)
+      .filter((edge) => edge.from === node.id && edge.relationship === 'DEPENDS_ON')
+      .map((edge) => edge.to),
+    costClass: node.costClass,
+    reliability: node.reliability,
+    reproducible: node.reproducible,
+  };
+}
+
+function graphInventory(
+  graph: CapabilityGraph,
+  activeRegistry?: ActiveCapabilityRegistry,
+): CapabilityInventory {
+  const all = () => graph.reusableCapabilities().map((node) => descriptorForNode(node, graph));
+  if (!activeRegistry) return { list: all };
+
+  return {
+    list: all,
+    listActive: () => all().filter((descriptor) => activeRegistry.isActive(descriptor.id)),
   };
 }
 
@@ -87,19 +101,22 @@ function manifestToDesiredResources(manifest: CapabilityManifest): DesiredStateR
 /**
  * Compiles an authorized intent against the canonical capability graph and
  * produces the desired-state reconciliation plan needed to make the capability
- * reproducible. Existing desired state is not silently overwritten by this
- * planning function; callers must explicitly persist the returned state.
+ * reproducible. When an active registry is supplied, only proof-gated active
+ * capabilities are eligible for REUSE. Existing desired state is not silently
+ * overwritten by this planning function; callers must explicitly persist the
+ * returned state.
  */
 export function planMastermindCapability(
   request: MastermindCapabilityRequest,
   graph: CapabilityGraph,
   actual: ActualState,
   revision: string,
+  activeRegistry?: ActiveCapabilityRegistry,
 ): MastermindControlPlan {
   const manifest = compileCapability(
     request.intent,
     request.requirements,
-    graphInventory(graph),
+    graphInventory(graph, activeRegistry),
     request.proofCriteria,
     request.authorizationRequired ?? true,
     request.manifestId,
@@ -125,8 +142,9 @@ export function planMastermindCapabilityAudited(
   revision: string,
   audit: MastermindAuditSink,
   auditContext: MastermindControlAuditContext,
+  activeRegistry?: ActiveCapabilityRegistry,
 ): MastermindControlPlan {
-  const plan = planMastermindCapability(request, graph, actual, revision);
+  const plan = planMastermindCapability(request, graph, actual, revision, activeRegistry);
   recordCapabilityPlanned(audit, plan, auditContext);
   return plan;
 }
