@@ -52,6 +52,8 @@ export interface CapabilityManifest {
 
 export interface CapabilityInventory {
   list(): CapabilityDescriptor[];
+  /** When present, only verified-active capabilities are eligible for REUSE. */
+  listActive?(): CapabilityDescriptor[];
 }
 
 function cloneDescriptor(descriptor: CapabilityDescriptor): CapabilityDescriptor {
@@ -114,7 +116,9 @@ function chooseBest(candidates: CapabilityDescriptor[]): CapabilityDescriptor | 
 /**
  * Compiles intent into a manifest. The compiler always inventories before it
  * proposes provisioning, and it never silently treats a missing capability as
- * available.
+ * available. If an active inventory is supplied, only verified-active entries
+ * may satisfy a REUSE decision; merely existing graph entries remain available
+ * to the surrounding planning layer but cannot be claimed as active.
  */
 export function compileCapability(
   intent: string,
@@ -128,7 +132,7 @@ export function compileCapability(
   if (proofCriteria.length === 0) throw new Error('Capability proof criteria are required');
   assertRequirements(requirements);
 
-  const available = inventory.list().map(cloneDescriptor);
+  const available = (inventory.listActive ? inventory.listActive() : inventory.list()).map(cloneDescriptor);
   const plan: CapabilityPlanStep[] = [];
   const reusableCapabilityIds: string[] = [];
   const composedCapabilityIds: string[] = [];
@@ -145,7 +149,7 @@ export function compileCapability(
         action: 'REUSE',
         selectedCapabilityIds: [selected.id],
         missingCapabilities: [],
-        rationale: `Existing capability ${selected.id} satisfies ${requirement.capability}`,
+        rationale: `Verified-active capability ${selected.id} satisfies ${requirement.capability}`,
       });
       continue;
     }
@@ -172,7 +176,7 @@ export function compileCapability(
       action: 'PROVISION',
       selectedCapabilityIds: [],
       missingCapabilities: [requirement.capability],
-      rationale: `No reusable capability satisfies ${requirement.capability}; provision only this missing capability`,
+      rationale: `No verified-active capability satisfies ${requirement.capability}; provision only this missing capability`,
     });
   }
 
