@@ -81,6 +81,9 @@ function assertRequirements(requirements: CapabilityRequirement[]): void {
     if (!requirement.capability.trim()) {
       throw new Error(`Capability requirement must name a capability: ${requirement.id}`);
     }
+    if (requirement.requiredVersion !== undefined && !requirement.requiredVersion.trim()) {
+      throw new Error(`Required capability version cannot be empty: ${requirement.id}`);
+    }
     ids.add(requirement.id);
   }
   for (const requirement of requirements) {
@@ -92,13 +95,46 @@ function assertRequirements(requirements: CapabilityRequirement[]): void {
   }
 }
 
+function dependencyFirstRequirements(
+  requirements: CapabilityRequirement[],
+): CapabilityRequirement[] {
+  const byId = new Map(requirements.map((requirement) => [requirement.id, requirement]));
+  const visiting = new Set<string>();
+  const visited = new Set<string>();
+  const ordered: CapabilityRequirement[] = [];
+
+  function visit(id: string): void {
+    if (visited.has(id)) return;
+    if (visiting.has(id)) {
+      throw new Error(`Capability requirement dependency cycle detected at: ${id}`);
+    }
+    const requirement = byId.get(id);
+    if (!requirement) throw new Error(`Unknown capability requirement dependency: ${id}`);
+
+    visiting.add(id);
+    for (const dependency of requirement.dependsOn ?? []) visit(dependency);
+    visiting.delete(id);
+    visited.add(id);
+    ordered.push(requirement);
+  }
+
+  for (const requirement of requirements) visit(requirement.id);
+  return ordered;
+}
+
+function versionMatches(requirement: CapabilityRequirement, candidate: CapabilityDescriptor): boolean {
+  if (requirement.requiredVersion === undefined) return true;
+  return normalize(candidate.version) === normalize(requirement.requiredVersion);
+}
+
 function matchingCapabilities(
   requirement: CapabilityRequirement,
   inventory: CapabilityDescriptor[],
 ): CapabilityDescriptor[] {
   const wanted = normalize(requirement.capability);
   return inventory.filter((candidate) =>
-    candidate.capabilities.some((capability) => normalize(capability) === wanted),
+    candidate.capabilities.some((capability) => normalize(capability) === wanted)
+      && versionMatches(requirement, candidate),
   );
 }
 
@@ -119,6 +155,9 @@ function chooseBest(candidates: CapabilityDescriptor[]): CapabilityDescriptor | 
  * available. If an active inventory is supplied, only verified-active entries
  * may satisfy a REUSE decision; merely existing graph entries remain available
  * to the surrounding planning layer but cannot be claimed as active.
+ *
+ * Requirement dependencies are evaluated dependency-first so composition can
+ * only consume capabilities that have already been resolved in this plan.
  */
 export function compileCapability(
   intent: string,
@@ -138,7 +177,7 @@ export function compileCapability(
   const composedCapabilityIds: string[] = [];
   const missingCapabilities: string[] = [];
 
-  for (const requirement of requirements.map(cloneRequirement)) {
+  for (const requirement of dependencyFirstRequirements(requirements).map(cloneRequirement)) {
     const matches = matchingCapabilities(requirement, available);
     const selected = chooseBest(matches);
 
@@ -149,7 +188,7 @@ export function compileCapability(
         action: 'REUSE',
         selectedCapabilityIds: [selected.id],
         missingCapabilities: [],
-        rationale: `Verified-active capability ${selected.id} satisfies ${requirement.capability}`,
+        rationale: `Verified-active capability ${selected.id} satisfies ${requirement.capability}${requirement.requiredVersion ? ` at version ${requirement.requiredVersion}` : ''}`,
       });
       continue;
     }
@@ -176,7 +215,7 @@ export function compileCapability(
       action: 'PROVISION',
       selectedCapabilityIds: [],
       missingCapabilities: [requirement.capability],
-      rationale: `No verified-active capability satisfies ${requirement.capability}; provision only this missing capability`,
+      rationale: `No verified-active capability satisfies ${requirement.capability}${requirement.requiredVersion ? ` at version ${requirement.requiredVersion}` : ''}; provision only this missing capability`,
     });
   }
 
