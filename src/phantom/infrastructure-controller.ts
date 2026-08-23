@@ -13,6 +13,11 @@ import type {
   ReconciliationPlan,
   ReconciliationAction,
 } from './desired-state';
+import {
+  recordInfrastructureMutation,
+  type MastermindAuditSink,
+  type MastermindControlAuditContext,
+} from './mastermind-audit';
 
 export interface InfrastructureAuthorization {
   authorized: boolean;
@@ -115,6 +120,27 @@ export function applyInfrastructurePlan(
     results,
     actualState: adapter.observe(),
   };
+}
+
+/**
+ * Audited controller boundary: mutation remains authorization-gated, while the
+ * resulting receipt is immediately recorded in the canonical Mastermind audit
+ * stream. The audit sink is injected so storage/telemetry remain provider-neutral.
+ */
+export function applyInfrastructurePlanAudited(
+  desiredState: CanonicalDesiredState,
+  plan: ReconciliationPlan,
+  authorization: InfrastructureAuthorization,
+  adapter: InfrastructureControllerAdapter,
+  audit: MastermindAuditSink,
+  auditContext: MastermindControlAuditContext,
+): InfrastructureControllerReceipt {
+  const receipt = applyInfrastructurePlan(desiredState, plan, authorization, adapter);
+  recordInfrastructureMutation(audit, receipt, {
+    ...auditContext,
+    authorizationId: authorization.authorizationId,
+  });
+  return receipt;
 }
 
 /** Returns true only when every planned mutation was applied/no-op and observation succeeded. */
