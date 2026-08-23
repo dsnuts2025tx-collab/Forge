@@ -140,6 +140,41 @@ export function recordDesiredStatePersisted(
   return cloneEvent(event);
 }
 
+/** Record the result of an authorized infrastructure reconciliation. */
+export function recordInfrastructureMutation(
+  sink: MastermindAuditSink,
+  receipt: InfrastructureControllerReceipt,
+  context: MastermindControlAuditContext,
+  occurredAt = receipt.appliedAt,
+): MastermindAuditEvent {
+  const failed = receipt.results.some((result) => result.status === 'FAILED');
+  const event: MastermindAuditEvent = {
+    id: `mastermind-mutation:${context.correlationId}:${receipt.authorizationId}:${receipt.appliedAt}`,
+    type: 'INFRASTRUCTURE_MUTATION',
+    occurredAt,
+    actor: context.actor,
+    authorizationId: receipt.authorizationId,
+    correlationId: context.correlationId,
+    resourceRevision: receipt.desiredRevision,
+    status: failed ? 'FAILED' : 'RECORDED',
+    evidence: {
+      controllerVersion: receipt.controllerVersion,
+      desiredRevision: receipt.desiredRevision,
+      results: receipt.results.map((result) => ({ ...result })),
+      actualState: {
+        ...receipt.actualState,
+        resources: receipt.actualState.resources.map((resource) => ({
+          ...resource,
+          configuration: { ...resource.configuration },
+        })),
+      },
+    },
+  };
+
+  sink.append(event);
+  return cloneEvent(event);
+}
+
 /** Record a complete infrastructure recovery receipt as canonical audit evidence. */
 export function recordInfrastructureRecovery(
   sink: MastermindAuditSink,
