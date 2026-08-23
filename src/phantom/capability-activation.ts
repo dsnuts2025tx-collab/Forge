@@ -35,6 +35,8 @@ export interface CapabilityActivationRequest {
   manifestId: string;
   proofRequired: boolean;
   reconciliationRequired: boolean;
+  /** When supplied, proof must explicitly satisfy every declared criterion. */
+  proofCriteria?: string[];
 }
 
 export interface CapabilityActivationResult {
@@ -53,6 +55,11 @@ export interface CapabilityActivationSink {
 
 function validTimestamp(value: string): boolean {
   return Number.isFinite(Date.parse(value));
+}
+
+function criteriaSatisfied(required: string[], supplied: string[]): boolean {
+  const suppliedCriteria = new Set(supplied.map((criterion) => criterion.trim()).filter(Boolean));
+  return required.every((criterion) => suppliedCriteria.has(criterion.trim()));
 }
 
 /**
@@ -106,12 +113,13 @@ export function activateCapability(
     || !validTimestamp(proof.verifiedAt)
     || proof.criteria.length === 0
     || proof.evidenceRefs.length === 0
+    || !criteriaSatisfied(request.proofCriteria ?? [], proof.criteria)
   )) {
     result = {
       ...base,
       status: 'REJECTED',
       authorizationId: authorization.authorizationId,
-      reason: 'Capability proof is incomplete or invalid.',
+      reason: 'Capability proof is incomplete, does not satisfy declared criteria, or is invalid.',
     };
   } else if (!validTimestamp(now)) {
     result = {
@@ -119,6 +127,13 @@ export function activateCapability(
       status: 'REJECTED',
       authorizationId: authorization.authorizationId,
       reason: 'Activation timestamp is invalid.',
+    };
+  } else if (proof && Date.parse(proof.verifiedAt) > Date.parse(now)) {
+    result = {
+      ...base,
+      status: 'REJECTED',
+      authorizationId: authorization.authorizationId,
+      reason: 'Capability proof cannot be verified after activation time.',
     };
   } else {
     result = {
