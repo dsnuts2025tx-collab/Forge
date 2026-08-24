@@ -9,6 +9,7 @@
 import type { InfrastructureRecoveryReceipt } from './infrastructure-recovery';
 import type { InfrastructureControllerReceipt } from './infrastructure-controller';
 import type { CapabilityHealthResult } from './capability-health';
+import type { MissionGraph, MissionNode } from './mission-graph';
 
 export type MastermindAuditEventType =
   | 'CAPABILITY_PLANNED'
@@ -20,7 +21,12 @@ export type MastermindAuditEventType =
   | 'RECOVERY_VERIFIED'
   | 'RECOVERY_FAILED'
   | 'CAPABILITY_HEALTH_CHECKED'
-  | 'CAPABILITY_REVOKED';
+  | 'CAPABILITY_REVOKED'
+  | 'MISSION_STARTED'
+  | 'MISSION_NODE_STARTED'
+  | 'MISSION_NODE_SUCCEEDED'
+  | 'MISSION_NODE_FAILED'
+  | 'MISSION_COMPLETED';
 
 export interface MastermindAuditEvent {
   id: string;
@@ -84,7 +90,6 @@ export interface MastermindControlAuditContext extends MastermindRecoveryAuditCo
   authorizationId?: string;
 }
 
-/** Record a capability compilation/planning decision as canonical audit evidence. */
 export function recordCapabilityPlanned(
   sink: MastermindAuditSink,
   plan: {
@@ -113,22 +118,13 @@ export function recordCapabilityPlanned(
       reconciliationActions: plan.reconciliation.actions.map((action) => ({ ...action })),
     },
   };
-
   sink.append(event);
   return cloneEvent(event);
 }
 
-/** Record a capability provisioning outcome as canonical evidence. */
 export function recordCapabilityProvisioned(
   sink: MastermindAuditSink,
-  result: {
-    manifestId: string;
-    missingCapabilityWork: boolean;
-    infrastructureApplied: boolean;
-    infrastructureVerified: boolean;
-    activationStatus: string;
-    registered: boolean;
-  },
+  result: { manifestId: string; missingCapabilityWork: boolean; infrastructureApplied: boolean; infrastructureVerified: boolean; activationStatus: string; registered: boolean },
   context: MastermindControlAuditContext,
   resourceRevision: string,
   occurredAt = new Date().toISOString(),
@@ -142,21 +138,12 @@ export function recordCapabilityProvisioned(
     correlationId: context.correlationId,
     resourceRevision,
     status: result.registered ? 'RECORDED' : 'FAILED',
-    evidence: {
-      manifestId: result.manifestId,
-      missingCapabilityWork: result.missingCapabilityWork,
-      infrastructureApplied: result.infrastructureApplied,
-      infrastructureVerified: result.infrastructureVerified,
-      activationStatus: result.activationStatus,
-      registered: result.registered,
-    },
+    evidence: { ...result },
   };
-
   sink.append(event);
   return cloneEvent(event);
 }
 
-/** Record persistence of canonical desired state as a first-class control-plane event. */
 export function recordDesiredStatePersisted(
   sink: MastermindAuditSink,
   state: { revision: string; version: string; resources: Array<{ id: string; kind: string; version: string }> },
@@ -177,12 +164,10 @@ export function recordDesiredStatePersisted(
       resourceIds: state.resources.map((resource) => ({ ...resource })),
     },
   };
-
   sink.append(event);
   return cloneEvent(event);
 }
 
-/** Record the result of an authorized infrastructure reconciliation. */
 export function recordInfrastructureMutation(
   sink: MastermindAuditSink,
   receipt: InfrastructureControllerReceipt,
@@ -203,21 +188,13 @@ export function recordInfrastructureMutation(
       controllerVersion: receipt.controllerVersion,
       desiredRevision: receipt.desiredRevision,
       results: receipt.results.map((result) => ({ ...result })),
-      actualState: {
-        ...receipt.actualState,
-        resources: receipt.actualState.resources.map((resource) => ({
-          ...resource,
-          configuration: { ...resource.configuration },
-        })),
-      },
+      actualState: receipt.actualState,
     },
   };
-
   sink.append(event);
   return cloneEvent(event);
 }
 
-/** Record a complete infrastructure recovery receipt as canonical audit evidence. */
 export function recordInfrastructureRecovery(
   sink: MastermindAuditSink,
   receipt: InfrastructureRecoveryReceipt,
@@ -230,7 +207,6 @@ export function recordInfrastructureRecovery(
       : receipt.status === 'RECOVERY_FAILED'
         ? 'RECOVERY_FAILED'
         : 'INFRASTRUCTURE_RECOVERY';
-
   const event: MastermindAuditEvent = {
     id: `mastermind-recovery:${context.correlationId}:${receipt.observedAt}`,
     type,
@@ -245,19 +221,15 @@ export function recordInfrastructureRecovery(
       recoveryStatus: receipt.status,
       verified: receipt.verified,
       driftDetected: receipt.driftPlan.driftDetected,
-      driftActions: receipt.driftPlan.actions.map((action) => ({ ...action })),
-      controllerReceipt: receipt.controllerReceipt
-        ? cloneControllerReceipt(receipt.controllerReceipt)
-        : undefined,
+      driftActions: receipt.driftPlan.actions,
+      controllerReceipt: receipt.controllerReceipt,
       error: receipt.error,
     },
   };
-
   sink.append(event);
   return cloneEvent(event);
 }
 
-/** Record an active-capability health check and its current trust decision. */
 export function recordCapabilityHealthChecked(
   sink: MastermindAuditSink,
   result: CapabilityHealthResult,
@@ -271,19 +243,12 @@ export function recordCapabilityHealthChecked(
     authorizationId: context.authorizationId,
     correlationId: context.correlationId,
     status: result.status === 'HEALTHY' || result.status === 'NOT_ACTIVE' ? 'RECORDED' : 'FAILED',
-    evidence: {
-      capabilityId: result.capabilityId,
-      healthStatus: result.status,
-      reason: result.reason,
-      proofId: result.proofId,
-    },
+    evidence: { capabilityId: result.capabilityId, healthStatus: result.status, reason: result.reason, proofId: result.proofId },
   };
-
   sink.append(event);
   return cloneEvent(event);
 }
 
-/** Record an authorized active-capability revocation as canonical evidence. */
 export function recordCapabilityRevoked(
   sink: MastermindAuditSink,
   result: CapabilityHealthResult,
@@ -297,29 +262,94 @@ export function recordCapabilityRevoked(
     authorizationId: context.authorizationId,
     correlationId: context.correlationId,
     status: 'RECORDED',
-    evidence: {
-      capabilityId: result.capabilityId,
-      healthStatus: result.status,
-      reason: result.reason,
-      proofId: result.proofId,
-      revocationAuthorizationId: result.authorizationId,
-    },
+    evidence: { capabilityId: result.capabilityId, healthStatus: result.status, reason: result.reason, proofId: result.proofId, revocationAuthorizationId: result.authorizationId },
   };
-
   sink.append(event);
   return cloneEvent(event);
 }
 
-function cloneControllerReceipt(receipt: InfrastructureControllerReceipt): InfrastructureControllerReceipt {
-  return {
-    ...receipt,
-    results: receipt.results.map((result) => ({ ...result })),
-    actualState: {
-      ...receipt.actualState,
-      resources: receipt.actualState.resources.map((resource) => ({
-        ...resource,
-        configuration: { ...resource.configuration },
-      })),
+export function recordMissionStarted(
+  sink: MastermindAuditSink,
+  graph: MissionGraph,
+  context: MastermindControlAuditContext,
+  occurredAt = new Date().toISOString(),
+): MastermindAuditEvent {
+  const event: MastermindAuditEvent = {
+    id: `mastermind-mission-started:${context.correlationId}:${graph.id}`,
+    type: 'MISSION_STARTED',
+    occurredAt,
+    actor: context.actor,
+    authorizationId: context.authorizationId,
+    correlationId: context.correlationId,
+    status: 'RECORDED',
+    evidence: { missionId: graph.id, objective: graph.objective, nodeIds: graph.nodes.map((node) => node.id) },
+  };
+  sink.append(event);
+  return cloneEvent(event);
+}
+
+function recordMissionNode(
+  sink: MastermindAuditSink,
+  type: 'MISSION_NODE_STARTED' | 'MISSION_NODE_SUCCEEDED' | 'MISSION_NODE_FAILED',
+  node: MissionNode,
+  context: MastermindControlAuditContext,
+  occurredAt: string,
+): MastermindAuditEvent {
+  const event: MastermindAuditEvent = {
+    id: `mastermind-mission-node:${context.correlationId}:${node.id}:${node.attempt}:${type}`,
+    type,
+    occurredAt,
+    actor: context.actor,
+    authorizationId: context.authorizationId,
+    correlationId: context.correlationId,
+    status: type === 'MISSION_NODE_FAILED' ? 'FAILED' : 'RECORDED',
+    evidence: {
+      missionNodeId: node.id,
+      capability: node.capability,
+      status: node.status,
+      attempt: node.attempt,
+      outputRef: node.outputRef,
+      failureReason: node.failureReason,
+      dependencies: [...node.dependsOn],
     },
   };
+  sink.append(event);
+  return cloneEvent(event);
+}
+
+export function recordMissionNodeStarted(sink: MastermindAuditSink, node: MissionNode, context: MastermindControlAuditContext, occurredAt = new Date().toISOString()): MastermindAuditEvent {
+  return recordMissionNode(sink, 'MISSION_NODE_STARTED', node, context, occurredAt);
+}
+
+export function recordMissionNodeSucceeded(sink: MastermindAuditSink, node: MissionNode, context: MastermindControlAuditContext, occurredAt = new Date().toISOString()): MastermindAuditEvent {
+  return recordMissionNode(sink, 'MISSION_NODE_SUCCEEDED', node, context, occurredAt);
+}
+
+export function recordMissionNodeFailed(sink: MastermindAuditSink, node: MissionNode, context: MastermindControlAuditContext, occurredAt = new Date().toISOString()): MastermindAuditEvent {
+  return recordMissionNode(sink, 'MISSION_NODE_FAILED', node, context, occurredAt);
+}
+
+export function recordMissionCompleted(
+  sink: MastermindAuditSink,
+  graph: MissionGraph,
+  status: 'SUCCEEDED' | 'FAILED',
+  context: MastermindControlAuditContext,
+  occurredAt = new Date().toISOString(),
+): MastermindAuditEvent {
+  const event: MastermindAuditEvent = {
+    id: `mastermind-mission-completed:${context.correlationId}:${graph.id}:${status}`,
+    type: 'MISSION_COMPLETED',
+    occurredAt,
+    actor: context.actor,
+    authorizationId: context.authorizationId,
+    correlationId: context.correlationId,
+    status: status === 'SUCCEEDED' ? 'RECORDED' : 'FAILED',
+    evidence: {
+      missionId: graph.id,
+      missionStatus: status,
+      nodeStatuses: graph.nodes.map((node) => ({ id: node.id, status: node.status, attempt: node.attempt })),
+    },
+  };
+  sink.append(event);
+  return cloneEvent(event);
 }
