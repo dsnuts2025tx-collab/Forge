@@ -1,5 +1,5 @@
 /**
- * Phantom mission graph control kernel.
+ * Phantom Mastermind mission graph control kernel.
  *
  * Master Mind owns mission semantics while workers execute individual nodes.
  * The graph is deliberately provider-neutral: workers, inference engines, and
@@ -47,6 +47,9 @@ function assertGraph(graph: MissionGraph): void {
   for (const node of graph.nodes) {
     if (!node.id || ids.has(node.id)) throw new Error(`Duplicate or empty mission node id: ${node.id}`);
     ids.add(node.id);
+    if (!Number.isInteger(node.attempt) || node.attempt < 0) {
+      throw new Error(`Mission node attempt must be a non-negative integer: ${node.id}`);
+    }
   }
   for (const node of graph.nodes) {
     for (const dependency of node.dependsOn) {
@@ -83,6 +86,27 @@ export function validateMissionGraph(graph: MissionGraph): MissionGraph {
     ...graph,
     nodes: graph.nodes.map(cloneNode),
   };
+}
+
+/**
+ * Recovers an interrupted mission after a runtime/process restart.
+ * In-flight RUNNING nodes are made retryable, while terminal results remain
+ * untouched. This is intentionally explicit so recovery cannot silently
+ * convert a successful or failed node into a new attempt.
+ */
+export function recoverInterruptedMission(graph: MissionGraph): {
+  graph: MissionGraph;
+  recoveredNodeIds: string[];
+} {
+  const next = validateMissionGraph(graph);
+  const recoveredNodeIds: string[] = [];
+  for (const node of next.nodes) {
+    if (node.status !== 'RUNNING') continue;
+    node.status = 'PENDING';
+    node.failureReason = 'Recovered from interrupted runtime; execution may be retried.';
+    recoveredNodeIds.push(node.id);
+  }
+  return { graph: next, recoveredNodeIds };
 }
 
 export function readyMissionNodes(graph: MissionGraph): MissionNode[] {
