@@ -23,6 +23,7 @@ export type MastermindAuditEventType =
   | 'CAPABILITY_HEALTH_CHECKED'
   | 'CAPABILITY_REVOKED'
   | 'MISSION_STARTED'
+  | 'MISSION_RECOVERED'
   | 'MISSION_NODE_STARTED'
   | 'MISSION_NODE_SUCCEEDED'
   | 'MISSION_NODE_FAILED'
@@ -283,6 +284,31 @@ export function recordMissionStarted(
     correlationId: context.correlationId,
     status: 'RECORDED',
     evidence: { missionId: graph.id, objective: graph.objective, nodeIds: graph.nodes.map((node) => node.id) },
+  };
+  sink.append(event);
+  return cloneEvent(event);
+}
+
+export function recordMissionRecovered(
+  sink: MastermindAuditSink,
+  graph: MissionGraph,
+  recoveredNodeIds: string[],
+  context: MastermindControlAuditContext,
+  occurredAt = new Date().toISOString(),
+): MastermindAuditEvent {
+  const event: MastermindAuditEvent = {
+    id: `mastermind-mission-recovered:${context.correlationId}:${graph.id}:${occurredAt}`,
+    type: 'MISSION_RECOVERED',
+    occurredAt,
+    actor: context.actor,
+    authorizationId: context.authorizationId,
+    correlationId: context.correlationId,
+    status: 'RECORDED',
+    evidence: {
+      missionId: graph.id,
+      recoveredNodeIds: [...recoveredNodeIds],
+      recoveredNodeCount: recoveredNodeIds.length,
+    },
   };
   sink.append(event);
   return cloneEvent(event);
