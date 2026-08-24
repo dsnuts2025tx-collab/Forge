@@ -12,6 +12,7 @@ import {
   markMissionNodeSucceeded,
   missionIsComplete,
   readyMissionNodes,
+  recoverInterruptedMission,
   type MissionExecutionBoundary,
   type MissionGraph,
 } from './mission-graph';
@@ -21,6 +22,7 @@ import {
   recordMissionNodeFailed,
   recordMissionNodeStarted,
   recordMissionNodeSucceeded,
+  recordMissionRecovered,
   recordMissionStarted,
   type MastermindAuditSink,
   type MastermindControlAuditContext,
@@ -33,6 +35,7 @@ export interface MissionRuntimeResult {
   status: MissionRuntimeStatus;
   completedNodes: string[];
   failedNodes: string[];
+  recoveredNodeIds: string[];
 }
 
 export class MastermindMissionRuntime {
@@ -47,8 +50,14 @@ export class MastermindMissionRuntime {
     context: MastermindControlAuditContext,
   ): Promise<MissionRuntimeResult> {
     let graph = this.store.currentGraph() ?? initialGraph;
+    const recovery = recoverInterruptedMission(graph);
+    graph = recovery.graph;
     this.store.save(graph);
-    recordMissionStarted(this.audit, graph, context);
+    if (recovery.recoveredNodeIds.length > 0) {
+      recordMissionRecovered(this.audit, graph, recovery.recoveredNodeIds, context);
+    } else {
+      recordMissionStarted(this.audit, graph, context);
+    }
 
     const completedNodes: string[] = [];
     const failedNodes: string[] = [];
@@ -58,13 +67,13 @@ export class MastermindMissionRuntime {
       if (ready.length === 0) {
         if (missionIsComplete(graph)) {
           recordMissionCompleted(this.audit, graph, 'SUCCEEDED', context);
-          return { graph, status: 'SUCCEEDED', completedNodes, failedNodes };
+          return { graph, status: 'SUCCEEDED', completedNodes, failedNodes, recoveredNodeIds: recovery.recoveredNodeIds };
         }
 
         const hasFailed = graph.nodes.some((node) => node.status === 'FAILED');
         const status: MissionRuntimeStatus = hasFailed ? 'FAILED' : 'BLOCKED';
         recordMissionCompleted(this.audit, graph, 'FAILED', context);
-        return { graph, status, completedNodes, failedNodes };
+        return { graph, status, completedNodes, failedNodes, recoveredNodeIds: recovery.recoveredNodeIds };
       }
 
       for (const candidate of ready) {
