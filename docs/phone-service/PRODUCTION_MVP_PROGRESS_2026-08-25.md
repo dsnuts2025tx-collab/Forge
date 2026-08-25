@@ -65,3 +65,9 @@ These are intentionally BLOCKED rather than simulated.
 
 ## Truth rule
 No carrier or satellite LIVE status may be asserted until legitimate integrations, credentials/authorization, compatible devices, applicable agreements, observed network behavior, and verification evidence exist.
+
+## Current external verification
+- 1NCE API v2: https://help.1nce.com/api/v2/
+- 1NCE API migration: https://help.1nce.com/platform-migration/api-migration/
+- 1NCE usage events: https://help.1nce.com/docs/v2/platform-services/platform-services-data-streamer/data-streamer-usage-events/
+- 1NCE Data Streamer: https://help.1nce.com/docs/v2/1nce-portal/portal-configuration/
