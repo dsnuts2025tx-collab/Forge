@@ -32,8 +32,7 @@ export class HttpCellularProvider implements CellularProvider {
 
   async getSimStatus(simId: string): Promise<SimStatus> {
     const response = await this.request(this.config.simStatusPath(simId), { method: "GET" });
-    const body = (await response.json()) as SimStatus;
-    return body;
+    return (await response.json()) as SimStatus;
   }
 
   async resetConnectivity(simId: string): Promise<void> {
@@ -79,7 +78,7 @@ export class HttpCellularProvider implements CellularProvider {
   private async accessToken(): Promise<string> {
     if (this.token && this.token.expiresAt > Date.now() + 30_000) return this.token.value;
 
-    const credentials = Buffer.from(`${this.config.clientId}:${this.config.clientSecret}`).toString("base64");
+    const credentials = btoa(`${this.config.clientId}:${this.config.clientSecret}`);
     const response = await this.fetchImpl(this.config.tokenUrl, {
       method: "POST",
       headers: {
