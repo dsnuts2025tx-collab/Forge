@@ -7,6 +7,7 @@ import {
   type FundingPosition,
   type ProductionEvidence,
 } from "./mvp.js";
+import { StrictProviderEventValidator, dedupeProviderEventIds } from "./provider-guards.js";
 import { verifyWebhookSignature } from "./webhook-auth.js";
 
 const policy: AdminPolicy = {
@@ -109,6 +110,24 @@ const overLimit: FundingPosition = { ...funded, projectedProviderCostMinor: 10_0
 assert(
   !canServeCustomer(customerEntitlement("self-test"), policy, overLimit),
   "projected provider cost above policy limit must fail closed",
+);
+
+const providerEvent = {
+  id: "evt-self-test",
+  provider: "carrier-test",
+  simId: "sim-self-test",
+  deviceId: "device-self-test",
+  observedAt: new Date().toISOString(),
+  dataBytes: 128,
+  smsCount: 0,
+};
+const validatedEvent = new StrictProviderEventValidator().validate(providerEvent);
+const seen = new Set<string>();
+assert(dedupeProviderEventIds(seen, validatedEvent), "first provider event must be accepted");
+assert(!dedupeProviderEventIds(seen, validatedEvent), "duplicate provider event must be rejected");
+assert(
+  dedupeProviderEventIds(seen, { ...validatedEvent, provider: "second-carrier" }),
+  "same event id from a different provider must not collide",
 );
 
 const rawBody = "The quick brown fox jumps over the lazy dog";
