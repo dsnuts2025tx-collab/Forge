@@ -1,24 +1,27 @@
 import type { ProviderUsageEvent } from "./mvp.js";
+import { validateProviderUsageEvent } from "./provider-validation.js";
 
 export interface ProviderEventValidator {
-  validate(event: ProviderUsageEvent): ProviderUsageEvent;
+  validate(event: unknown): ProviderUsageEvent;
 }
 
+/**
+ * Normalize provider ingress onto the canonical Phone Service usage-event shape.
+ * Provider-specific field mapping must happen before this boundary.
+ */
 export class StrictProviderEventValidator implements ProviderEventValidator {
-  validate(event: ProviderUsageEvent): ProviderUsageEvent {
-    if (!event || typeof event !== "object") throw new Error("Invalid provider event");
-    const required = ["eventId", "occurredAt", "simId"] as const;
-    for (const key of required) {
-      const value = event[key];
-      if (typeof value !== "string" || value.length === 0) throw new Error(`Provider event missing ${key}`);
-    }
-    if (Number.isNaN(Date.parse(event.occurredAt))) throw new Error("Provider event occurredAt is invalid");
-    return event;
+  validate(event: unknown): ProviderUsageEvent {
+    return validateProviderUsageEvent(event);
   }
 }
 
+/**
+ * Deduplicate within a provider namespace so two providers may legitimately use
+ * the same event identifier without colliding in the shared ledger.
+ */
 export function dedupeProviderEventIds(seen: Set<string>, event: ProviderUsageEvent): boolean {
-  if (seen.has(event.eventId)) return false;
-  seen.add(event.eventId);
+  const key = `${event.provider}:${event.id}`;
+  if (seen.has(key)) return false;
+  seen.add(key);
   return true;
 }
