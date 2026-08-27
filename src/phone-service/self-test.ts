@@ -7,6 +7,8 @@ import {
   type FundingPosition,
   type ProductionEvidence,
 } from "./mvp.js";
+import { createHmac } from "node:crypto";
+import { verifyWebhookSignature } from "./webhook-auth.js";
 
 const policy: AdminPolicy = {
   allowCellular: true,
@@ -109,5 +111,12 @@ assert(
   !canServeCustomer(customerEntitlement("self-test"), policy, overLimit),
   "projected provider cost above policy limit must fail closed",
 );
+
+const rawBody = JSON.stringify({ eventId: "evt-self-test", bytes: 128 });
+const secret = "runtime-only-test-secret";
+const signature = `sha256=${createHmac("sha256", secret).update(rawBody).digest("hex")}`;
+assert(verifyWebhookSignature({ rawBody, signature, secret }), "valid provider webhook signature must verify");
+assert(!verifyWebhookSignature({ rawBody, signature: `${signature}00`, secret }), "tampered signature must fail");
+assert(!verifyWebhookSignature({ rawBody: `${rawBody}x`, signature, secret }), "tampered body must fail");
 
 console.log("Phone Service self-test: PASS");
