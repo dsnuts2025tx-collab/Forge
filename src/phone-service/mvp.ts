@@ -143,6 +143,15 @@ export function canServeCustomer(
 ): boolean {
   if (!entitlement.active || entitlement.servicePriceMinor !== 0) return false;
   if (!policy.allowCellular && !policy.allowSatellite) return false;
-  const projectedAfterReserve = funding.availableMinor - funding.reservedMinor - funding.projectedProviderCostMinor;
-  return projectedAfterReserve >= 0 || !policy.suspendOnFundingShortfall;
+
+  const projectedAfterReserve =
+    funding.availableMinor - funding.reservedMinor - funding.projectedProviderCostMinor;
+
+  // Customer price may be $0, but provider liability must always be funded.
+  // The policy flag controls suspension behavior elsewhere; it must not turn
+  // an unfunded service admission into an allowed state.
+  if (projectedAfterReserve < 0) return false;
+  if (funding.projectedProviderCostMinor > policy.maxProjectedCostMinor) return false;
+
+  return true;
 }
