@@ -54,6 +54,19 @@ assert(
 assert(
   deriveConnectivityState({
     observedAt: new Date(0).toISOString(),
+    wifiConnected: true,
+    cellularRegistered: true,
+    cellularDataAvailable: true,
+    satelliteSupported: true,
+    satelliteEntitled: true,
+    satelliteConnected: true,
+  }) === "cellular_connected",
+  "cellular must remain primary even when Wi-Fi is present",
+);
+
+assert(
+  deriveConnectivityState({
+    observedAt: new Date(0).toISOString(),
     wifiConnected: false,
     cellularRegistered: false,
     cellularDataAvailable: false,
@@ -62,6 +75,19 @@ assert(
     satelliteConnected: true,
   }) === "satellite_active",
   "satellite fallback must be observable before activation",
+);
+
+assert(
+  deriveConnectivityState({
+    observedAt: new Date(0).toISOString(),
+    wifiConnected: true,
+    cellularRegistered: false,
+    cellularDataAvailable: false,
+    satelliteSupported: true,
+    satelliteEntitled: true,
+    satelliteConnected: true,
+  }) === "offline",
+  "Wi-Fi must not make satellite look like a no-Wi-Fi fallback",
 );
 
 assert(isProductionReady(evidence, policy, funded), "complete evidence and funding must pass");
@@ -75,7 +101,13 @@ assert(
 const shortfall: FundingPosition = { ...funded, availableMinor: 2_500 };
 assert(
   !canServeCustomer(customerEntitlement("self-test"), policy, shortfall),
-  "funding shortfall must fail closed",
+  "funding shortfall must fail closed even when suspension behavior is disabled",
+);
+
+const overLimit: FundingPosition = { ...funded, projectedProviderCostMinor: 10_001 };
+assert(
+  !canServeCustomer(customerEntitlement("self-test"), policy, overLimit),
+  "projected provider cost above policy limit must fail closed",
 );
 
 console.log("Phone Service self-test: PASS");
