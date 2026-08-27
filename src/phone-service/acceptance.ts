@@ -20,12 +20,42 @@ export interface PhysicalMvpEvidence extends ProductionEvidence {
   satelliteProofTimestamp: string | null;
 }
 
+export interface AcceptancePolicy {
+  maxCellularProofAgeMs: number;
+  maxSatelliteProofAgeMs: number;
+}
+
+const DEFAULT_ACCEPTANCE_POLICY: AcceptancePolicy = {
+  maxCellularProofAgeMs: 24 * 60 * 60 * 1000,
+  maxSatelliteProofAgeMs: 24 * 60 * 60 * 1000,
+};
+
+function isFreshEvidenceTimestamp(
+  timestamp: string | null,
+  nowMs: number,
+  maxAgeMs: number,
+): boolean {
+  if (!timestamp || !Number.isFinite(maxAgeMs) || maxAgeMs < 0) return false;
+  const observedMs = Date.parse(timestamp);
+  if (!Number.isFinite(observedMs)) return false;
+  const ageMs = nowMs - observedMs;
+  return ageMs >= 0 && ageMs <= maxAgeMs;
+}
+
 export function evaluatePhysicalMvp(
   observation: ConnectivityObservation,
   evidence: PhysicalMvpEvidence,
   policy: AdminPolicy,
   funding: FundingPosition,
+  acceptancePolicy: AcceptancePolicy = DEFAULT_ACCEPTANCE_POLICY,
+  nowMs = Date.now(),
 ): AcceptanceCheck[] {
+  const cellularProofFresh = isFreshEvidenceTimestamp(
+    evidence.cellularProofTimestamp,
+    nowMs,
+    acceptancePolicy.maxCellularProofAgeMs,
+  );
+
   const checks: AcceptanceCheck[] = [
     {
       name: "customer-zero-entitlement",
@@ -37,10 +67,16 @@ export function evaluatePhysicalMvp(
       passed:
         evidence.noWifiCellularObserved &&
         evidence.wifiDisabledDuringCellularProof &&
+        cellularProofFresh &&
         observation.cellularRegistered &&
         observation.cellularDataAvailable &&
         !observation.wifiConnected,
-      detail: "Requires observed cellular registration/data while Wi-Fi is disabled.",
+      detail: "Requires recent observed cellular registration/data while Wi-Fi is disabled.",
+    },
+    {
+      name: "cellular-proof-freshness",
+      passed: cellularProofFresh,
+      detail: "Cellular connectivity evidence must have a valid timestamp no older than the configured acceptance window.",
     },
     {
       name: "cellular-state",
@@ -70,13 +106,18 @@ export function evaluatePhysicalMvp(
   ];
 
   if (observation.satelliteSupported || evidence.satelliteAgreementVerified || evidence.satelliteFallbackObserved) {
+    const satelliteProofFresh = isFreshEvidenceTimestamp(
+      evidence.satelliteProofTimestamp,
+      nowMs,
+      acceptancePolicy.maxSatelliteProofAgeMs,
+    );
     checks.push({
       name: "satellite-fallback-proof",
       passed:
         evidence.satelliteAgreementVerified &&
         evidence.satelliteFallbackObserved &&
-        Boolean(evidence.satelliteProofTimestamp),
-      detail: "Satellite is optional for cellular-first MVP promotion but cannot be called operational without agreement and observed fallback evidence.",
+        satelliteProofFresh,
+      detail: "Satellite is optional for cellular-first MVP promotion but cannot be called operational without agreement and recent observed fallback evidence.",
     });
   }
 
