@@ -1,0 +1,34 @@
+name: Phone Service
+
+on:
+  push:
+    paths:
+      - 'src/phone-service/**'
+      - 'package.json'
+      - 'tsconfig.json'
+      - '.github/workflows/phone-service.yml'
+  pull_request:
+    paths:
+      - 'src/phone-service/**'
+      - 'package.json'
+      - 'tsconfig.json'
+      - '.github/workflows/phone-service.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  phone-service:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm install
+      - name: Typecheck
+        run: npm run check
+      - name: Control-plane self-test
+        run: npm run phone-service:self-test
