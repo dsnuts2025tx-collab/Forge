@@ -7,7 +7,6 @@ import {
   type FundingPosition,
   type ProductionEvidence,
 } from "./mvp.js";
-import { createHmac } from "node:crypto";
 import { verifyWebhookSignature } from "./webhook-auth.js";
 
 const policy: AdminPolicy = {
@@ -112,11 +111,19 @@ assert(
   "projected provider cost above policy limit must fail closed",
 );
 
-const rawBody = JSON.stringify({ eventId: "evt-self-test", bytes: 128 });
-const secret = "runtime-only-test-secret";
-const signature = `sha256=${createHmac("sha256", secret).update(rawBody).digest("hex")}`;
-assert(verifyWebhookSignature({ rawBody, signature, secret }), "valid provider webhook signature must verify");
-assert(!verifyWebhookSignature({ rawBody, signature: `${signature}00`, secret }), "tampered signature must fail");
-assert(!verifyWebhookSignature({ rawBody: `${rawBody}x`, signature, secret }), "tampered body must fail");
+const rawBody = "The quick brown fox jumps over the lazy dog";
+const signature = "sha256=f7bc83f430538424b13298e6aa6fb143ef4d59a14946175997479dbc2d1a3cd8";
+assert(
+  await verifyWebhookSignature({ rawBody, signature, secret: "key" }),
+  "valid provider webhook signature must verify",
+);
+assert(
+  !(await verifyWebhookSignature({ rawBody, signature: `${signature}00`, secret: "key" })),
+  "tampered signature must fail",
+);
+assert(
+  !(await verifyWebhookSignature({ rawBody: `${rawBody}!`, signature, secret: "key" })),
+  "tampered body must fail",
+);
 
 console.log("Phone Service self-test: PASS");
