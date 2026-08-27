@@ -2,7 +2,8 @@
   "name": "forge",
   "private": true,
   "scripts": {
-    "check": "tsc --noEmit"
+    "check": "tsc --noEmit",
+    "phone-service:self-test": "node --experimental-strip-types src/phone-service/self-test.ts"
   },
   "devDependencies": {
     "typescript": "^5.9.2"
