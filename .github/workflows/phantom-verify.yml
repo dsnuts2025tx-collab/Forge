@@ -21,3 +21,9 @@ jobs:
       - run: npm install --ignore-scripts
       - run: npm run check
       - run: npm run phantom:capability-compiler:self-test
+      - name: Upload capability compiler proof
+        uses: actions/upload-artifact@v4
+        with:
+          name: phantom-capability-compiler-proof-${{ github.sha }}
+          path: artifacts/capability-compiler-proof.json
+          if-no-files-found: error
