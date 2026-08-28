@@ -1,3 +1,4 @@
+import { mkdirSync, writeFileSync } from 'node:fs';
 import {
   capabilityManifestIsProvisioningMinimal,
   compileCapability,
@@ -164,4 +165,28 @@ const activation = activateCapability(
 );
 assert(capabilityActivationSucceeded(activation), 'compiled capability must pass activation gates with valid proof');
 
+const proofArtifact = {
+  schema: 'phantom.capability-compiler.proof.v1',
+  result: 'PASS',
+  revision: process.env.GITHUB_SHA ?? 'local',
+  command: 'npm run phantom:capability-compiler:self-test',
+  configuration: {
+    node: process.version,
+    compiler: 'src/phantom/capability-compiler.ts',
+    graph: 'src/phantom/capability-graph.ts',
+    activation: 'src/phantom/capability-activation.ts',
+  },
+  checks: [
+    'verified-active reuse',
+    'inactive capability rejection',
+    'dependency-first composition',
+    'duplicate requirement rejection',
+    'dependency-cycle rejection',
+    'provisioning minimality',
+    'Capability Graph integration',
+    'activation proof gate',
+  ],
+};
+mkdirSync('artifacts', { recursive: true });
+writeFileSync('artifacts/capability-compiler-proof.json', `${JSON.stringify(proofArtifact, null, 2)}\n`, 'utf8');
 console.log('capability-compiler self-test: PASS');
