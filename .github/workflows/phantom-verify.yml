@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  typecheck:
+  phantom-proof:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,3 +20,4 @@ jobs:
           cache: npm
       - run: npm install --ignore-scripts
       - run: npm run check
+      - run: npm run phantom:capability-compiler:self-test
