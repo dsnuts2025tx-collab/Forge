@@ -4,12 +4,37 @@ export class ProviderAdapterError extends Error {
   constructor(code, message = code) { super(message); this.name = "ProviderAdapterError"; this.code = code; }
 }
 
+const liveConfigIsComplete = (config) => config?.state === PROVIDER_STATES.LIVE
+  && config.live === true
+  && config.authorization === "VERIFIED"
+  && Boolean(config.integrationId)
+  && Boolean(config.credentialRef)
+  && Boolean(config.agreementId)
+  && Array.isArray(config.supportedDeviceProfiles)
+  && config.supportedDeviceProfiles.length > 0;
+
 export class ProviderAdapterContract {
   constructor(config) {
     if (!config?.id || !["cellular", "satellite"].includes(config.type)) throw new ProviderAdapterError("invalid_provider");
-    this.config = Object.freeze({ ...config, state: config.state || PROVIDER_STATES.PENDING, live: config.state === PROVIDER_STATES.LIVE && config.live === true });
+    this.config = Object.freeze({
+      ...config,
+      state: config.state || PROVIDER_STATES.PENDING,
+      live: liveConfigIsComplete(config)
+    });
   }
-  status() { return { id: this.config.id, type: this.config.type, state: this.config.state, live: this.config.live, capabilities: this.config.capabilities || [] }; }
+  status() {
+    return {
+      id: this.config.id,
+      type: this.config.type,
+      state: this.config.state,
+      live: this.config.live,
+      capabilities: this.config.capabilities || [],
+      integrationId: this.config.integrationId || null,
+      credentialConfigured: Boolean(this.config.credentialRef),
+      agreementConfigured: Boolean(this.config.agreementId),
+      supportedDeviceProfiles: this.config.supportedDeviceProfiles || []
+    };
+  }
   assertLive() {
     if (!this.config.live || this.config.state !== PROVIDER_STATES.LIVE) throw new ProviderAdapterError("provider_not_live");
   }
