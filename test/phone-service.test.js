@@ -12,7 +12,16 @@ const domainFor = () => {
   const storage = new MemoryStorage();
   return { storage, domain: new PhoneServiceDomain({ get: async (k,f)=>{const v=await storage.get(k);return v??f}, put:(k,v)=>storage.put(k,v), append:async(k,v)=>{const a=(await storage.get(k))??[];a.push(v);return storage.put(k,a)} }) };
 };
-const liveProvider = (provider) => ({ ...provider, state: "LIVE", live: true, authorization: "VERIFIED", integrationId: "integration-test" });
+const liveProvider = (provider) => ({
+  ...provider,
+  state: "LIVE",
+  live: true,
+  authorization: "VERIFIED",
+  integrationId: "integration-test",
+  credentialRef: "runtime-secret-ref",
+  agreementId: "agreement-test",
+  supportedDeviceProfiles: ["default"]
+});
 
 test("customer enrollment persists a $0 entitlement", async () => {
   const { domain } = domainFor();
@@ -35,7 +44,7 @@ test("connectivity never requires Wi-Fi and does not fake unavailable providers"
 
 test("live cellular is preferred over live satellite when voice and SMS are available", async () => {
   const { domain } = domainFor();
-  const customer = await domain.createCustomer({ name: "Test", device: { cellular: true, satellite: true } });
+  const customer = await domain.createCustomer({ name: "Test", device: { cellular: true, satellite: true, profile: "default" } });
   await domain.enroll(customer.id);
   await domain.providers.set(liveProvider({ id: "cell", type: "cellular", capabilities: ["voice", "sms", "data"] }));
   await domain.providers.set(liveProvider({ id: "sat", type: "satellite", capabilities: ["emergency", "sms"] }));
@@ -45,10 +54,13 @@ test("live cellular is preferred over live satellite when voice and SMS are avai
   assert.equal(status.wifiRequired, false);
 });
 
-test("LIVE provider state requires verified authorization and an integration", async () => {
+test("LIVE provider state requires verified authorization, integration, credentials, agreement, and device compatibility", async () => {
   const { domain } = domainFor();
   await assert.rejects(() => domain.providers.set({ id: "unverified", type: "cellular", state: "LIVE", live: true, capabilities: ["voice", "sms"] }), /provider_authorization_required/);
   await assert.rejects(() => domain.providers.set({ id: "no-integration", type: "cellular", state: "LIVE", live: true, authorization: "VERIFIED", capabilities: ["voice", "sms"] }), /provider_integration_required/);
+  await assert.rejects(() => domain.providers.set({ id: "no-credentials", type: "cellular", state: "LIVE", live: true, authorization: "VERIFIED", integrationId: "i", capabilities: ["voice", "sms"] }), /provider_credentials_required/);
+  await assert.rejects(() => domain.providers.set({ id: "no-agreement", type: "cellular", state: "LIVE", live: true, authorization: "VERIFIED", integrationId: "i", credentialRef: "r", capabilities: ["voice", "sms"] }), /provider_agreement_required/);
+  await assert.rejects(() => domain.providers.set({ id: "no-device", type: "cellular", state: "LIVE", live: true, authorization: "VERIFIED", integrationId: "i", credentialRef: "r", agreementId: "a", capabilities: ["voice", "sms"] }), /provider_device_compatibility_required/);
 });
 
 test("cellular provider without voice/SMS is rejected instead of being presented as phone service", async () => {
@@ -63,7 +75,7 @@ test("cellular provider without voice/SMS is rejected instead of being presented
 
 test("satellite is selected only as fallback when cellular is unavailable", async () => {
   const { domain } = domainFor();
-  const customer = await domain.createCustomer({ name: "Test", device: { cellular: true, satellite: true } });
+  const customer = await domain.createCustomer({ name: "Test", device: { cellular: true, satellite: true, profile: "default" } });
   await domain.enroll(customer.id);
   await domain.providers.set(liveProvider({ id: "sat", type: "satellite", capabilities: ["emergency", "sms"] }));
   const status = await domain.selectConnectivity(customer.id, customer.device);
@@ -95,8 +107,13 @@ test("provider adapter contract refuses to impersonate a non-live provider", asy
   await assert.rejects(() => adapter.health(), (error) => error instanceof ProviderAdapterError && error.code === "provider_not_live");
 });
 
-test("live provider adapter exposes health but leaves real provisioning to the authorized integration", async () => {
-  const adapter = createProviderAdapter({ id: "cell-live", type: "cellular", state: "LIVE", live: true, capabilities: ["voice", "sms", "data"] });
+test("provider adapter exposes credential/agreement/device readiness without exposing secrets", async () => {
+  const adapter = createProviderAdapter({ id: "cell-live", type: "cellular", state: "LIVE", live: true, authorization: "VERIFIED", integrationId: "integration-test", credentialRef: "runtime-secret-ref", agreementId: "agreement-test", supportedDeviceProfiles: ["default"], capabilities: ["voice", "sms", "data"] });
+  assert.equal(adapter.status().live, true);
+  assert.equal(adapter.status().credentialConfigured, true);
+  assert.equal(adapter.status().agreementConfigured, true);
+  assert.deepEqual(adapter.status().supportedDeviceProfiles, ["default"]);
+  assert.equal("credentialRef" in adapter.status(), false);
   const health = await adapter.health();
   assert.equal(health.ok, true);
   await assert.rejects(() => adapter.provision(), (error) => error.code === "provisioning_not_implemented");
