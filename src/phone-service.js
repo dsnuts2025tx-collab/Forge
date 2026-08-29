@@ -2,6 +2,14 @@ export const PATHS = Object.freeze({ CELLULAR: "cellular", SATELLITE: "satellite
 
 const now = () => new Date().toISOString();
 const id = (prefix) => `${prefix}_${crypto.randomUUID()}`;
+const liveProviderReady = (provider) => provider?.live === true
+  && provider.state === "LIVE"
+  && provider.authorization === "VERIFIED"
+  && Boolean(provider.integrationId)
+  && Boolean(provider.credentialRef)
+  && Boolean(provider.agreementId)
+  && Array.isArray(provider.supportedDeviceProfiles)
+  && provider.supportedDeviceProfiles.length > 0;
 
 export class PhoneServiceStore {
   constructor(storage) { this.storage = storage; }
@@ -23,8 +31,11 @@ export class ProviderRegistry {
     if (provider.live === true || provider.state === "LIVE") {
       if (provider.authorization !== "VERIFIED") throw new Error("provider_authorization_required");
       if (!provider.integrationId) throw new Error("provider_integration_required");
+      if (!provider.credentialRef) throw new Error("provider_credentials_required");
+      if (!provider.agreementId) throw new Error("provider_agreement_required");
+      if (!Array.isArray(provider.supportedDeviceProfiles) || provider.supportedDeviceProfiles.length === 0) throw new Error("provider_device_compatibility_required");
     }
-    const next = providers.filter((p) => p.id !== provider.id).concat({ ...provider, live: provider.live === true && provider.state === "LIVE", authorization: provider.authorization || "UNVERIFIED" });
+    const next = providers.filter((p) => p.id !== provider.id).concat({ ...provider, live: liveProviderReady(provider), authorization: provider.authorization || "UNVERIFIED" });
     return this.store.put("providers", next);
   }
 }
@@ -57,13 +68,13 @@ export class PhoneServiceDomain {
 
   async selectConnectivity(customerId, device = {}) {
     const providers = await this.providers.list();
-    const cellular = providers.find((p) => p.type === "cellular" && p.live === true && p.state === "LIVE" && p.authorization === "VERIFIED" && p.integrationId && p.capabilities.includes("voice") && p.capabilities.includes("sms"));
-    if (cellular && device.cellular !== false) {
+    const cellular = providers.find((p) => p.type === "cellular" && liveProviderReady(p) && p.capabilities.includes("voice") && p.capabilities.includes("sms"));
+    if (cellular && device.cellular !== false && cellular.supportedDeviceProfiles.includes(device.profile || "default")) {
       const state = { customerId, path: PATHS.CELLULAR, providerId: cellular.id, reason: "authorized_cellular_available", capabilities: cellular.capabilities, wifiRequired: false, observedAt: now() };
       await this.store.put(`connectivity:${customerId}`, state); return state;
     }
-    const satellite = providers.find((p) => p.type === "satellite" && p.live === true && p.state === "LIVE" && p.authorization === "VERIFIED" && p.integrationId && p.capabilities.includes("sms"));
-    if (satellite && device.satellite === true) {
+    const satellite = providers.find((p) => p.type === "satellite" && liveProviderReady(p) && p.capabilities.includes("sms"));
+    if (satellite && device.satellite === true && satellite.supportedDeviceProfiles.includes(device.profile || "default")) {
       const state = { customerId, path: PATHS.SATELLITE, providerId: satellite.id, reason: "authorized_satellite_fallback", capabilities: satellite.capabilities, wifiRequired: false, observedAt: now() };
       await this.store.put(`connectivity:${customerId}`, state); return state;
     }
