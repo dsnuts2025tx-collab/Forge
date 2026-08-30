@@ -21,6 +21,12 @@ jobs:
       - run: npm install --ignore-scripts
       - run: npm run check
       - run: npm run phantom:capability-compiler:self-test
+      - name: Validate Insight production contracts
+        run: |
+          test -f products/phantom-insight/PHIA_RUNTIME_CONTRACT.ts
+          test -f products/phantom-insight/PRODUCTION_GATE_RUNBOOK.md
+          grep -q 'Implemented != Tested != Deployed != Production-Verified' products/phantom-insight/PRODUCTION_GATE_RUNBOOK.md
+          echo 'Insight production contracts present'
       - name: Upload capability compiler proof
         uses: actions/upload-artifact@v4
         with:
