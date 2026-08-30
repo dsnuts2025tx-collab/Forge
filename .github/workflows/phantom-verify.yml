@@ -20,6 +20,7 @@ jobs:
           cache: npm
       - run: npm install --ignore-scripts
       - run: npm run check
+      - run: npm run phantom:overdrive:verify
       - run: npm run phantom:capability-compiler:self-test
       - name: Upload capability compiler proof
         uses: actions/upload-artifact@v4
