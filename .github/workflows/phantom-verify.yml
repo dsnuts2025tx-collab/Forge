@@ -19,6 +19,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm install --ignore-scripts
+      - run: npm run workflow:verify
       - run: npm run check
       - run: npm run phantom:overdrive:verify
       - run: npm run phantom:capability-compiler:self-test
