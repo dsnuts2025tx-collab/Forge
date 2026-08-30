@@ -6,6 +6,7 @@ const workflow = readFileSync(workflowPath, "utf8");
 const required = [
   'name: Deploy Forge Runtime',
   'branches:\n      - main',
+  "if: github.ref == 'refs/heads/main'",
   'environment: production',
   'CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}',
   'CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}',
