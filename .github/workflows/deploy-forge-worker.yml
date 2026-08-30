@@ -55,13 +55,23 @@ jobs:
     timeout-minutes: 15
     environment: production
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Download verified Forge package
+        uses: actions/download-artifact@v4
+        with:
+          name: forge-production-package
+          path: dist
+      - name: Verify packaged runtime
+        run: |
+          test -f dist/worker.js
+          test -f dist/wrangler.jsonc
+          test -f dist/BUILD.txt
+          grep -Fq 'Forge Engine 6.0.0-PLATINUM' dist/BUILD.txt
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Deploy Forge Engine to Cloudflare Workers
+      - name: Deploy verified Forge package to Cloudflare Workers
+        working-directory: dist
         run: npx --yes wrangler@4.123.0 deploy --config wrangler.jsonc
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
