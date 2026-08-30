@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "check": "tsc --noEmit",
+    "workflow:verify": "node scripts/verify-phantom-workflow.mjs",
     "phantom:capability-compiler:self-test": "node --experimental-strip-types src/phantom/capability-compiler.self-test.ts",
     "phone-service:self-test": "node --experimental-strip-types src/phone-service/self-test.ts",
     "phantom:overdrive:verify": "node scripts/verify-overdrive.mjs"
