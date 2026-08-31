@@ -62,4 +62,5 @@ export class PhoneServiceDO {
   }
 }
 
+export { PhoneServiceDO as defaultDurableObject };
 export default { async fetch(request, env) { const id = env.PHONE_SERVICE.idFromName("primary"); return env.PHONE_SERVICE.get(id).fetch(request); } };
