@@ -8,6 +8,7 @@ const liveProviderReady = (provider) => provider?.live === true
   && Boolean(provider.integrationId)
   && Boolean(provider.credentialRef)
   && Boolean(provider.agreementId)
+  && Boolean(provider.verificationEvidenceRef)
   && Array.isArray(provider.supportedDeviceProfiles)
   && provider.supportedDeviceProfiles.length > 0;
 
@@ -33,6 +34,7 @@ export class ProviderRegistry {
       if (!provider.integrationId) throw new Error("provider_integration_required");
       if (!provider.credentialRef) throw new Error("provider_credentials_required");
       if (!provider.agreementId) throw new Error("provider_agreement_required");
+      if (!provider.verificationEvidenceRef) throw new Error("provider_verification_evidence_required");
       if (!Array.isArray(provider.supportedDeviceProfiles) || provider.supportedDeviceProfiles.length === 0) throw new Error("provider_device_compatibility_required");
     }
     const next = providers.filter((p) => p.id !== provider.id).concat({ ...provider, live: liveProviderReady(provider), authorization: provider.authorization || "UNVERIFIED" });
