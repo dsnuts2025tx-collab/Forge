@@ -20,6 +20,7 @@ const liveProvider = (provider) => ({
   integrationId: "integration-test",
   credentialRef: "runtime-secret-ref",
   agreementId: "agreement-test",
+  verificationEvidenceRef: "verification-test",
   supportedDeviceProfiles: ["default"]
 });
 
@@ -54,13 +55,14 @@ test("live cellular is preferred over live satellite when voice and SMS are avai
   assert.equal(status.wifiRequired, false);
 });
 
-test("LIVE provider state requires verified authorization, integration, credentials, agreement, and device compatibility", async () => {
+test("LIVE provider state requires verified authorization, integration, credentials, agreement, verification evidence, and device compatibility", async () => {
   const { domain } = domainFor();
   await assert.rejects(() => domain.providers.set({ id: "unverified", type: "cellular", state: "LIVE", live: true, capabilities: ["voice", "sms"] }), /provider_authorization_required/);
   await assert.rejects(() => domain.providers.set({ id: "no-integration", type: "cellular", state: "LIVE", live: true, authorization: "VERIFIED", capabilities: ["voice", "sms"] }), /provider_integration_required/);
   await assert.rejects(() => domain.providers.set({ id: "no-credentials", type: "cellular", state: "LIVE", live: true, authorization: "VERIFIED", integrationId: "i", capabilities: ["voice", "sms"] }), /provider_credentials_required/);
   await assert.rejects(() => domain.providers.set({ id: "no-agreement", type: "cellular", state: "LIVE", live: true, authorization: "VERIFIED", integrationId: "i", credentialRef: "r", capabilities: ["voice", "sms"] }), /provider_agreement_required/);
-  await assert.rejects(() => domain.providers.set({ id: "no-device", type: "cellular", state: "LIVE", live: true, authorization: "VERIFIED", integrationId: "i", credentialRef: "r", agreementId: "a", capabilities: ["voice", "sms"] }), /provider_device_compatibility_required/);
+  await assert.rejects(() => domain.providers.set({ id: "no-verification", type: "cellular", state: "LIVE", live: true, authorization: "VERIFIED", integrationId: "i", credentialRef: "r", agreementId: "a", capabilities: ["voice", "sms"] }), /provider_verification_evidence_required/);
+  await assert.rejects(() => domain.providers.set({ id: "no-device", type: "cellular", state: "LIVE", live: true, authorization: "VERIFIED", integrationId: "i", credentialRef: "r", agreementId: "a", verificationEvidenceRef: "v", capabilities: ["voice", "sms"] }), /provider_device_compatibility_required/);
 });
 
 test("cellular provider without voice/SMS is rejected instead of being presented as phone service", async () => {
@@ -107,7 +109,7 @@ test("provider adapter contract refuses to impersonate a non-live provider", asy
   await assert.rejects(() => adapter.health(), (error) => error instanceof ProviderAdapterError && error.code === "provider_not_live");
 });
 
-test("provider adapter exposes credential/agreement/device readiness without exposing secrets", async () => {
+test("provider adapter exposes readiness without exposing secrets", async () => {
   const adapter = createProviderAdapter({ id: "cell-live", type: "cellular", state: "LIVE", live: true, authorization: "VERIFIED", integrationId: "integration-test", credentialRef: "runtime-secret-ref", agreementId: "agreement-test", supportedDeviceProfiles: ["default"], capabilities: ["voice", "sms", "data"] });
   assert.equal(adapter.status().live, true);
   assert.equal(adapter.status().credentialConfigured, true);
