@@ -12,6 +12,7 @@ const requiredCommands = [
   'npm run phantom:overdrive:verify',
   'npm run phantom:capability-compiler:self-test',
   'npm run phone-service:self-test',
+  'npm run phantom:production-control:self-test',
 ];
 
 for (const command of requiredCommands) {
@@ -25,6 +26,7 @@ const scriptNames = [
   'phantom:overdrive:verify',
   'phantom:capability-compiler:self-test',
   'phone-service:self-test',
+  'phantom:production-control:self-test',
 ];
 
 for (const name of scriptNames) {
