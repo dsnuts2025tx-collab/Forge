@@ -23,7 +23,7 @@ export class PhoneServiceDO {
       if (request.method === "OPTIONS") return cors(new Response(null, { status: 204 }), this.env);
       const url = new URL(request.url); const path = url.pathname;
       if (request.method === "GET" && path === "/") return new Response(appHtml, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
-      if (request.method === "GET" && path === "/health") return cors(json({ ok: true, service: "free-phone-service", wifiRequired: false, at: new Date().toISOString() }), this.env);
+      if (request.method === "GET" && path === "/health") return cors(json({ ok: true, service: "free-phone-service", controlPlane: true, wifiRequired: false, at: new Date().toISOString() }), this.env);
       if (request.method === "POST" && path === "/phone/v1/customers") {
         if (!(await this.allowCreate(request))) return cors(json({ error: "rate_limited" }, 429), this.env);
         const idempotencyKey = request.headers.get("x-idempotency-key");
@@ -55,6 +55,7 @@ export class PhoneServiceDO {
       if (path === "/phone/v1/usage/events" && request.method === "POST") return adminAuth(request, this.env) ? cors(json(await this.domain.addUsage(await request.json()), 201), this.env) : unauthorized(this.env);
       if (path === "/phone/v1/accounting/coverage" && request.method === "GET") return cors(json(await this.domain.accounting()), this.env);
       if (path === "/phone/v1/accounting/funding" && request.method === "POST") return adminAuth(request, this.env) ? cors(json(await this.domain.setFunding(await request.json())), this.env) : unauthorized(this.env);
+      if (path === "/phone/v1/accounting/reconcile" && request.method === "POST") return adminAuth(request, this.env) ? cors(json(await this.domain.reconcileCosts(await request.json())), this.env) : unauthorized(this.env);
       if (path === "/phone/v1/admin/audit" && request.method === "GET") return adminAuth(request, this.env) ? cors(json(await this.domain.audit()), this.env) : unauthorized(this.env);
       return cors(json({ error: "not_found" }, 404), this.env);
     } catch (error) { return cors(json({ error: error?.message || "internal_error" }, 400), this.env); }
