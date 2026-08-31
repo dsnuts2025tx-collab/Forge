@@ -69,7 +69,11 @@ export class PhoneServiceDomain {
   async getStatus(customerId) { return this.store.get(`connectivity:${customerId}`, { customerId, path: PATHS.UNAVAILABLE, reason: "not_enrolled", wifiRequired: false, observedAt: now() }); }
 
   async selectConnectivity(customerId, device = {}) {
+    const entitlement = await this.store.get(`entitlement:${customerId}`, null);
+    if (!entitlement || entitlement.state !== "active" || entitlement.price !== 0) throw new Error("active_free_entitlement_required");
     const providers = await this.providers.list();
+    const coverage = await this.accounting();
+    if (coverage.expectedCost > 0 && coverage.coverageRatio !== null && coverage.coverageRatio < 1) return this.persistUnavailable(customerId, "funding_shortfall");
     const cellular = providers.find((p) => p.type === "cellular" && liveProviderReady(p) && p.capabilities.includes("voice") && p.capabilities.includes("sms"));
     if (cellular && device.cellular !== false && cellular.supportedDeviceProfiles.includes(device.profile || "default")) {
       const state = { customerId, path: PATHS.CELLULAR, providerId: cellular.id, reason: "authorized_cellular_available", capabilities: cellular.capabilities, wifiRequired: false, observedAt: now() };
@@ -80,27 +84,56 @@ export class PhoneServiceDomain {
       const state = { customerId, path: PATHS.SATELLITE, providerId: satellite.id, reason: "authorized_satellite_fallback", capabilities: satellite.capabilities, wifiRequired: false, observedAt: now() };
       await this.store.put(`connectivity:${customerId}`, state); return state;
     }
-    return this.getStatus(customerId);
+    return this.persistUnavailable(customerId, "no_authorized_provider");
+  }
+
+  async persistUnavailable(customerId, reason) {
+    const state = { customerId, path: PATHS.UNAVAILABLE, reason, wifiRequired: false, observedAt: now() };
+    await this.store.put(`connectivity:${customerId}`, state);
+    return state;
   }
 
   async getUsage(customerId) { return (await this.store.get("usage", [])).filter((event) => event.customerId === customerId); }
 
   async addUsage(event) {
-    if (!event?.customerId || !event?.eventType) throw new Error("invalid_usage_event");
+    if (!event?.customerId || !event?.eventType || !event?.providerId) throw new Error("invalid_usage_event");
     const record = { id: id("use"), ...event, at: now() };
     await this.store.append("usage", record);
-    if (event.cost !== undefined) await this.store.append("costs", { id: id("cost"), usageId: record.id, providerId: event.providerId || null, expected: Number(event.cost) || 0, actual: null, currency: event.currency || "USD", at: now() });
+    if (event.expectedCost !== undefined || event.cost !== undefined) await this.store.append("costs", { id: id("cost"), usageId: record.id, providerId: event.providerId, expected: Number(event.expectedCost ?? event.cost) || 0, actual: null, currency: event.currency || "USD", reconciliationState: "UNRECONCILED", providerReference: event.providerReference || null, at: now() });
     return record;
+  }
+
+  async reconcileCosts(input) {
+    if (!Array.isArray(input?.records) || input.records.length === 0) throw new Error("billing_records_required");
+    const costs = await this.store.get("costs", []);
+    const updates = new Map(input.records.filter((r) => r?.usageId && r?.providerReference).map((r) => [r.usageId, r]));
+    const next = costs.map((cost) => {
+      const bill = updates.get(cost.usageId);
+      if (!bill) return cost;
+      if (!Number.isFinite(Number(bill.actualCost)) || Number(bill.actualCost) < 0) throw new Error("invalid_authoritative_cost");
+      return { ...cost, actual: Number(bill.actualCost), currency: bill.currency || cost.currency, providerReference: bill.providerReference, reconciliationState: "RECONCILED", reconciledAt: now() };
+    });
+    const unmatched = input.records.filter((r) => !costs.some((c) => c.usageId === r.usageId));
+    if (unmatched.length) throw new Error("billing_usage_reference_unmatched");
+    await this.store.put("costs", next);
+    await this.store.append("audit", { id: id("aud"), action: "costs.reconcile", records: input.records.length, at: now() });
+    return { reconciled: input.records.length, unreconciled: next.filter((c) => c.reconciliationState !== "RECONCILED").length, costs: next };
   }
 
   async accounting() {
     const costs = await this.store.get("costs", []);
     const funding = await this.store.get("funding", { committed: 0, received: 0, allocated: 0 });
     const expected = costs.reduce((sum, c) => sum + Number(c.expected || 0), 0);
+    const actualReconciled = costs.filter((c) => c.reconciliationState === "RECONCILED").reduce((sum, c) => sum + Number(c.actual || 0), 0);
+    const unresolved = costs.filter((c) => c.reconciliationState !== "RECONCILED").reduce((sum, c) => sum + Number(c.expected || 0), 0);
     const available = Number(funding.received || 0) + Number(funding.committed || 0) - Number(funding.allocated || 0);
-    return { expectedCost: expected, availableFunding: available, coverageRatio: expected ? available / expected : null, shortfall: Math.max(0, expected - available), funding };
+    const coverageBasis = actualReconciled + unresolved;
+    return { expectedCost: expected, reconciledActualCost: actualReconciled, unreconciledExpectedCost: unresolved, availableFunding: available, coverageRatio: coverageBasis ? available / coverageBasis : null, shortfall: Math.max(0, coverageBasis - available), funding, fundingSufficient: coverageBasis <= available };
   }
 
-  async setFunding(funding) { return this.store.put("funding", { ...funding, updatedAt: now() }); }
+  async setFunding(funding) {
+    for (const key of ["committed", "received", "allocated"]) if (funding[key] !== undefined && (!Number.isFinite(Number(funding[key])) || Number(funding[key]) < 0)) throw new Error("invalid_funding_amount");
+    return this.store.put("funding", { ...funding, updatedAt: now() });
+  }
   async audit() { return this.store.get("audit", []); }
 }
