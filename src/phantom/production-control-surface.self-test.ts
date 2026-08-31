@@ -27,28 +27,33 @@ const verifiedEvidence: DeploymentEvidence = {
   artifactVerified: true,
   authorizationVerified: true,
   rollbackReady: true,
+  independentVerificationPassed: true,
   notes: ["Reference self-test only; no production mutation performed."],
 };
 
 assertProductionReleaseAllowed(manifest, verifiedEvidence);
 const record = createDeploymentRecord(manifest, verifiedEvidence);
 
-if (record.status !== "verified" || record.environment !== "production") {
+if (
+  record.status !== "verified" ||
+  record.environment !== "production" ||
+  record.independentVerificationPassed !== true
+) {
   throw new Error("Production control surface self-test failed.");
 }
 
 const blockedEvidence: DeploymentEvidence = {
   ...verifiedEvidence,
-  releaseId: "different-release",
+  independentVerificationPassed: false,
 };
 
 let blocked = false;
 try {
   assertProductionReleaseAllowed(manifest, blockedEvidence);
 } catch (error) {
-  blocked = error instanceof Error && error.message.includes("identity mismatch");
+  blocked = error instanceof Error && error.message.includes("independent verification");
 }
 
-if (!blocked) throw new Error("Production control surface failed to block mismatched evidence.");
+if (!blocked) throw new Error("Production control surface failed to block missing independent verification.");
 
 console.log("Phantom production control surface self-test: PASS");
