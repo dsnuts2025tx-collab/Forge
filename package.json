@@ -8,7 +8,8 @@
     "phantom:capability-compiler:self-test": "node --experimental-strip-types src/phantom/capability-compiler.self-test.ts",
     "phone-service:self-test": "node --experimental-strip-types src/phone-service/self-test.ts",
     "phantom:overdrive:verify": "node scripts/verify-overdrive.mjs",
-    "phantom:production-control:self-test": "node --experimental-strip-types src/phantom/production-control-surface.self-test.ts"
+    "phantom:production-control:self-test": "node --experimental-strip-types src/phantom/production-control-surface.self-test.ts",
+    "phantom:production-authority:verify": "node scripts/verify-phantom-production-authority-binding.mjs"
   },
   "devDependencies": {
     "typescript": "^5.9.2"
