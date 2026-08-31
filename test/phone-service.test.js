@@ -94,13 +94,38 @@ test("customer usage is returned from the persistent usage ledger", async () => 
   assert.equal(usage[0].cost, 10);
 });
 
-test("funding coverage reports a shortfall", async () => {
+test("funding coverage reports a shortfall and blocks funded connectivity", async () => {
   const { domain } = domainFor();
-  await domain.addUsage({ customerId: "cus_test", providerId: "p1", eventType: "data", cost: 10 });
+  const customer = await domain.createCustomer({ name: "Test", device: { cellular: true, profile: "default" } });
+  await domain.enroll(customer.id);
+  await domain.providers.set(liveProvider({ id: "cell", type: "cellular", capabilities: ["voice", "sms", "data"] }));
+  await domain.addUsage({ customerId: customer.id, providerId: "cell", eventType: "data", cost: 10 });
   await domain.setFunding({ committed: 4, received: 0, allocated: 0 });
   const coverage = await domain.accounting();
   assert.equal(coverage.expectedCost, 10);
   assert.equal(coverage.shortfall, 6);
+  assert.equal(coverage.fundingSufficient, false);
+  const status = await domain.selectConnectivity(customer.id, customer.device);
+  assert.equal(status.path, "unavailable");
+  assert.equal(status.reason, "funding_shortfall");
+});
+
+test("authoritative billing records reconcile usage costs without rewriting usage history", async () => {
+  const { domain } = domainFor();
+  const usage = await domain.addUsage({ customerId: "cus_test", providerId: "p1", eventType: "data", expectedCost: 10, providerReference: "usage-1" });
+  const result = await domain.reconcileCosts({ records: [{ usageId: usage.id, providerReference: "bill-1", actualCost: 8.5, currency: "USD" }] });
+  assert.equal(result.reconciled, 1);
+  assert.equal(result.unreconciled, 0);
+  assert.equal(result.costs[0].actual, 8.5);
+  assert.equal(result.costs[0].reconciliationState, "RECONCILED");
+  assert.equal((await domain.getUsage("cus_test"))[0].expectedCost, 10);
+});
+
+test("unmatched or invalid authoritative billing records fail closed", async () => {
+  const { domain } = domainFor();
+  const usage = await domain.addUsage({ customerId: "cus_test", providerId: "p1", eventType: "data", cost: 10 });
+  await assert.rejects(() => domain.reconcileCosts({ records: [{ usageId: "missing", providerReference: "bill-x", actualCost: 1 }] }), /billing_usage_reference_unmatched/);
+  await assert.rejects(() => domain.reconcileCosts({ records: [{ usageId: usage.id, providerReference: "bill-x", actualCost: -1 }] }), /invalid_authoritative_cost/);
 });
 
 test("provider adapter contract refuses to impersonate a non-live provider", async () => {
