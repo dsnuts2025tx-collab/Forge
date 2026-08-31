@@ -42,6 +42,7 @@ export interface DeploymentEvidence {
   artifactVerified: boolean;
   authorizationVerified: boolean;
   rollbackReady: boolean;
+  independentVerificationPassed: boolean;
   notes: string[];
 }
 
@@ -101,8 +102,12 @@ export function assertProductionReleaseAllowed(
     throw new Error("Production release blocked: smoke-test evidence missing.");
   }
 
-  if (policy.productionRequiresIndependentVerification && evidence.status !== "verified") {
+  if (policy.productionRequiresIndependentVerification && !evidence.independentVerificationPassed) {
     throw new Error("Production release blocked: independent verification not complete.");
+  }
+
+  if (policy.productionRequiresIndependentVerification && evidence.status !== "verified") {
+    throw new Error("Production release blocked: verification status not complete.");
   }
 }
 
@@ -124,6 +129,7 @@ export function createDeploymentRecord(
     artifactVerified: evidence.artifactVerified,
     authorizationVerified: evidence.authorizationVerified,
     rollbackReady: evidence.rollbackReady,
+    independentVerificationPassed: evidence.independentVerificationPassed,
     createdAt: manifest.createdAt,
     completedAt: evidence.completedAt ?? null,
   };
