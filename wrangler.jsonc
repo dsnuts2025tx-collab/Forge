@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "phantom-forge-engine",
-  "main": "./worker.js",
+  "main": "./runtime-entry.js",
   "compatibility_date": "2026-08-20",
   "workers_dev": true,
   "assets": {
