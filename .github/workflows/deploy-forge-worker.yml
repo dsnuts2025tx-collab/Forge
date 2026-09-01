@@ -19,6 +19,7 @@ jobs:
       - name: Validate Forge runtime
         run: |
           test -f worker.js
+          test -f runtime-entry.js
           test -f wrangler.jsonc
           test -f index.html
           test -f builder.html
@@ -40,8 +41,21 @@ jobs:
       - name: Create deployable package
         run: |
           mkdir -p dist
-          cp worker.js wrangler.jsonc index.html builder.html dashboard.html projects.html settings.html generator.html playground.html billing.html dist/
+          cp worker.js runtime-entry.js wrangler.jsonc index.html builder.html dashboard.html projects.html settings.html generator.html playground.html billing.html dist/
           echo "Forge Engine 6.0.0-PLATINUM" > dist/BUILD.txt
+          node <<'NODE'
+          const fs = require('fs');
+          const crypto = require('crypto');
+          const files = ['worker.js','runtime-entry.js','wrangler.jsonc','BUILD.txt'];
+          const sha256 = file => crypto.createHash('sha256').update(fs.readFileSync(`dist/${file}`)).digest('hex');
+          const release = {
+            engine: 'Forge Engine 6.0.0-PLATINUM',
+            sourceCommit: process.env.GITHUB_SHA,
+            generatedAt: new Date().toISOString(),
+            artifacts: Object.fromEntries(files.map(file => [file, sha256(file)])),
+          };
+          fs.writeFileSync('dist/RELEASE.json', JSON.stringify(release, null, 2) + '\n');
+          NODE
       - name: Upload Forge package
         uses: actions/upload-artifact@v4
         with:
@@ -63,16 +77,63 @@ jobs:
       - name: Verify packaged runtime
         run: |
           test -f dist/worker.js
+          test -f dist/runtime-entry.js
           test -f dist/wrangler.jsonc
           test -f dist/BUILD.txt
+          test -f dist/RELEASE.json
           grep -Fq 'Forge Engine 6.0.0-PLATINUM' dist/BUILD.txt
+          grep -Fq "${GITHUB_SHA}" dist/RELEASE.json
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
       - name: Deploy verified Forge package to Cloudflare Workers
         working-directory: dist
-        run: npx --yes wrangler@4.123.0 deploy --config wrangler.jsonc
+        run: |
+          set -o pipefail
+          npx --yes wrangler@4.123.0 deploy --config wrangler.jsonc 2>&1 | tee ../deploy.log
+      - name: Discover deployed endpoint
+        id: endpoint
+        run: |
+          URL=$(grep -Eo 'https://[^[:space:]<>]+\.workers\.dev' deploy.log | tail -1 || true)
+          if [ -z "$URL" ]; then
+            echo "No workers.dev endpoint was emitted by Wrangler" >&2
+            exit 1
+          fi
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          echo "Discovered endpoint: $URL"
+      - name: Live health readiness release proof
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          FORGE_URL: ${{ steps.endpoint.outputs.url }}
+        run: |
+          set -euo pipefail
+          health_code=$(curl -sS -o health.json -w '%{http_code}' "$FORGE_URL/health")
+          ready_code=$(curl -sS -o ready.json -w '%{http_code}' "$FORGE_URL/ready")
+          release_code=$(curl -sS -o release.json -w '%{http_code}' "$FORGE_URL/release")
+          test "$health_code" = "200"
+          test "$ready_code" = "200"
+          test "$release_code" = "200"
+          grep -Fq '"ok":true' health.json
+          grep -Fq '"ok":true' ready.json
+          grep -Fq '"ok":true' release.json
+          grep -Fq "${GITHUB_SHA}" release.json
+          grep -Fq '"worker.js"' release.json
+          grep -Fq '"runtime-entry.js"' release.json
+          echo "PHANTOM_LIVE_RUNTIME_PROOF_PASSED"
+          echo "endpoint=$FORGE_URL"
+          echo "health=$health_code"
+          echo "ready=$ready_code"
+          echo "release=$release_code"
+          echo "artifact-footprint=source-commit+sha256-manifest"
+      - name: Publish proof summary
+        if: always()
+        env:
+          FORGE_URL: ${{ steps.endpoint.outputs.url }}
+        run: |
+          {
+            echo "## Forge Runtime Proof"
+            echo "- Endpoint: ${FORGE_URL:-unresolved}"
+            echo "- Source commit: ${GITHUB_SHA}"
+            echo "- Required probes: /health /ready /release"
+            echo "- Artifact identity: RELEASE.json with SHA-256 manifest"
+          } >> "$GITHUB_STEP_SUMMARY"
