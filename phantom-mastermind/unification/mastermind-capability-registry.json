@@ -1,0 +1,70 @@
+{
+  "schema": "phantom.mastermind.capability-registry/v1",
+  "status": "FOUNDATIONAL_STAGING",
+  "authority": "Phantom Mastermind",
+  "canonicality": "external-staging-only",
+  "canonicalSystem": "phantom-owned",
+  "pathway": "Phantom Pathway",
+  "evidence": "Phantom Footprints",
+  "capabilities": [
+    {
+      "id": "engineering.detective",
+      "name": "Engineering Detective",
+      "class": "diagnosis",
+      "operations": ["inspect", "reproduce", "correlate", "root-cause", "recommend"],
+      "requires": ["read-authorized-state", "evidence-access", "sandbox-when-needed"],
+      "never": ["destructive-mutation-without-authorization", "evidence-destruction", "authority-bypass"]
+    },
+    {
+      "id": "engineering.emt",
+      "name": "Engineering EMT",
+      "class": "emergency-response",
+      "operations": ["stabilize", "isolate", "checkpoint", "repair", "rollback", "verify", "recover"],
+      "priority": "critical",
+      "requires": ["Mastermind-authorization", "incident-footprint", "recovery-checkpoint", "verification"],
+      "never": ["unsafe-force-mutation", "security-bypass", "unverified-live-claim"]
+    },
+    {
+      "id": "intent.translator",
+      "name": "Mastermind Intent Translator",
+      "class": "orchestration",
+      "operations": ["parse", "normalize", "constraint-preservation", "capability-routing", "directive-generation"],
+      "output": "MastermindDirective",
+      "mustPreserve": ["negative-constraints", "priority", "scope", "privacy", "locked-invariants"]
+    },
+    {
+      "id": "memory.fabric",
+      "name": "Phantom Mass Memory Fabric",
+      "class": "state-and-knowledge",
+      "operations": ["ingest", "index", "retrieve", "link", "version", "conflict-detect", "compact", "restore", "export"],
+      "layers": ["canonical-config", "architecture", "project-state", "evidence", "decisions", "operations", "research", "working-context"]
+    },
+    {
+      "id": "production.operations",
+      "name": "Production Operations",
+      "class": "mastermind-first-class",
+      "operations": ["observe", "deploy", "verify", "operate", "incident-response", "rollback", "recover", "capacity-plan"]
+    },
+    {
+      "id": "gadget.fabric",
+      "name": "Phantom Gadget Fabric",
+      "class": "capability-execution",
+      "operations": ["discover", "authorize", "execute", "observe", "verify", "evidence", "audit", "recover", "lock"]
+    }
+  ],
+  "globalInvariants": [
+    "Mastermind-is-highest-operational-authority",
+    "Pathway-is-canonical-execution-chain",
+    "Footprints-required-for-attributable-operations",
+    "Phantom-owned-canonical-source",
+    "Phantom-owned-canonical-deployment-plane",
+    "No-GitHub-canonical-dependency",
+    "No-Vercel-canonical-dependency",
+    "No-external-provider-as-canonical-authority",
+    "Fail-closed-on-missing-authority-or-proof",
+    "No-LIVE-claim-without-live-verification",
+    "Public-control-plane-is-denied",
+    "Public-mutation-is-denied",
+    "Rollback-preserves-evidence"
+  ]
+}
