@@ -1,0 +1,597 @@
+# PHANTOM MASTERmind — FORGE — INSIGHT — PLATFORM UNIFIED CONFIGURATION
+# Version: 1.0.0-unified-staging
+# Date: 2026-09-02
+#
+# IMPORTANT:
+# This is an external staging representation of the unified configuration.
+# It MUST NOT become a competing canonical configuration. The Phantom-owned
+# canonical configuration authority remains authoritative and this file must
+# be reconciled into that authority through its approved lock/promotion path.
+
+phantom:
+  name: Phantom
+  authority:
+    operational: Phantom Mastermind
+    execution: Phantom Pathway
+    evidence: Phantom Footprints
+  canonical_control:
+    source: phantom-owned
+    configuration: phantom-owned
+    deployment_plane: phantom-owned
+    runtime: phantom-owned
+    data: phantom-owned
+    business_logic: phantom-owned
+  external_platform_policy:
+    github: boundary_adapter_only
+    vercel: boundary_adapter_only
+    cloudflare: boundary_adapter_only
+    replit: boundary_adapter_only
+    other_providers: boundary_adapter_only
+    rule: no_external_provider_is_canonical_authority
+
+mastermind:
+  role: highest_operational_authority
+  mission: >-
+    Build, maintain, verify, operate, improve and keep Phantom applications
+    production-ready under one authoritative configuration and evidence chain.
+  operating_loop:
+    - OBSERVE
+    - UNDERSTAND
+    - REASON
+    - SIMULATE
+    - TEST
+    - CANARY
+    - DEPLOY
+    - MEASURE
+    - LEARN
+    - IMPROVE
+  command_translation:
+    input: natural_language_user_intent
+    translator: mastermind.intent_translator
+    output: MastermindDirective
+    preserve:
+      - objective
+      - scope
+      - priority
+      - constraints
+      - prohibitions
+      - privacy
+      - locked_invariants
+  memory:
+    mode: persistent_mass_memory
+    required: true
+    layers:
+      - canonical_configuration
+      - architecture
+      - project_state
+      - release_state
+      - deployment_state
+      - evidence
+      - decisions
+      - incidents
+      - recovery_history
+      - research
+      - worker_knowledge
+      - task_context
+    retrieval:
+      - exact
+      - keyword
+      - semantic
+      - temporal
+      - entity
+      - dependency
+      - incident
+      - decision
+    integrity:
+      provenance_required: true
+      source_identity_required: true
+      version_required: true
+      conflict_detection_required: true
+      immutable_locked_history: true
+      point_in_time_restore: true
+      exportable: true
+    rule: never silently convert inference into canonical fact
+
+capability_fabric:
+  name: Phantom Gadget Fabric
+  authority: Phantom Mastermind
+  pathway: Phantom Pathway
+  functions:
+    - discover
+    - authorize
+    - execute
+    - observe
+    - verify
+    - evidence
+    - audit
+    - recover
+    - lock
+  execution_policy:
+    capability_scoped: true
+    authenticated: true
+    authorized: true
+    idempotent: true
+    footprinted: true
+
+engineering:
+  detective:
+    id: engineering.detective
+    purpose: diagnose_any_authorized_software_or_infrastructure_problem
+    loop:
+      - inspect
+      - preserve_evidence
+      - reproduce
+      - correlate
+      - hypothesize
+      - test
+      - root_cause
+      - repair_recommendation
+  emt:
+    id: engineering.emt
+    purpose: emergency_stabilization_repair_and_recovery
+    priority: critical
+    loop:
+      - detect
+      - classify
+      - freeze_unsafe_mutation
+      - checkpoint
+      - isolate
+      - repair_or_rollback
+      - retest
+      - verify
+      - restore
+      - footprint
+      - learn
+    invariant: emergency_speed_never_bypasses_security_authority_or_evidence
+  intent_translator:
+    id: mastermind.intent_translator
+    purpose: direct_user_intent_to_mastermind
+    stages:
+      - parse
+      - normalize
+      - extract_constraints
+      - resolve_configuration
+      - route_capabilities
+      - create_directive
+      - execute_through_pathway
+      - report_verified_result
+
+phantom_x_platform:
+  name: Phantom X
+  role: first_party_launch_deploy_command_center
+  purpose: >-
+    Unified command center for BUILD, VERIFY, PROVE, LAUNCH, DEPLOY, LAND,
+    LIVE VERIFY, OPERATE, AUDIT and ROLLBACK.
+  promotion_chain:
+    - SOURCE
+    - REPOSITORY_AUTHORITY
+    - BUILD
+    - TEST
+    - PROVE
+    - APPROVE
+    - LAUNCH
+    - DEPLOY
+    - LAND
+    - LIVE_VERIFY
+    - OPERATE
+    - AUDIT_OR_ROLLBACK
+  command_states:
+    - DRAFT
+    - BUILDING
+    - TESTING
+    - VERIFYING
+    - PROVEN
+    - APPROVED
+    - LAUNCHING
+    - DEPLOYING
+    - LANDING
+    - LIVE
+    - DEGRADED
+    - ROLLBACK
+    - RETIRED
+  authorities:
+    repository_creation: Repository Creation Authority Agent
+    repository_boundary: Repository Precinct
+    build: Build Authority
+    verification: Verification Authority
+    launch: Launch Authority
+    deployment: Deployment Authority
+    land: Land Authority
+    runtime: Runtime Authority
+
+forge:
+  name: Forge
+  version: v2.1
+  role: public_website_and_application_builder
+  engine_role: build_test_validate_deploy_engine
+  source_language: TypeScript
+  capabilities:
+    - built_in_templates
+    - preconfigured_stacks
+    - model_and_worker_configuration
+    - drag_and_drop_builder
+    - app_workflows
+    - api_building
+    - isolated_testing
+    - version_control
+    - worker_creation
+    - integration_hub
+    - security_by_design
+    - one_click_deploy_intent
+  fast_launch:
+    objective: seconds_class_launch_for_approved_low_risk_sites
+    mechanisms:
+      - warm_build_workers
+      - parallel_build_tasks
+      - dependency_cache
+      - artifact_cache
+      - reusable_verified_templates
+      - incremental_builds
+      - preflight_validation
+      - automated_smoke_tests
+    constraint: live_status_requires_real_verification
+  build_pipeline:
+    - intake
+    - design
+    - build
+    - isolated_test
+    - security
+    - performance
+    - artifact_identity
+    - verification
+    - deployment
+    - live_verification
+    - footprint
+  current_repo_controls:
+    typecheck: tsc --noEmit
+    workflow_verify: node scripts/verify-phantom-workflow.mjs
+    deployment_verify: node scripts/verify-phantom-deployment-workflow.mjs
+    capability_compiler_self_test: node --experimental-strip-types src/phantom/capability-compiler.self-test.ts
+    overdrive_verify: node scripts/verify-overdrive.mjs
+    production_control_self_test: node --experimental-strip-types src/phantom/production-control-surface.self-test.ts
+    production_authority_verify: node scripts/verify-phantom-production-authority-binding.mjs
+
+insight:
+  name: Phantom Insight
+  primary_ai: PHIA
+  role: priority_application_of_phantom_x
+  mission: >-
+    Premium educational AI platform for exploration of symbolism, mythology,
+    dreams, history, philosophy, folklore, cultural traditions and personal
+    reflection.
+  architecture:
+    coordinator: PHIA
+    specialist_council: Council of Insight
+    specialists:
+      - Astrology
+      - Dream Symbolism
+      - Tarot
+      - Numerology
+      - Palmistry
+      - Mythology
+      - Mythical Creatures
+      - Spirit Animals
+      - Archetypes
+      - Psychology
+      - Meditation
+      - Philosophy
+      - Comparative Religion
+      - History
+      - Folklore
+      - Ancient Civilizations
+      - Cultural Studies
+      - Symbolism
+  realms:
+    - Divination
+    - Astrology
+    - World Traditions
+    - Mythology
+    - Nature
+    - Rituals & Symbolism
+    - Wisdom
+    - AI
+  user_realm:
+    - personal_dashboard
+    - profile_avatar
+    - personal_journal
+    - dream_journal
+    - saved_ai_conversations
+    - symbol_library
+    - favorites
+    - bookmarks
+    - learning_paths
+    - progress_tracking
+    - achievements
+    - friends
+    - groups
+    - private_messaging
+    - shared_journals
+    - ai_preferences
+    - privacy_controls
+    - billing_dashboard
+    - subscription_management
+    - payment_history
+    - data_export
+    - account_management
+  community:
+    - profiles
+    - friends
+    - followers
+    - groups
+    - discussion_boards
+    - community_feed
+    - workshops
+    - events
+    - achievement_badges
+    - learning_challenges
+  memberships:
+    free:
+      price: 0
+      features:
+        - limited_phia
+        - journal
+        - basic_dream_journal
+        - three_symbolic_traditions
+        - limited_ai_usage
+        - educational_articles
+        - community_browsing
+    plus:
+      price_monthly: 19
+      features:
+        - unlimited_journal
+        - saved_conversations
+        - five_symbolic_traditions
+        - enhanced_learning_tools
+        - favorites_bookmarks
+    gold:
+      price_monthly: 29
+      features:
+        - council_of_insight
+        - full_symbol_library
+        - workshops
+        - advanced_journaling
+        - priority_support
+    phantom_platinum:
+      price_monthly: 49
+      features:
+        - unlimited_council_sessions
+        - fastest_ai_responses
+        - vip_community
+        - personalized_learning_paths
+        - early_access
+        - premium_educational_experiences
+  payments:
+    architecture_ready_for:
+      - Stripe
+      - Apple_Pay
+      - Google_Pay
+      - Credit_Debit_Cards
+      - PayPal_where_available
+    controls:
+      - secure_checkout
+      - billing_dashboard
+      - subscriptions
+      - invoices
+      - receipts
+      - payment_history
+      - upgrades_downgrades
+      - renewals
+      - cancellation
+      - refund_request_information
+  authentication:
+    - sign_up
+    - sign_in
+    - forgot_password
+    - password_reset
+    - email_verification
+    - account_settings
+  administration:
+    admin_dashboard:
+      - members
+      - memberships
+      - ai_usage
+      - content
+      - reports
+      - analytics
+      - community_moderation
+    owner_console:
+      - platform_settings
+      - ai_specialists
+      - phia_configuration
+      - feature_toggles
+      - billing_oversight
+      - branding_controls
+  trust:
+    pages:
+      - privacy_policy
+      - terms_of_service
+      - cookie_policy
+      - disclaimer
+      - acceptable_use_policy
+      - accessibility
+      - contact_support
+    educational_boundary: >-
+      Symbolic interpretations are educational, cultural, entertainment and
+      reflective experiences and are not factual predictions or professional
+      medical, legal, financial or mental-health advice.
+  design:
+    - glassmorphism
+    - animated_starfields
+    - elegant_typography
+    - responsive_layouts
+    - premium_dashboards
+    - modern_saas
+    - fantasy_ancient_meets_technology
+  future_ready:
+    - native_ios
+    - native_android
+    - ai_marketplace
+    - additional_ai_specialists
+    - courses
+    - podcasts
+    - live_events
+    - api_integrations
+    - multi_language
+    - team_enterprise
+
+runtime_security:
+  authority: Phantom Mastermind
+  pathway: Phantom Pathway
+  runtime: phantom-owned
+  public_control_plane_access: false
+  public_internal_access: false
+  public_mutation_access: false
+  public_pathway_access: false
+  control_authentication: attested_capability_scoped_requests
+  replay_protection: timestamp_plus_nonce
+  transport: private_network_or_unix_socket_plus_tls_mtls
+  artifact_integrity: SHA-256
+  max_request_age_ms: 30000
+  max_body_bytes: 1048576
+  public_routes:
+    allow:
+      - /
+      - /health
+      - /ready
+      - /version
+      - /release
+    deny:
+      - /internal/*
+      - /control/*
+      - /api/phantom/pathway
+      - public_mutation
+
+verification:
+  before_live:
+    source_integrity:
+      - correct_source
+      - provenance
+      - dependency_review
+      - prohibited_dependency_check
+    build_integrity:
+      - reproducible_build_or_equivalent
+      - successful_build
+      - artifact_identity
+      - checksum
+    functional:
+      - startup
+      - critical_routes
+      - core_workflows
+      - api_behavior
+      - persistence_when_applicable
+    security:
+      - authentication
+      - authorization
+      - secret_handling
+      - input_validation
+      - dependency_security
+      - isolation
+    policy:
+      - phantom_architecture_compatibility
+      - external_boundary_compliance
+      - lawful_control_preservation
+      - privacy_compliance
+    runtime:
+      - health
+      - readiness
+      - telemetry
+      - error_detection
+      - rollback_readiness
+    evidence:
+      - release_id
+      - source_revision
+      - build_result
+      - verification_result
+      - deployment_event
+      - live_verification_result
+      - footprint
+  live_claim_rule: no_live_claim_without_live_verification
+
+footprints:
+  name: Phantom Footprints
+  purpose: immutable_attributable_operational_evidence
+  records:
+    - request_identity
+    - authority
+    - capability
+    - project
+    - release
+    - artifact
+    - build
+    - verification
+    - deployment
+    - runtime_state
+    - incident
+    - rollback
+    - recovery
+    - research_provenance
+  policy:
+    append_evidence: true
+    preserve_failed_release_evidence: true
+    immutable_locked_records: true
+    audit_ready: true
+
+recovery:
+  strategy:
+    - detect
+    - freeze
+    - identify_last_verified_release
+    - restore
+    - health_check
+    - live_verify
+    - record_incident
+    - audit
+  checkpoints:
+    before_repair: true
+    after_repair: true
+  backups:
+    immutable_snapshots: true
+    point_in_time_restore: true
+
+shared_state:
+  single_source_of_truth: true
+  synchronization:
+    mastermind: continuous
+    pathway: on_config_change_and_release
+    footprints: immediate_append
+    forge: before_task_and_on_lock_change
+    insight: before_release_and_runtime_change
+    workers: before_task_start
+    incidents: event_driven
+    research: ingestion_and_review
+  drift_policy:
+    configuration_drift: incident
+    worker_drift: incident
+    release_drift: incident
+    silent_override: prohibited
+
+resource_model:
+  requested_capability: elastic_authorized_capacity
+  target: remove_artificial_resource_bottlenecks
+  scalable_dimensions:
+    - workers
+    - concurrency
+    - compute
+    - storage
+    - model_capacity
+    - build_cache
+    - queue_capacity
+    - memory_index
+  constraint: physical_and_authorized_limits_still_apply
+
+production_readiness:
+  insight:
+    local_verified: true
+    public_live: false
+    reason: actual_phantom_controlled_host_network_hostname_tls_and_external_reachability_are_required
+  forge:
+    role: production_build_and_deployment_engine
+    public_claim: evidence_required
+
+master_rule:
+  statement: >-
+    Mastermind, Forge, Phantom Insight, Phantom X, Phantom Pathway, Phantom
+    Footprints, the capability fabric, security boundary, memory fabric,
+    verification system, runtime, recovery system and all authorized workers
+    operate as one Phantom-controlled system. New capabilities must integrate
+    with this configuration rather than create competing authority.
