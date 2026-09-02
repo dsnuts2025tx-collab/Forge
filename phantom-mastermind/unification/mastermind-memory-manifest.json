@@ -1,0 +1,71 @@
+{
+  "schema": "phantom.mastermind.memory-manifest/v1",
+  "purpose": "Unify durable knowledge and operational context across Mastermind, Pathway, Footprints, workers, Seven Dwarfs, Forge, Insight, and future Phantom capabilities.",
+  "canonicalStore": "phantom-owned",
+  "stagingCopy": "external",
+  "ingestionPolicy": "preserve-source-and-provenance",
+  "memoryClasses": {
+    "locked": {
+      "priority": "absolute",
+      "mutation": "approval-required",
+      "examples": ["architecture invariants", "security boundaries", "authority rules", "deployment contracts"]
+    },
+    "active": {
+      "priority": "high",
+      "mutation": "versioned",
+      "examples": ["current project state", "open incidents", "current release", "worker assignments"]
+    },
+    "evidence": {
+      "priority": "high",
+      "mutation": "append-only",
+      "examples": ["Footprints", "verification records", "artifact identities", "incident records"]
+    },
+    "research": {
+      "priority": "medium",
+      "mutation": "versioned-with-provenance",
+      "examples": ["standards", "new agent techniques", "security research", "benchmark findings"]
+    },
+    "working": {
+      "priority": "task-scoped",
+      "mutation": "ephemeral-or-expiring",
+      "examples": ["current investigation", "temporary hypotheses", "scratch context"]
+    }
+  },
+  "knownPhantomSources": [
+    "phantom_pathway_lock_manifest.json",
+    "phantom_pathway_runtime_binding_manifest.json",
+    "phantom_insight_foundational_lock.json",
+    "phantom_pathway_endpoint.ts",
+    "phantom_runtime_security_boundary.ts",
+    "forge_engine_phantom_owned_deployment.ts",
+    "PHANTOM_X_PLATFORM_LAUNCH_DEPLOY_COMMAND_CENTER_LOCKED.md",
+    "RELEASE_CANDIDATE_VERIFICATION.json",
+    "execution_result.json"
+  ],
+  "requiredMetadata": ["sourceId", "sourceType", "capturedAt", "effectiveAt", "authority", "version", "integrity", "classification", "confidence"],
+  "retrieval": ["exact", "keyword", "semantic", "temporal", "entity", "dependency", "incident", "decision"],
+  "conflictPolicy": [
+    "never silently overwrite locked configuration",
+    "prefer newer valid approved configuration over superseded configuration",
+    "retain superseded records",
+    "surface unresolved conflicts to Mastermind",
+    "never convert inference into fact without provenance"
+  ],
+  "synchronization": {
+    "mastermind": "continuous",
+    "pathway": "on-config-change-and-release",
+    "footprints": "append-immediately",
+    "workers": "before-task-start-and-on-lock-change",
+    "research": "on-ingestion-and-review",
+    "incidents": "event-driven",
+    "recovery": "checkpoint-before-and-after-repair"
+  },
+  "disasterRecovery": {
+    "required": true,
+    "immutableSnapshots": true,
+    "pointInTimeRestore": true,
+    "exportable": true,
+    "integrityVerification": true,
+    "evidencePreservation": true
+  }
+}
