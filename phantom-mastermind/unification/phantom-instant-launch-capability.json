@@ -1,0 +1,122 @@
+{
+  "schema": "phantom.mastermind.instant-launch/v1",
+  "status": "FOUNDATIONAL_STAGING",
+  "purpose": "Give Mastermind a fast, provider-neutral path from user intent to a verified public website while preserving Phantom authority and proof gates.",
+  "authority": "Phantom Mastermind",
+  "execution": "Phantom Pathway",
+  "evidence": "Phantom Footprints",
+  "canonicalSource": "phantom-owned",
+  "canonicalDeployment": "phantom-owned",
+  "resourcePolicy": "elastic-capacity-brokered",
+  "resourceReality": "No literal unlimited physical capacity; capacity may scale within available authorized infrastructure and budget/policy ceilings.",
+  "latencyTarget": {
+    "static_or_prebuilt": "seconds-class best effort",
+    "simple_generated_site": "seconds-to-minutes best effort",
+    "complex_application": "minutes-or-longer based on build, verification, data, and infrastructure requirements",
+    "neverTradeProofForSpeed": true
+  },
+  "fastPath": [
+    "intent-translate",
+    "load-canonical-config",
+    "retrieve-relevant-memory",
+    "select-approved-template-or-build-plan",
+    "parallelize-independent-build-work",
+    "build-in-isolated-workspace",
+    "run-fast-validation",
+    "produce-artifact-identity",
+    "stage-deployment",
+    "land-on-phantom-runtime",
+    "external-reachability-check",
+    "health-readiness-release-check",
+    "write-footprint",
+    "mark-live-only-after-proof"
+  ],
+  "capabilityPool": [
+    "site-planner",
+    "architecture-agent",
+    "ui-agent",
+    "backend-agent",
+    "data-agent",
+    "content-agent",
+    "security-agent",
+    "test-agent",
+    "build-agent",
+    "deployment-agent",
+    "runtime-agent",
+    "engineering-detective",
+    "engineering-emt",
+    "rollback-agent",
+    "evidence-agent",
+    "research-agent"
+  ],
+  "parallelism": {
+    "enabled": true,
+    "rule": "parallelize only independent tasks with explicit dependency edges",
+    "fanout": "dynamic within authorized capacity",
+    "fanIn": "verification gate before promotion"
+  },
+  "resourceBroker": {
+    "functions": [
+      "capacity-discovery",
+      "workload-placement",
+      "autoscaling",
+      "queue-management",
+      "priority-scheduling",
+      "quota-enforcement",
+      "cost-policy",
+      "degradation-policy",
+      "capacity-reservation"
+    ],
+    "preferredStrategies": [
+      "scale-to-demand",
+      "warm-pools-for-hot-paths",
+      "ephemeral-isolated-build-workers",
+      "parallel-build-execution",
+      "artifact-cache",
+      "dependency-cache",
+      "incremental-builds",
+      "prebuilt-safe-site-shells"
+    ]
+  },
+  "technologyIntelligence": {
+    "continuousResearch": true,
+    "sources": ["official-documentation", "standards", "security-advisories", "benchmarks", "peer-reviewed-research", "approved-provider-documentation"],
+    "evaluate": [
+      "agent-orchestration",
+      "sandbox-execution",
+      "shell-execution",
+      "long-running-agent-workflows",
+      "context-compaction",
+      "persistent-memory",
+      "semantic-retrieval",
+      "event-sourcing",
+      "workflow-durability",
+      "autoscaling",
+      "artifact-caching",
+      "observability",
+      "supply-chain-security",
+      "runtime-isolation",
+      "zero-trust-identity",
+      "deployment-provenance",
+      "progressive-delivery",
+      "automatic-rollback"
+    ],
+    "promotionRule": "Research findings remain non-canonical until evaluated, tested, security-reviewed, and approved into Phantom configuration."
+  },
+  "memoryAcceleration": {
+    "retrieveBeforeBuild": true,
+    "retrieveBeforeRepair": true,
+    "retrieveBeforeDeployment": true,
+    "index": ["architecture", "configuration", "source", "artifacts", "decisions", "incidents", "footprints", "research", "dependencies"],
+    "cacheHotContext": true,
+    "checkpointLongRuns": true,
+    "compactContextWithoutLosingSourceLinks": true
+  },
+  "verificationGates": {
+    "required": ["source-integrity", "build-success", "artifact-identity", "functional", "security", "policy", "runtime-health", "external-reachability", "footprint"],
+    "liveClaim": "proof-required",
+    "failClosed": true
+  },
+  "emergencyPath": "Engineering EMT may stabilize/rollback rapidly, but may not bypass authority, identity, security, or proof requirements.",
+  "providerBoundary": "External services may supply bounded compute, intelligence, storage, or interoperability, but cannot become Phantom canonical authority."
+}
