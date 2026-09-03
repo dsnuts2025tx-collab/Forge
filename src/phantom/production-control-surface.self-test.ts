@@ -3,7 +3,7 @@ import {
   createDeploymentRecord,
   type DeploymentEvidence,
   type ReleaseManifest,
-} from "./production-control-surface.ts";
+} from "./production-control-surface.js";
 
 const manifest: ReleaseManifest = {
   releaseId: "self-test-release",
@@ -34,19 +34,11 @@ const verifiedEvidence: DeploymentEvidence = {
 assertProductionReleaseAllowed(manifest, verifiedEvidence);
 const record = createDeploymentRecord(manifest, verifiedEvidence);
 
-if (
-  record.status !== "verified" ||
-  record.environment !== "production" ||
-  record.independentVerificationPassed !== true
-) {
+if (record.status !== "verified" || record.environment !== "production" || record.independentVerificationPassed !== true) {
   throw new Error("Production control surface self-test failed.");
 }
 
-const blockedEvidence: DeploymentEvidence = {
-  ...verifiedEvidence,
-  independentVerificationPassed: false,
-};
-
+const blockedEvidence: DeploymentEvidence = { ...verifiedEvidence, independentVerificationPassed: false };
 let blocked = false;
 try {
   assertProductionReleaseAllowed(manifest, blockedEvidence);
@@ -55,5 +47,4 @@ try {
 }
 
 if (!blocked) throw new Error("Production control surface failed to block missing independent verification.");
-
 console.log("Phantom production control surface self-test: PASS");
