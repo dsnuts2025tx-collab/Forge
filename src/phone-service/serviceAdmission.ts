@@ -1,5 +1,5 @@
-import { AdminControlState } from "./adminControl.js";
-import { ProductionEvidence, evaluateProductionReadiness } from "./productionGate.js";
+import { AdminControlState } from "./admin-controls.js";
+import { ProductionEvidence, evaluateProductionReadiness } from "./production-gate.js";
 
 export type AdmissionDecision = {
   allowed: boolean;
