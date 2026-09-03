@@ -1,4 +1,4 @@
-name: Validate Forge Runtime Package
+name: Deploy Forge Runtime
 
 on:
   push:
@@ -65,7 +65,36 @@ jobs:
           name: forge-production-package
           path: dist/
 
+  deploy:
+    needs: package
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Download verified Forge package
+        uses: actions/download-artifact@v4
+        with:
+          name: forge-production-package
+          path: dist
+      - name: Verify packaged runtime
+        working-directory: dist
+        run: |
+          test -f RELEASE.json
+          test -f worker.js
+          test -f runtime-entry.js
+          test -f wrangler.jsonc
+          grep -Fq "${GITHUB_SHA}" RELEASE.json
+          grep -Fq 'Forge Engine 6.0.0-PLATINUM' BUILD.txt
+      - name: Deploy Forge runtime
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx --yes wrangler@4.123.0 deploy --config wrangler.jsonc
+
 # Production execution authority is the established Cloudflare Workers build/deployment
-# integration for Forge. This workflow validates and packages the exact runtime artifact;
-# it does not attempt a second deployment path or require duplicate Cloudflare secrets.
-# Live runtime proof remains a separate gate and must observe the deployed Worker directly.
+# integration for Forge. The package is created and verified before deployment; no second
+# deployment authority is introduced. Live runtime proof remains a separate gate.
