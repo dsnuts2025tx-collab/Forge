@@ -12,6 +12,7 @@ import type {
   CanonicalDesiredState,
   ReconciliationPlan,
   ReconciliationAction,
+  ReconciliationStep,
 } from './desired-state';
 import {
   recordInfrastructureMutation,
@@ -64,13 +65,12 @@ function assertAuthorization(auth: InfrastructureAuthorization): void {
 
 function toMutation(
   desired: CanonicalDesiredState,
-  action: ReconciliationAction,
-  resourceId: string,
+  step: ReconciliationStep,
 ): InfrastructureMutation {
-  const resource = desired.resources.find((candidate) => candidate.id === resourceId);
-  if (!resource) throw new Error(`Desired resource not found: ${resourceId}`);
+  const resource = desired.resources.find((candidate) => candidate.id === step.resourceId) ?? step.actual;
+  if (!resource) throw new Error(`Reconciliation resource not found: ${step.resourceId}`);
   return {
-    action,
+    action: step.action,
     resourceId: resource.id,
     kind: resource.kind,
     version: resource.version,
@@ -78,11 +78,7 @@ function toMutation(
   };
 }
 
-/**
- * Applies a previously planned reconciliation through the injected Phantom
- * infrastructure adapter. The adapter is the only boundary allowed to mutate
- * external infrastructure.
- */
+/** Applies a previously planned reconciliation through the injected Phantom infrastructure adapter. */
 export function applyInfrastructurePlan(
   desiredState: CanonicalDesiredState,
   plan: ReconciliationPlan,
@@ -91,21 +87,17 @@ export function applyInfrastructurePlan(
 ): InfrastructureControllerReceipt {
   assertAuthorization(authorization);
 
-  const results = plan.actions.map((action) => {
-    if (action.action === 'NOOP') {
-      return {
-        resourceId: action.resourceId,
-        action: action.action,
-        status: 'NOOP' as const,
-      };
+  const results = plan.steps.map((step) => {
+    if (step.action === 'NOOP') {
+      return { resourceId: step.resourceId, action: step.action, status: 'NOOP' as const };
     }
 
     try {
-      return adapter.apply(toMutation(desiredState, action.action, action.resourceId));
+      return adapter.apply(toMutation(desiredState, step));
     } catch (error) {
       return {
-        resourceId: action.resourceId,
-        action: action.action,
+        resourceId: step.resourceId,
+        action: step.action,
         status: 'FAILED' as const,
         error: error instanceof Error ? error.message : String(error),
       };
@@ -122,11 +114,7 @@ export function applyInfrastructurePlan(
   };
 }
 
-/**
- * Audited controller boundary: mutation remains authorization-gated, while the
- * resulting receipt is immediately recorded in the canonical Mastermind audit
- * stream. The audit sink is injected so storage/telemetry remain provider-neutral.
- */
+/** Audited controller boundary: mutation remains authorization-gated and provider-neutral. */
 export function applyInfrastructurePlanAudited(
   desiredState: CanonicalDesiredState,
   plan: ReconciliationPlan,
@@ -143,9 +131,6 @@ export function applyInfrastructurePlanAudited(
   return receipt;
 }
 
-/** Returns true only when every planned mutation was applied/no-op and observation succeeded. */
-export function infrastructurePlanSucceeded(
-  receipt: InfrastructureControllerReceipt,
-): boolean {
+export function infrastructurePlanSucceeded(receipt: InfrastructureControllerReceipt): boolean {
   return receipt.results.every((result) => result.status !== 'FAILED');
 }
