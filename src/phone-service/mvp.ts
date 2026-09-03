@@ -97,6 +97,16 @@ export function transportForState(state: ConnectivityState): Transport {
   }
 }
 
+export function isTransportAllowed(
+  state: ConnectivityState,
+  policy: AdminPolicy,
+): boolean {
+  const transport = transportForState(state);
+  if (transport === "cellular") return policy.allowCellular;
+  if (transport === "satellite") return policy.allowSatellite;
+  return false;
+}
+
 export function isProductionReady(
   evidence: ProductionEvidence,
   policy: AdminPolicy,
@@ -154,4 +164,14 @@ export function canServeCustomer(
   if (funding.projectedProviderCostMinor > policy.maxProjectedCostMinor) return false;
 
   return true;
+}
+
+export function canServeCustomerWithConnectivity(
+  entitlement: CustomerEntitlement,
+  policy: AdminPolicy,
+  funding: FundingPosition,
+  observation: ConnectivityObservation,
+): boolean {
+  const state = deriveConnectivityState(observation);
+  return canServeCustomer(entitlement, policy, funding) && isTransportAllowed(state, policy);
 }
