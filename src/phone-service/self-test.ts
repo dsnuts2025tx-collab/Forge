@@ -1,8 +1,10 @@
 import {
   canServeCustomer,
+  canServeCustomerWithConnectivity,
   customerEntitlement,
   deriveConnectivityState,
   isProductionReady,
+  reconcileUsage,
   type AdminPolicy,
   type FundingPosition,
   type ProductionEvidence,
@@ -40,25 +42,24 @@ function assert(condition: boolean, message: string): void {
   if (!condition) throw new Error(`Phone Service self-test failed: ${message}`);
 }
 
+const cellularObservation = {
+  observedAt: new Date(0).toISOString(),
+  wifiConnected: false,
+  cellularRegistered: true,
+  cellularDataAvailable: true,
+  satelliteSupported: false,
+  satelliteEntitled: false,
+  satelliteConnected: false,
+};
 assert(
-  deriveConnectivityState({
-    observedAt: new Date(0).toISOString(),
-    wifiConnected: false,
-    cellularRegistered: true,
-    cellularDataAvailable: true,
-    satelliteSupported: false,
-    satelliteEntitled: false,
-    satelliteConnected: false,
-  }) === "cellular_connected",
+  deriveConnectivityState(cellularObservation) === "cellular_connected",
   "cellular must win when registered and data is available",
 );
 
 assert(
   deriveConnectivityState({
-    observedAt: new Date(0).toISOString(),
+    ...cellularObservation,
     wifiConnected: true,
-    cellularRegistered: true,
-    cellularDataAvailable: true,
     satelliteSupported: true,
     satelliteEntitled: true,
     satelliteConnected: true,
@@ -66,34 +67,63 @@ assert(
   "cellular must remain primary even when Wi-Fi is present",
 );
 
+const satelliteObservation = {
+  observedAt: new Date(0).toISOString(),
+  wifiConnected: false,
+  cellularRegistered: false,
+  cellularDataAvailable: false,
+  satelliteSupported: true,
+  satelliteEntitled: true,
+  satelliteConnected: true,
+};
 assert(
-  deriveConnectivityState({
-    observedAt: new Date(0).toISOString(),
-    wifiConnected: false,
-    cellularRegistered: false,
-    cellularDataAvailable: false,
-    satelliteSupported: true,
-    satelliteEntitled: true,
-    satelliteConnected: true,
-  }) === "satellite_active",
+  deriveConnectivityState(satelliteObservation) === "satellite_active",
   "satellite fallback must be observable before activation",
 );
 
 assert(
-  deriveConnectivityState({
-    observedAt: new Date(0).toISOString(),
-    wifiConnected: true,
-    cellularRegistered: false,
-    cellularDataAvailable: false,
-    satelliteSupported: true,
-    satelliteEntitled: true,
-    satelliteConnected: true,
-  }) === "offline",
+  deriveConnectivityState({ ...satelliteObservation, wifiConnected: true }) === "offline",
   "Wi-Fi must not make satellite look like a no-Wi-Fi fallback",
 );
 
+const customer = customerEntitlement("self-test");
 assert(isProductionReady(evidence, policy, funded), "complete evidence and funding must pass");
-assert(canServeCustomer(customerEntitlement("self-test"), policy, funded), "funded $0 customer must be serviceable");
+assert(canServeCustomer(customer, policy, funded), "funded $0 customer must be serviceable");
+assert(
+  canServeCustomerWithConnectivity(customer, policy, funded, cellularObservation),
+  "funded $0 customer must be admitted over cellular when cellular is enabled",
+);
+assert(
+  canServeCustomerWithConnectivity(customer, policy, funded, satelliteObservation),
+  "funded $0 customer must be admitted over satellite when cellular is unavailable and satellite is enabled",
+);
+assert(
+  !canServeCustomerWithConnectivity(
+    customer,
+    { ...policy, allowSatellite: false },
+    funded,
+    satelliteObservation,
+  ),
+  "satellite transport must be blocked when the admin policy disables it",
+);
+assert(
+  !canServeCustomerWithConnectivity(
+    customer,
+    { ...policy, allowCellular: false },
+    funded,
+    cellularObservation,
+  ),
+  "cellular transport must be blocked when the admin policy disables it",
+);
+assert(
+  !canServeCustomerWithConnectivity(
+    customer,
+    policy,
+    funded,
+    { ...satelliteObservation, satelliteSupported: false },
+  ),
+  "offline state must never be serviceable",
+);
 
 assert(
   !canServeCustomer(customerEntitlement("self-test", false), policy, funded),
@@ -102,13 +132,13 @@ assert(
 
 const shortfall: FundingPosition = { ...funded, availableMinor: 2_500 };
 assert(
-  !canServeCustomer(customerEntitlement("self-test"), policy, shortfall),
+  !canServeCustomer(customer, policy, shortfall),
   "funding shortfall must fail closed even when suspension behavior is disabled",
 );
 
 const overLimit: FundingPosition = { ...funded, projectedProviderCostMinor: 10_001 };
 assert(
-  !canServeCustomer(customerEntitlement("self-test"), policy, overLimit),
+  !canServeCustomer(customer, policy, overLimit),
   "projected provider cost above policy limit must fail closed",
 );
 
@@ -129,6 +159,15 @@ assert(
   dedupeProviderEventIds(seen, { ...validatedEvent, provider: "second-carrier" }),
   "same event id from a different provider must not collide",
 );
+
+const reconciled = reconcileUsage(
+  [validatedEvent, { ...validatedEvent, id: "evt-unreconciled" }],
+  new Map([[validatedEvent.id, 125]]),
+);
+assert(reconciled[0]?.costStatus === "reconciled", "authoritative provider cost must reconcile");
+assert(reconciled[0]?.authoritativeCostMinor === 125, "reconciled cost must be authoritative");
+assert(reconciled[1]?.costStatus === "unreconciled", "missing authoritative cost must remain unreconciled");
+assert(reconciled[1]?.authoritativeCostMinor === null, "unreconciled cost must remain null");
 
 const rawBody = "The quick brown fox jumps over the lazy dog";
 const signature = "sha256=f7bc83f430538424b13298e6aa6fb143ef4d59a14946175997479dbc2d1a3cd8";
