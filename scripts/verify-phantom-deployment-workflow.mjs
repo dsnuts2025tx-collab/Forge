@@ -26,7 +26,7 @@ for (const fragment of requiredWorkflow) {
 
 const requiredConfig = [
   '"name": "phantom-forge-engine"',
-  '"main": "./worker.js"',
+  '"main": "./runtime-entry.js"',
   '"workers_dev": true',
   '"directory": "."',
   '"binding": "ASSETS"',
