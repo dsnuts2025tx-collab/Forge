@@ -12,6 +12,8 @@
     "phantom:production-authority:verify": "node scripts/verify-phantom-production-authority-binding.mjs"
   },
   "devDependencies": {
-    "typescript": "5.9.2"
+    "@types/node": "^24.0.0",
+    "typescript": "5.9.2",
+    "vitest": "^3.2.4"
   }
 }
