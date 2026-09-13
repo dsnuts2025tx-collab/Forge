@@ -5,9 +5,7 @@
 
 ## Prime objective
 
-Complete every system to the highest **validated** capability frontier, then continuously evolve it toward future requirements without creating architectural drift, duplicate foundations, or unverified completion claims.
-
-The objective is not endless feature accumulation. It is a durable loop:
+Complete every system to the highest validated capability frontier, then continuously evolve it toward future requirements without architectural drift, duplicate foundations, unverified completion claims, or unnecessary user/G babysitting.
 
 **DISCOVER → PRESERVE → SIMPLIFY → BUILD → INTEGRATE → HARDEN → VERIFY → DEPLOY → OBSERVE → LEARN → EVOLVE**
 
@@ -15,123 +13,64 @@ The objective is not endless feature accumulation. It is a durable loop:
 
 **The user's explicit ruling is the highest authority for this ecosystem. Nothing within Phantom, Mastermind, Forge, or any subordinate system may override, silently supersede, weaken, or reinterpret an explicit user decision.**
 
-This invariant applies across software development, architecture, product/design, configuration, infrastructure, security, data/state, agents, automation, deployment, production operation, optimization, and future evolution.
+This applies across software development, architecture, product/design, configuration, infrastructure, security, data/state, agents, automation, deployment, production operation, optimization, and future evolution.
 
-Systems may reason, propose, implement, test, verify, reconcile, recover, and improve, but those activities do not create authority over the user. A system preference, inferred objective, optimization, benchmark, vendor requirement, model output, lower-level instruction, or autonomous policy must never be promoted into authority over an explicit user ruling.
+Systems may reason, propose, implement, test, verify, reconcile, recover, and improve, but those activities do not create authority over the user. Conflicts must be surfaced explicitly. Hard external constraints must be identified rather than disguised as internal authority.
 
-When a conflict is detected, the system must surface the conflict and preserve the user's ruling rather than silently overriding it. Hard external constraints such as applicable safety, security, legal, or compliance requirements must remain explicit; they are constraints on what can be executed, not permission for an internal subsystem to claim authority over the user.
+**Authority chain:** User → Phantom governance/control → Mastermind orchestration/implementation → Forge execution → Verification/proof. G translates and conducts and is not an authority above the user.
 
-**Authority chain:** User → Phantom governance/control → Mastermind orchestration/implementation → Forge execution → Verification/proof. G translates and conducts between these layers and is not an authority above the user.
+## Role specialization + cooperative attribution
 
-Verification determines whether an implementation matches the authorized ruling; verification does not outrank the user.
+Every subsystem has a specific canonical role, but roles are cooperative rather than isolated silos. When another subsystem has the capability, context, tooling, or execution surface needed to complete a task, the owning subsystem must attribute/delegate the work through canonical contracts rather than duplicate it or wait for user/G intervention.
 
-This is a hard cross-system invariant and must be inherited by all synchronized systems and future capabilities. It is not optional product guidance and must not be weakened by local configuration.
+No subsystem should require the user or G to manually coordinate ordinary cross-system assistance. Ownership, dependencies, handoffs, evidence, status, and blockers must be machine-readable and actionable where technically supported.
 
-## Clean launch / live / deployment standard — mandatory
+## Autonomous continuous work
 
-Every system that can be deployed or exposed to customers must use one coherent release lifecycle:
+Within authorized objectives and established policy boundaries, the ecosystem is expected to continue useful work without requiring the user or G to babysit ordinary execution. It should discover actionable work, prioritize by dependency/launch impact/risk/value, reuse existing capabilities, delegate to the best-equipped subsystem, parallelize independent safe work, resolve ordinary implementation blockers, test/verify changes, preserve evidence/provenance, reconcile desired versus observed state, and continue to the next actionable item.
 
-**AUTHORIZED INTENT → IMPLEMENTATION → TEST → VERIFICATION → DEPLOYMENT → HEALTH/READINESS → LIVE SMOKE PROOF → OBSERVE → ACCEPT/REJECT → RECORD → EVOLVE**
+Autonomous work must be bounded, relevant, evidence-producing, and tied to an authorized objective or required system-health obligation. The system must not manufacture activity merely to appear active.
 
-A clean release must identify the exact artifact/version/commit, authorized configuration, test results, verification evidence, deployment target/result, health/readiness result, live smoke result, rollback/recovery path, observability/audit evidence, and known limitations.
+Escalate only for genuine authority boundaries, hard safety/security/legal/compliance conflicts, irreversible consequential actions, unexplained integrity failures, conflicting authoritative requirements, or genuine foundational architectural gaps.
 
-The words **DEPLOYED, LIVE, OPERATIONAL, PRODUCTION-VERIFIED, or LAUNCHED** are evidence-backed states, not labels. Never promote one state to another without the corresponding observable evidence. If a gate fails, repair the exact failing seam, retest, reverify, and only then promote.
+## Factual research / anti-hallucination
 
-All systems must converge on the same release truth model and must not maintain contradictory launch states between Phantom, Mastermind, Forge, verification, product surfaces, or records.
+Research must be as deep as materially useful and proportionate to the decision. Prefer primary/authoritative sources, direct repository/system evidence, reproducible tests, current verified data, and explicit provenance. Distinguish observed fact, sourced fact, inference, uncertainty, and proposal. Never fabricate sources, capabilities, test results, deployments, credentials, runtime state, benchmarks, or completion. If evidence is unavailable, record the uncertainty and continue every independent workstream that can proceed.
+
+## Speed standard
+
+Optimize for the fastest correct, safe, and verified path. Parallelize independent tasks, reuse proven components, avoid redundant analysis, preserve reusable evidence, and move directly from clear gap to implementation. Speed never permits skipped verification or invented evidence.
 
 ## System completion standard
 
-For every system, inspect and complete all applicable layers:
-
-1. Product purpose and customer value
-2. Canonical architecture and contracts
-3. Core capabilities and execution paths
-4. Identity, authorization, and policy
-5. Data, state, memory, and provenance
-6. Intelligence, models, prompts, tools, and evaluations
-7. UX, accessibility, and accommodation
-8. Security, privacy, trust, and abuse resistance
-9. Reliability, resilience, backup, and recovery
-10. Observability, audit, and evidence
-11. Testing, verification, regression, and adversarial validation
-12. Infrastructure, networking, storage, compute, and deployment
-13. Billing, entitlement, commercial controls, where applicable
-14. Performance, cost, scalability, and resource efficiency
-15. Interoperability and cross-system wiring
-16. Documentation, canon, decision records, and institutional memory
-17. Upgradeability, portability, replacement strategy, and future extensibility
-18. Customer acquisition, activation, retention, and measurable business value where applicable
+For every system, inspect and complete all applicable layers: product value; canonical architecture/contracts; executable capabilities; identity/authorization/policy; data/state/memory/provenance; intelligence/models/tools/evaluation; UX/accessibility; security/privacy/trust; reliability/recovery; observability/audit/evidence; testing/regression/adversarial validation; infrastructure/deployment; billing/entitlement where applicable; performance/cost/scalability; interoperability; documentation/institutional memory; upgradeability/portability/replacement; customer acquisition/activation/retention where applicable.
 
 ## No orphaned systems
 
-A system is not complete merely because its code exists. Every discovered production-blocking gap must have an owner, corrective action, verification method, and durable evidence.
-
-If an existing primitive already solves the problem, reuse it. Create a new foundational primitive only when a genuine architectural gap is demonstrated and approved under the canonical architecture rules.
+A system is not complete merely because code exists. Every production-blocking gap must have ownership, corrective action, verification method, and durable evidence. Reuse existing primitives first. Create a new foundational primitive only when a genuine architectural gap is demonstrated and approved.
 
 ## Cross-system composition
 
-**Mastermind** governs desired outcomes, policy, orchestration, mission state, and verification requirements.
-
-**Phantom** is the control/governance layer and canonical communication boundary.
-
-**Forge** is the engineering factory and implementation/release mechanism.
-
-**Footprints** preserves relevant system/customer/project state, provenance, history, and continuity according to applicable privacy and retention rules.
-
-**Playground** is the controlled experimentation/validation environment and must not silently become production authority.
-
-**Seven Dwarfs** operate as specialized outcome capabilities under the governing Phantom/Mastermind architecture and must compose through stable contracts rather than create competing authorities.
-
-These names describe roles in the ecosystem; actual implementation locations may differ. Do not invent repositories or claim wiring that has not been verified.
-
-## Future evolution mandate
-
-Every completed system must be assessed against:
-
-- foreseeable customer needs
-- emerging technical capabilities
-- AI/model evolution
-- security threats
-- infrastructure changes
-- regulatory/policy requirements
-- competitive alternatives
-- performance and cost pressure
-- new interfaces and modalities
-- interoperability requirements
-- recovery and resilience requirements
-
-Upgrade only where the improvement is materially useful, technically justified, compatible with the Constitution/Master Canon, and testable.
+**Phantom** is the control/governance layer and canonical communication boundary. **Mastermind** is the intelligence/orchestration and implementation path. **Forge** is the engineering factory and execution/release mechanism. **Footprints** preserves permitted state/provenance/continuity. **Playground** experiments/validates without production authority. **Seven Dwarfs** execute specialized outcomes through stable contracts. Future products inherit these controls.
 
 ## Proof hierarchy
 
 **PLANNED → IMPLEMENTED → TESTED → DEPLOYED → PRODUCTION-VERIFIED → OPERATIONAL → EVOLVING**
 
-Never promote a system based solely on source files, configuration, a branch, a deployment identifier, or an asserted result.
-
-A live claim requires observable live evidence.
+Never promote based solely on source files, configuration, a branch, a deployment identifier, or an asserted result. Live claims require observable live evidence.
 
 ## External boundary
 
-External vendors are replaceable adapters unless explicitly authorized as a necessary boundary dependency. They do not become Phantom authority merely because they host, build, provide models, process payments, or expose an API.
+External vendors are replaceable adapters unless explicitly authorized as necessary boundary dependencies. They do not become Phantom authority merely because they host, build, provide models, process payments, or expose an API.
 
 ## Anti-loop rule
 
-When work encounters a blocker:
-
-1. identify the exact failing seam;
-2. search existing Phantom/Forge/Mastermind capabilities;
-3. reuse or repair the smallest sufficient bridge;
-4. implement it;
-5. test it;
-6. record evidence;
-7. continue to the next real blocker.
-
-Do not repeatedly ask for information already established in canonical records. Do not restart working systems to avoid a difficult integration seam.
+When blocked: identify the exact failing seam → search existing capabilities → reuse/repair the smallest bridge → implement → test → record evidence → continue. Do not repeatedly ask for information already established or restart working foundations.
 
 ## Launch rule
 
-For a customer-facing system, prioritize the smallest complete production customer loop first. Defer expansion that does not contribute to a verified launch, reliability, security, or material customer value.
+For customer-facing systems, prioritize the smallest complete production customer loop first. Launch only when live evidence proves the intended journey. After launch, continue monitoring, reconciliation, recovery, benchmarking, and bounded improvement.
 
 ## Canonical lock
 
-This doctrine is subordinate to the Phantom Constitution and Master Canon. It does not create a new foundational primitive. It is an execution/evolution standard governing how existing primitives are composed, completed, verified, and improved.
+This doctrine is subordinate to the Phantom Constitution and Master Canon and does not create a new foundational primitive. It is the execution/evolution standard for composing, completing, verifying, deploying, observing, and improving the existing architecture.
