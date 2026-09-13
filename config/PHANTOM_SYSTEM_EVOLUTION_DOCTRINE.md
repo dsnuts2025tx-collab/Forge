@@ -27,6 +27,18 @@ Verification determines whether an implementation matches the authorized ruling;
 
 This is a hard cross-system invariant and must be inherited by all synchronized systems and future capabilities. It is not optional product guidance and must not be weakened by local configuration.
 
+## Clean launch / live / deployment standard — mandatory
+
+Every system that can be deployed or exposed to customers must use one coherent release lifecycle:
+
+**AUTHORIZED INTENT → IMPLEMENTATION → TEST → VERIFICATION → DEPLOYMENT → HEALTH/READINESS → LIVE SMOKE PROOF → OBSERVE → ACCEPT/REJECT → RECORD → EVOLVE**
+
+A clean release must identify the exact artifact/version/commit, authorized configuration, test results, verification evidence, deployment target/result, health/readiness result, live smoke result, rollback/recovery path, observability/audit evidence, and known limitations.
+
+The words **DEPLOYED, LIVE, OPERATIONAL, PRODUCTION-VERIFIED, or LAUNCHED** are evidence-backed states, not labels. Never promote one state to another without the corresponding observable evidence. If a gate fails, repair the exact failing seam, retest, reverify, and only then promote.
+
+All systems must converge on the same release truth model and must not maintain contradictory launch states between Phantom, Mastermind, Forge, verification, product surfaces, or records.
+
 ## System completion standard
 
 For every system, inspect and complete all applicable layers:
