@@ -7,6 +7,7 @@
     "deployment:verify": "node scripts/verify-phantom-deployment-workflow.mjs",
     "phantom:capability-compiler:self-test": "node --experimental-strip-types src/phantom/capability-compiler.self-test.ts",
     "phantom:bridge:self-test": "node --experimental-strip-types src/phantom/mastermind-g-bridge.self-test.ts",
+    "g:launch:self-test": "node --experimental-strip-types src/phantom/g-product-launch.self-test.ts",
     "phone-service:self-test": "node --experimental-strip-types src/phone-service/self-test.ts",
     "phantom:overdrive:verify": "node scripts/verify-overdrive.mjs",
     "phantom:production-control:self-test": "node --experimental-strip-types src/phantom/production-control-surface.self-test.ts",
