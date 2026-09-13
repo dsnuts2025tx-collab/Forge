@@ -91,9 +91,10 @@ Every production promotion must have a known recovery/rollback path appropriate 
 
 The currently accessible Phantom-controlled repositories were inspected and advanced directly:
 
-- **Forge:** universal evolution doctrine, completion matrix, user-sovereignty invariant, and clean launch/live/deployment standard are locked in mainline; Insight remains under its explicit production gates.
+- **Forge:** universal evolution doctrine, completion matrix, user-sovereignty invariant, and clean launch/live/deployment standard are locked in mainline.
 - **Forge Engine v2:** canonical Mastermind → native Layer 1 runtime compilation is in mainline; empty runtime programs fail closed; Layer 2 is explicitly isolated behind recovery authorization; identity/non-empty execution checks and regression tests are present; universal evolution inheritance is locked.
 - **Phantom Volt:** universal evolution inheritance is locked in its canonical repository; product-specific hardware/software, safety, provenance, replaceability, and prototype-versus-production truth boundaries remain mandatory.
+- **Insight / PHIA:** remains governed by its explicit production gates; it is not marked live until the complete customer path has observable proof.
 
 These changes establish implementation synchronization, not blanket completion. Systems without an accessible user-owned repository remain governed by this matrix but are not falsely marked implemented or live.
 
