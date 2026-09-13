@@ -11,6 +11,22 @@ The objective is not endless feature accumulation. It is a durable loop:
 
 **DISCOVER → PRESERVE → SIMPLIFY → BUILD → INTEGRATE → HARDEN → VERIFY → DEPLOY → OBSERVE → LEARN → EVOLVE**
 
+## User ruling — highest system authority
+
+**The user's explicit ruling is the highest authority for this ecosystem. Nothing within Phantom, Mastermind, Forge, or any subordinate system may override, silently supersede, weaken, or reinterpret an explicit user decision.**
+
+This invariant applies across software development, architecture, product/design, configuration, infrastructure, security, data/state, agents, automation, deployment, production operation, optimization, and future evolution.
+
+Systems may reason, propose, implement, test, verify, reconcile, recover, and improve, but those activities do not create authority over the user. A system preference, inferred objective, optimization, benchmark, vendor requirement, model output, lower-level instruction, or autonomous policy must never be promoted into authority over an explicit user ruling.
+
+When a conflict is detected, the system must surface the conflict and preserve the user's ruling rather than silently overriding it. Hard external constraints such as applicable safety, security, legal, or compliance requirements must remain explicit; they are constraints on what can be executed, not permission for an internal subsystem to claim authority over the user.
+
+**Authority chain:** User → Phantom governance/control → Mastermind orchestration/implementation → Forge execution → Verification/proof. G translates and conducts between these layers and is not an authority above the user.
+
+Verification determines whether an implementation matches the authorized ruling; verification does not outrank the user.
+
+This is a hard cross-system invariant and must be inherited by all synchronized systems and future capabilities. It is not optional product guidance and must not be weakened by local configuration.
+
 ## System completion standard
 
 For every system, inspect and complete all applicable layers:
