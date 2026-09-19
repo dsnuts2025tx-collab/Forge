@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "1.0.0",
+  "product": "Phantom Insight",
+  "purpose": "A broad, extensible learning and exploration catalog. This registry defines subject coverage; it does not claim that every lesson, calculation engine, reading, or AI interaction is already built.",
+  "experiencePrinciples": [
+    "Socrates is the central guide for critical thinking, inquiry, dialogue, and reflection.",
+    "Present cultural and spiritual traditions respectfully and in context.",
+    "Clearly distinguish scientific evidence, historical claims, traditional teachings, symbolic interpretations, personal belief, and entertainment.",
+    "Never present astrology, numerology, divination, past-life readings, or psychic-style experiences as scientifically proven prediction or diagnosis.",
+    "Allow users to explore topics independently and through cross-linked learning paths."
+  ],
+  "socratesLearningFramework": [
+    {"id":"clarify","title":"Clarify the question","practices":["Define terms","Separate the question into parts","Identify what would count as an answer"]},
+    {"id":"assumptions","title":"Expose assumptions","practices":["Name explicit and hidden assumptions","Ask what is being taken for granted","Consider how context changes the claim"]},
+    {"id":"evidence","title":"Examine reasons and evidence","practices":["Distinguish observation from interpretation","Assess source quality","Identify uncertainty and missing information"]},
+    {"id":"counterexamples","title":"Test the idea","practices":["Search for counterexamples","Compare alternative explanations","Check whether the reasoning is consistent"]},
+    {"id":"perspectives","title":"Consider other perspectives","practices":["Represent opposing views fairly","Explore cultural and historical context","Notice how values shape interpretation"]},
+    {"id":"reflect","title":"Reflect and apply","practices":["Summarize what changed","Record open questions","Choose a practical next step without surrendering personal agency"]}
+  ],
+  "realms": [
+    {"id":"astrology", "title":"Astrology and celestial traditions", "domains":[
+      {"id":"western", "title":"Western astrology", "topics":["Tropical zodiac and its history","Signs, elements, modalities, and polarities","Planets, luminaries, nodes, and points","Houses, angles, chart rulers, and house systems","Aspects, configurations, dignities, and retrogrades","Natal chart foundations and chart synthesis","Transits, progressions, solar arcs, profections, and returns","Synastry, composite charts, and relationship symbolism","Horary, electional, mundane, and medical-astrology history (historical study only)","Hellenistic, medieval, Renaissance, and modern psychological approaches","Decans, bounds/terms, fixed stars, lunar phases, and eclipses","Astrocartography and locational techniques"]},
+      {"id":"jyotish", "title":"Jyotish / Indian astrological traditions", "topics":["Sidereal zodiac and ayanamsha concepts","Grahas, rashis, bhavas, and nakshatras","Dashas, yogas, divisional charts, and chart interpretation","Historical schools, texts, and cultural context"]},
+      {"id":"chinese", "title":"Chinese and East Asian systems", "topics":["Twelve-animal zodiac and year/month/day/hour cycles","Heavenly Stems and Earthly Branches","Five Phases and yin-yang frameworks","BaZi / Four Pillars foundations","Chinese calendrical traditions and historical context"]},
+      {"id":"mesoamerican", "title":"Mesoamerican calendars and traditions", "topics":["Tzolk’in and 260-day cycle","Haab’ and 365-day cycle","Calendar Round and Long Count overview","Day signs and contemporary interpretations","Distinguishing historical Maya knowledge from modern spiritual adaptations"]},
+      {"id":"other_astrology", "title":"Additional traditions and techniques", "topics":["Persian and Arabic astrological history","Egyptian and Greco-Roman antecedents","Tibetan and other regional traditions, with appropriate cultural context","Lunar mansions and alternative zodiac frameworks","Comparative astrology and the history of astrological ideas"]},
+      {"id":"astronomy", "title":"Astronomy and sky literacy", "topics":["Solar system, planets, moons, and small bodies","Stars, constellations, galaxies, and cosmology","Celestial coordinates, seasons, precession, and observation","Eclipses, phases, and orbital mechanics","How astronomy differs from astrology and how scientific claims are tested"]}
+    ]},
+    {"id":"numerology", "title":"Numerology and number symbolism", "domains":[
+      {"id":"core_numbers", "title":"Core profile calculations", "topics":["Life Path number","Birthday number","Expression / Destiny number","Soul Urge / Heart’s Desire number","Personality number","Maturity number","Name-based calculations and spelling conventions","Show the arithmetic and explain that systems differ"]},
+      {"id":"cycles", "title":"Cycles and timing", "topics":["Personal Year, Month, and Day cycles","Pinnacles and Challenges","Essence and period cycles in systems that use them","Calendar conventions and calculation variants"]},
+      {"id":"number_traditions", "title":"Number traditions and methods", "topics":["Pythagorean numerology","Chaldean numerology","Kabbalistic and gematria-related number symbolism, carefully contextualized","Master numbers and compound numbers","Angel-number numerology and contemporary interpretations","Comparing methods, historical origins, and interpretive limits"]}
+    ]},
+    {"id":"angel_numbers", "title":"Angel numbers and repeating sequences", "domains":[
+      {"id":"sequences", "title":"Common sequences", "topics":["111 and 1111","222 and 2222","333 and 3333","444 and 4444","555 and 5555","666 and 6666, including varied cultural meanings","777 and 7777","888 and 8888","999 and 9999","000 and 0000","1234 and ascending or descending sequences","Mirrored, paired, and personally significant number patterns"]},
+      {"id":"interpretation", "title":"Interpretation and reflection", "topics":["Origins and growth of contemporary angel-number beliefs","How meanings vary among authors and communities","Personal reflection prompts without asserting supernatural certainty","Pattern recognition, attention, and confirmation bias","A user journal for context, feelings, and alternative explanations"]}
+    ]},
+    {"id":"past_lives", "title":"Past lives, reincarnation, and karmic traditions", "domains":[
+      {"id":"religious_philosophical", "title":"Traditions and philosophies", "topics":["Rebirth and samsara in Hindu traditions","Buddhist perspectives on rebirth, with distinctions among schools","Jain perspectives on rebirth and karma","Greek philosophical accounts of transmigration and metempsychosis","Other historical and contemporary reincarnation beliefs, with cultural context"]},
+      {"id":"symbolic_astrology", "title":"Karmic and past-life symbolism", "topics":["Lunar nodes in karmic astrology interpretations","Saturn, Pluto, and other placements in selected karmic approaches","Regression narratives as reported experiences, not verified historical memories","Dreams, archetypes, and personal meaning-making","Guided imaginative reflection with clear non-factual framing"]},
+      {"id":"ethics", "title":"Careful exploration", "topics":["Distinguish belief, subjective experience, evidence, and established history","Avoid leading prompts that implant memories or claims","Keep exploration voluntary and non-diagnostic","Encourage grounding and personal agency"]}
+    ]},
+    {"id":"philosophy_socrates", "title":"Socrates, philosophy, and critical thinking", "domains":[
+      {"id":"socratic_method", "title":"Socratic method", "topics":["Elenchus and question-led examination","Socratic dialogue and intellectual humility","Defining concepts and testing definitions","Examining contradictions and counterexamples","The difference between productive uncertainty and cynicism"]},
+      {"id":"classical_philosophy", "title":"Classical philosophy", "topics":["Socrates in Plato’s dialogues and the limits of historical reconstruction","Plato: forms, knowledge, justice, and the examined life","Aristotle: logic, virtue, causes, and practical wisdom","Cynic, Stoic, Epicurean, and other ancient schools","Ethics, virtue, justice, friendship, courage, and the good life"]},
+      {"id":"thinking_skills", "title":"Reasoning and knowledge", "topics":["Formal and informal logic","Argument mapping and fallacies","Epistemology and standards of evidence","Scientific reasoning and falsifiability","Media literacy, source evaluation, and misinformation","Cognitive biases and motivated reasoning","Ethical dilemmas and respectful disagreement"]}
+    ]},
+    {"id":"divination_symbolism", "title":"Divination, symbols, and reflective practices", "domains":[
+      {"id":"tarot_oracle", "title":"Tarot and oracle", "topics":["Tarot history and deck traditions","Major and Minor Arcana symbolism","Court cards, spreads, and reflective reading methods","Oracle decks and contemporary practices","Interpretations as reflection or entertainment, not guaranteed prediction"]},
+      {"id":"runes_iching", "title":"Runes and I Ching", "topics":["Runic alphabets, historical uses, and modern divination interpretations","I Ching structure, trigrams, hexagrams, and commentarial traditions","Cultural and historical context, including limits of modern adaptations"]},
+      {"id":"palm_aura_energy", "title":"Palmistry, aura, and energy concepts", "topics":["Palmistry lineages and symbolic approaches","Aura and chakra concepts across traditions","Historical, spiritual, and contemporary interpretations","Distinguishing traditional belief from medical or scientific claims"]},
+      {"id":"dreams", "title":"Dreams and dream interpretation", "topics":["Dream journaling and recall","Personal associations and recurring themes","Historical and cultural dream traditions","Psychological theories of dreaming","Multiple possible interpretations and avoiding certainty"]}
+    ]},
+    {"id":"mythology_culture", "title":"Mythology, folklore, and world cultures", "domains":[
+      {"id":"myth_systems", "title":"Mythologies and sacred narratives", "topics":["Greek and Roman mythology","Egyptian, Norse, Celtic, and Mesopotamian traditions","South Asian, East Asian, African, Indigenous, and Oceanian narratives studied respectfully","Creation, flood, underworld, hero, trickster, and transformation motifs","Source traditions, living communities, and cultural sensitivity"]},
+      {"id":"symbols_archetypes", "title":"Symbols and archetypes", "topics":["Animal, plant, color, and elemental symbolism","Cross-cultural similarities and differences","Folklore, ritual, seasonal customs, and oral traditions","Archetypes as interpretive models rather than universal facts"]}
+    ]},
+    {"id":"self_knowledge", "title":"Self-knowledge, relationships, and life skills", "domains":[
+      {"id":"reflection", "title":"Personal reflection", "topics":["Values clarification and journaling","Strengths, habits, goals, and decision reflection","Communication, empathy, boundaries, and conflict skills","Mindful attention and self-observation"]},
+      {"id":"relationships", "title":"Relationships and compatibility", "topics":["Communication and relationship reflection","Astrological compatibility as a symbolic lens only","Consent, respect, boundaries, and individual differences","Avoiding deterministic judgments about people"]}
+    ]},
+    {"id":"psychic_exploration", "title":"Psychic and intuitive experiences", "domains":[
+      {"id":"intuitive_practices", "title":"Intuition and subjective experience", "topics":["How people describe intuition and anomalous experiences","Journaling observations without assuming their cause","Cultural histories of psychic claims","Evidence evaluation and alternative explanations","Creative, role-play, and entertainment readings with explicit framing"]}
+    ]}
+  ],
+  "crossRealmLearningPaths": [
+    {"id":"moon_path", "title":"The Moon: sky, symbol, and story", "sequence":["astronomy","astrology","mythology_culture","philosophy_socrates"]},
+    {"id":"number_path", "title":"Numbers and the meanings people make", "sequence":["numerology","angel_numbers","mythology_culture","philosophy_socrates"]},
+    {"id":"identity_path", "title":"Identity, fate, and personal agency", "sequence":["astrology","past_lives","self_knowledge","philosophy_socrates"]},
+    {"id":"dream_path", "title":"Dreams across psychology and tradition", "sequence":["dreams","mythology_culture","psychic_exploration","philosophy_socrates"]}
+  ],
+  "contentSafetyAndAccuracy": {
+    "labels": ["Scientific evidence", "Historical record", "Cultural tradition", "Spiritual belief", "Symbolic interpretation", "Personal reflection", "Entertainment"],
+    "requirements": [
+      "Label the epistemic status of material where relevant.",
+      "Do not claim to verify a user's past life or supernatural identity.",
+      "Do not give deterministic predictions or advise high-stakes decisions solely from divination systems.",
+      "Avoid appropriating or flattening living cultures; provide context and acknowledge diversity within traditions.",
+      "Do not present spiritual interpretations as medical, legal, financial, or psychological diagnosis."
+    ]
+  },
+  "implementationStatus": {
+    "catalogRegistry": "committed",
+    "completeLessonBodies": "not yet built for every topic",
+    "calculatorsAndInteractiveEngines": "require separate implementation and tests",
+    "liveSocratesAndPHIAModels": "not established by this registry",
+    "publicDeployment": "not verified"
+  }
+}
