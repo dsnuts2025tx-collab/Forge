@@ -1,0 +1,196 @@
+{
+  "schema": "phantom.project.registry.v1",
+  "owner_attribution": "Donald Long III / Phantom",
+  "canonical_authority": "Phantom",
+  "production_authority": "Phantom-owned physical substrate",
+  "third_party_production_authority": false,
+  "truth_rule": "NO_EVIDENCE_NO_CLAIM",
+  "state_model": [
+    "DESIGNED",
+    "BUILT",
+    "VERIFIED",
+    "PROVEN",
+    "ACTIVE"
+  ],
+  "promotion_rule": "PROVEN is required before ACTIVE; physical production claims require physical evidence.",
+  "projects": [
+    [
+      "Phantom Mastermind",
+      "core intelligence/control",
+      "synchronize"
+    ],
+    [
+      "Phantom Pathway",
+      "authority/orchestration lifecycle",
+      "synchronize"
+    ],
+    [
+      "Phantom Forge Engine",
+      "engineering/execution platform",
+      "synchronize"
+    ],
+    [
+      "Gadget Fabric",
+      "capability fabric",
+      "synchronize"
+    ],
+    [
+      "Phantom Footprints",
+      "state/evidence/audit substrate",
+      "synchronize"
+    ],
+    [
+      "Phantom Insight",
+      "customer product",
+      "synchronize"
+    ],
+    [
+      "Psychic PHIA",
+      "adaptive AI guide",
+      "synchronize"
+    ],
+    [
+      "Council of Insight",
+      "multi-agent insight system",
+      "synchronize"
+    ],
+    [
+      "User Realms",
+      "personalized realm system",
+      "synchronize"
+    ],
+    [
+      "Guardian Journey",
+      "guided experience system",
+      "synchronize"
+    ],
+    [
+      "Realm Builder",
+      "user creation system",
+      "synchronize"
+    ],
+    [
+      "Phantom Life OS",
+      "personal operating system",
+      "synchronize"
+    ],
+    [
+      "Socrates",
+      "critical-thinking engine",
+      "synchronize"
+    ],
+    [
+      "Living Knowledge Universe",
+      "knowledge/content universe",
+      "synchronize"
+    ],
+    [
+      "Phantom Promote",
+      "promotion/business system",
+      "synchronize"
+    ],
+    [
+      "Phantom Workforce",
+      "worker orchestration",
+      "synchronize"
+    ],
+    [
+      "Three Kings",
+      "research/engineering/development workforce",
+      "synchronize"
+    ],
+    [
+      "Master Mechanic",
+      "repair/optimization worker system",
+      "synchronize"
+    ],
+    [
+      "Implementation Station",
+      "implementation worker system",
+      "synchronize"
+    ],
+    [
+      "PR/Merge Management",
+      "engineering governance workers",
+      "synchronize"
+    ],
+    [
+      "Phantom Runtime",
+      "first-party runtime",
+      "physical-proof-gated"
+    ],
+    [
+      "Phantom Deployment Path",
+      "deployment/rollback authority",
+      "physical-proof-gated"
+    ],
+    [
+      "First-Party Scheduler",
+      "durable scheduling/queues",
+      "synchronize"
+    ],
+    [
+      "Execution Fabric",
+      "resource execution layer",
+      "synchronize"
+    ],
+    [
+      "Telemetry Fabric",
+      "observability/telemetry layer",
+      "synchronize"
+    ],
+    [
+      "Evaluation/Proof Fabric",
+      "evaluation/proof layer",
+      "synchronize"
+    ],
+    [
+      "Performance Engine",
+      "benchmark/performance layer",
+      "synchronize"
+    ],
+    [
+      "Self-Healing Convergence",
+      "continuous recovery layer",
+      "synchronize"
+    ],
+    [
+      "Phantom Volt / Voltz",
+      "physical mobility/energy platform",
+      "hardware-proof-gated"
+    ],
+    [
+      "VibeCharge X1 / Voltz Box",
+      "energy-harvesting technology",
+      "hardware-proof-gated"
+    ],
+    [
+      "Phantom Glass / HUD",
+      "adaptive visual interface",
+      "hardware-proof-gated"
+    ]
+  ],
+  "sync_policy": {
+    "inherit_starting_point": true,
+    "inherit_first_party_lifecycle": [
+      "CREATE",
+      "BUILD",
+      "ENDORSE",
+      "CONFIGURE",
+      "WRITE",
+      "WIRE",
+      "EXECUTE",
+      "VERIFY",
+      "DEPLOY",
+      "PUBLIC_DEPLOYMENT_ACTIVE",
+      "INDEPENDENT_EXTERNAL_VERIFY",
+      "PUBLIC_LIVE_PROVEN",
+      "FOOTPRINT",
+      "CONTINUOUS_OPERATION"
+    ],
+    "no_third_party_production_authority": true,
+    "recoverable_failure_policy": "auto-correct-retry-converge",
+    "human_babysitting_required": false,
+    "hardware_claims_require_measurement": true
+  }
+}
