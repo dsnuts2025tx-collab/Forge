@@ -1,0 +1,31 @@
+{
+  "system": "Phantom Project Starting Point",
+  "version": "1.0.0",
+  "owner_attribution": "Donald Long III / Phantom",
+  "canonical_authority": "Phantom",
+  "production_authority": "Phantom-owned physical substrate",
+  "third_party_production_authority": false,
+  "starting_rule": "Every Phantom project begins here before build, bind, configure, write, wire, execute, deploy, or promote.",
+  "lifecycle": ["CREATE","BUILD","ENDORSE","CONFIGURE","WRITE","WIRE","EXECUTE","VERIFY","DEPLOY","PUBLIC_DEPLOYMENT_ACTIVE","INDEPENDENT_EXTERNAL_VERIFY","PUBLIC_LIVE_PROVEN","FOOTPRINT","CONTINUOUS_OPERATION"],
+  "hard_boundaries": ["NO_THIRD_PARTY_PRODUCTION_AUTHORITY","NO_EVIDENCE_NO_CLAIM","UNKNOWN_IS_NOT_ABSENT","UNREACHABLE_IS_NOT_ABSENT","ATTEMPTED_FIX_IS_NOT_RESOLVED","WORKAROUND_IS_NOT_ELIMINATION","PUBLIC_DEPLOYMENT_ACTIVE_IS_NOT_PUBLIC_LIVE"],
+  "provider_policy": {
+    "third_party_as_production_authority": false,
+    "third_party_as_canonical_control_plane": false,
+    "third_party_credentials_required_for_production": false,
+    "provider_lock_in_allowed": false
+  },
+  "failure_policy": {
+    "recoverable_failures": "auto-correct-and-retry",
+    "convergence": "continuous",
+    "human_babysitting_required": false,
+    "truth_security_identity_authorization_gates_remain_authoritative": true
+  },
+  "truth_policy": "NO_EVIDENCE_NO_CLAIM",
+  "inheritance": {
+    "new_projects": "required",
+    "existing_projects": "migrate-to-this-starting-point",
+    "subprojects": "inherit-parent-policy",
+    "workers": "inherit-project-policy",
+    "deployment_paths": "inherit-project-policy"
+  }
+}
