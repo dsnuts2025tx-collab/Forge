@@ -1,0 +1,12 @@
+{
+  "schema":"phantom.frontier.system-profile.v1",
+  "owner_attribution":"Donald Long III / Phantom",
+  "canonical_authority":"Phantom",
+  "production_authority":"Phantom-owned physical substrate",
+  "third_party_production_authority":false,
+  "target":"frontier",
+  "domains":{"intelligence":["multi-agent reasoning","verification-aware planning","continuous convergence","evidence-driven decisions"],"software":["reproducible builds","typed interfaces","fail-closed authorization","self-healing recovery","rollback","configuration integrity"],"speed":["parallelizable work","bounded retries","incremental verification","durable queues and leases","performance telemetry"],"infrastructure":["Phantom-owned compute","Phantom-owned storage","Phantom-owned network","Phantom-owned ingress","Phantom-owned DNS","Phantom-owned TLS","Phantom-owned runtime","Phantom-owned scheduler"],"hardware":["Phantom-controlled physical host","accelerated compute when independently owned and controlled","power/thermal monitoring","hardware identity and attestation"],"evidence":["immutable receipts","release digest","runtime health/readiness","external network observation","independent verification","final footprint"]},
+  "hard_rules":["NO_THIRD_PARTY_PRODUCTION_AUTHORITY","NO_EVIDENCE_NO_CLAIM","UNKNOWN_IS_NOT_ABSENT","UNREACHABLE_IS_NOT_ABSENT","ATTEMPTED_FIX_IS_NOT_RESOLVED","PUBLIC_DEPLOYMENT_ACTIVE_IS_NOT_PUBLIC_LIVE"],
+  "promotion_policy":"Capability may advance internally without claiming production proof; PUBLIC_LIVE_PROVEN requires physical and independent evidence.",
+  "continuous_operation":"Recoverable failures are corrected and retried without human babysitting; security, identity, authorization and truth gates remain fail-closed."
+}
