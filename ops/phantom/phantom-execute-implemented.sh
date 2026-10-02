@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+MASTER_MANIFEST="${PHANTOM_ROOT:-/opt/phantom}/ops/phantom/phantom-master-manifest-gate.sh"
+[[ -f "$MASTER_MANIFEST" ]] || { echo "EXECUTE_REJECT: mega master manifest gate missing" >&2; exit 1; }
+bash "$MASTER_MANIFEST" || { echo "EXECUTE_REJECT: mega master manifest gate failed" >&2; exit 1; }
+
 set -Eeuo pipefail
 # Phantom Execution Implemented gate.
 # This proves implementation readiness/wiring, NOT physical production proof.
