@@ -1,0 +1,12 @@
+{
+  "schema":"phantom.continuous-evolution.v1",
+  "manifest_id":"PHANTOM-CONTINUOUS-EVOLUTION-2026-10-01",
+  "owner_attribution":"Donald Long III / Phantom",
+  "canonical_authority":"Phantom",
+  "truth_policy":"NO_EVIDENCE_NO_CLAIM",
+  "doctrine":{"continuous_upgrade":true,"continuous_research":true,"continuous_testing":true,"continuous_verification":true,"continuous_operation":true,"live_service_preservation":true,"no_manual_babysitting_for_recoverable_failures":true},
+  "lifecycle":["OBSERVE","RESEARCH","DESIGN","BUILD","TEST","VERIFY","STAGE","CANARY","PROMOTE","MONITOR","ROLLBACK_IF_REQUIRED","FOOTPRINT","REPEAT"],
+  "live_safety":{"production_changes_must_be_reversible":true,"health_gate_before_promotion":true,"canary_or_equivalent_required_when_supported":true,"automatic_rollback_on_verified_regression":true,"no_false_green":true,"public_live_claim_requires_independent_external_proof":true},
+  "failure_policy":{"recoverable":"AUTO_CORRECT_RETRY_REVERIFY","regression":"STOP_PROMOTION_ROLLBACK_RETEST","authority_security_identity_truth_failure":"FAIL_CLOSED","live_service_must_not_be_intentionally_disabled_for_routine_upgrade":true},
+  "scope":"ALL_PHANTOM_PROJECTS_AND_THREADS"
+}
