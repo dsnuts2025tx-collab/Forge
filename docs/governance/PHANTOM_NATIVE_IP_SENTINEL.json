@@ -1,0 +1,33 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "schema":"phantom.native-ip-sentinel.v1",
+  "system":"PHANTOM_IP_SENTINEL",
+  "version":"1.0.0",
+  "owner":"Donald Long III",
+  "brand":"Phantom",
+  "canonical_authority":"Phantom",
+  "production_authority":"Phantom-owned physical substrate",
+  "third_party_production_authority":false,
+  "mission":"First-party provenance, integrity, observation, comparison, evidence preservation, and incident handling for Phantom intellectual property.",
+  "components":{
+    "fingerprint_engine":"native_sha256_artifact_fingerprinting",
+    "provenance_engine":"artifact_identity_lineage_timestamp_creator",
+    "observation_ingest":"local_files_manifests_user_supplied_evidence",
+    "comparison_engine":"hash_exact_then_structural_metadata_and_text_comparison",
+    "evidence_engine":"immutable_receipt_chain_and_chain_of_custody",
+    "incident_engine":"classification_and_review_state_machine",
+    "watch_engine":"repeatable_local_scan_and_external_observation_ingest",
+    "response_engine":"preserve_compare_document_escalate"
+  },
+  "states":["BASELINED","OBSERVED","POSSIBLE_OVERLAP","STRONG_INDICATION","CONFIRMED_EVIDENCE","RESOLVED","FALSE_POSITIVE"],
+  "truth_rules":["NO_EVIDENCE_NO_CLAIM","SIMILARITY_IS_NOT_PROOF","UNKNOWN_IS_NOT_ABSENT","OBSERVATION_IS_NOT_VERDICT","HASH_MISMATCH_IS_NOT_THEFT","EXTERNAL_PROVIDER_METADATA_IS_NOT_AUTHORITY"],
+  "evidence_requirements":["source","timestamp","artifact_identity","sha256","observation","comparison_basis","authorization_status","chain_of_custody"],
+  "response_policy":{
+    "possible_overlap":"preserve_and_review",
+    "strong_indication":"preserve_and_escalate",
+    "confirmed_evidence":"preserve_full_chain_and_prepare_legal_review",
+    "false_positive":"record_reason_and_close"
+  },
+  "security":{"fail_closed":true,"no_credential_collection":true,"no_unauthorized_access":true,"no_intrusion":true},
+  "ownership":{"default_creator":"Donald Long III / Phantom","default_license":"UNLICENSED_UNAUTHORIZED_FOR_PUBLIC_REUSE","default_confidentiality":"PHANTOM_CONTROLLED"}
+}
