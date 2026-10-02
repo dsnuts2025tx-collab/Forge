@@ -1,0 +1,48 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "schema":"phantom.pricing-constitution.v1",
+  "pricing_system":"PHANTOM_NATIVE_PRICING_ENGINE",
+  "version":"2026.10",
+  "owner":"Donald Long III / Phantom",
+  "canonical_authority":"Phantom",
+  "production_authority":"Phantom-owned physical substrate",
+  "third_party_production_authority":false,
+  "currency":"USD",
+  "principles":["market-aware","transparent","capability-based","usage-aware","cost-aware","no_hidden_required_addons","real_time_reviewable","all_projects_inherit"],
+  "benchmark_basis":{
+    "ai_individual":"~$15-$25/month common mainstream range",
+    "ai_power_user":"~$100+/month",
+    "team":"~$25-$125/seat/month",
+    "infrastructure":"subscription_plus_usage",
+    "security":"per-user_or_per-endpoint_plus_enterprise",
+    "note":"Benchmarks are reference inputs, not copied prices."
+  },
+  "universal_tiers":[
+    {"id":"FREE","monthly":0,"annual":0,"target":"explore","included":"limited core capability"},
+    {"id":"PLUS","monthly":9.99,"annual":99.90,"target":"individual","included":"expanded capability and usage"},
+    {"id":"PRO","monthly":24.99,"annual":249.90,"target":"power_user","included":"advanced capability, automation, priority resources"},
+    {"id":"MAX","monthly":99.99,"annual":999.90,"target":"professional_power_user","included":"high limits, advanced workers, priority execution"},
+    {"id":"TEAM","monthly_per_seat":39.99,"annual_per_seat":399.90,"target":"teams","included":"shared workspace, governance, collaboration"},
+    {"id":"ENTERPRISE","monthly":"CUSTOM","annual":"CUSTOM","target":"organizations","included":"scale, controls, audit, dedicated capacity"}
+  ],
+  "category_profiles":{
+    "consumer_ai":{"tier_set":["FREE","PLUS","PRO","MAX"],"usage_addons":true},
+    "developer":{"tier_set":["FREE","PLUS","PRO","MAX","TEAM","ENTERPRISE"],"usage_addons":true},
+    "infrastructure":{"tier_set":["FREE","PRO","TEAM","ENTERPRISE"],"usage_addons":true},
+    "security":{"tier_set":["FREE","PRO","TEAM","ENTERPRISE"],"usage_addons":true},
+    "knowledge":{"tier_set":["FREE","PLUS","PRO","MAX","TEAM","ENTERPRISE"],"usage_addons":true},
+    "media":{"tier_set":["FREE","PLUS","PRO","MAX","TEAM","ENTERPRISE"],"usage_addons":true},
+    "hardware":{"tier_set":["RESEARCH","PROTOTYPE","COMMERCIAL","ENTERPRISE"],"usage_addons":false},
+    "energy":{"tier_set":["RESEARCH","PROTOTYPE","COMMERCIAL","ENTERPRISE"],"usage_addons":false},
+    "enterprise_platform":{"tier_set":["FREE","PRO","TEAM","ENTERPRISE"],"usage_addons":true}
+  },
+  "hardware_tiers":[
+    {"id":"RESEARCH","price":"PROJECT_SPECIFIC","purpose":"research access"},
+    {"id":"PROTOTYPE","price":"PROJECT_SPECIFIC","purpose":"prototype program"},
+    {"id":"COMMERCIAL","price":"PROJECT_SPECIFIC","purpose":"commercial product"},
+    {"id":"ENTERPRISE","price":"CUSTOM","purpose":"enterprise deployment"}
+  ],
+  "usage_policy":{"metered_dimensions":["compute","storage","network","agent_execution","media_processing","automation","data_volume","hardware_runtime"],"no_silent_overage":true,"customer_visible_metering":true},
+  "market_policy":{"review_interval":"WEEKLY","material_change_repricing":"REVIEW_REQUIRED","automatic_price_change":"DISABLED_UNTIL_AUTHORIZED"},
+  "truth_policy":"NO_EVIDENCE_NO_CLAIM"
+}
