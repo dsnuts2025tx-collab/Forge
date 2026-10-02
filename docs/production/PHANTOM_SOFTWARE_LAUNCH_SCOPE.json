@@ -1,0 +1,82 @@
+{
+  "schema": "phantom.software-launch-scope.v1",
+  "manifest_id": "PHANTOM-SOFTWARE-LAUNCH-2026-10-01",
+  "owner_attribution": "Donald Long III / Phantom",
+  "canonical_authority": "Phantom",
+  "truth_policy": "NO_EVIDENCE_NO_CLAIM",
+  "launch_policy": {
+    "software_scope_only": true,
+    "hardware_excluded_from_software_launch": true,
+    "public_live_requires_physical_execution_and_independent_external_verification": true,
+    "no_third_party_production_authority": true
+  },
+  "software_launch_projects": [
+    "Phantom Mastermind",
+    "Phantom Pathway",
+    "Phantom Forge Engine",
+    "Gadget Fabric",
+    "Phantom Footprints",
+    "Phantom Insight",
+    "Psychic PHIA",
+    "Council of Insight",
+    "User Realms",
+    "Guardian Journey",
+    "Realm Builder",
+    "Phantom Life OS",
+    "Socrates",
+    "Living Knowledge Universe",
+    "Phantom Promote",
+    "Phantom Workforce",
+    "Three Kings",
+    "Master Mechanic",
+    "Implementation Station",
+    "PR/Merge Management",
+    "Phantom Runtime",
+    "Phantom Deployment Path",
+    "First-Party Scheduler",
+    "Execution Fabric",
+    "Telemetry Fabric",
+    "Evaluation/Proof Fabric",
+    "Performance Engine",
+    "Self-Healing Convergence",
+    "Phantom Git",
+    "Phantom Edge",
+    "Phantom Host",
+    "Phantom Build",
+    "Phantom IP Sentinel"
+  ],
+  "excluded_from_software_launch": [
+    {
+      "project": "Phantom Volt / Voltz",
+      "reason": "HARDWARE/PHYSICAL_PRODUCT"
+    },
+    {
+      "project": "VibeCharge X1 / Voltz Box",
+      "reason": "HARDWARE/ENERGY_PRODUCT"
+    },
+    {
+      "project": "Phantom Glass / HUD",
+      "reason": "HARDWARE/WEARABLE_PRODUCT"
+    }
+  ],
+  "not_launchable_without_additional_implementation_evidence": [
+    "Phantom Farmers",
+    "Gateway",
+    "Mortal Kombat / Production Authority"
+  ],
+  "launch_states": [
+    "IMPLEMENTATION_READY",
+    "EXECUTE_IMPLEMENTED",
+    "VERIFIED",
+    "PROVEN",
+    "PUBLIC_DEPLOYMENT_ACTIVE",
+    "PUBLIC_LIVE_PROVEN"
+  ],
+  "promotion_rule": "No project may advance without corresponding evidence.",
+  "continuous_operation": {
+    "auto_correct_recoverable_failures": true,
+    "retry_and_reverify": true,
+    "human_babysitting_required": false,
+    "authority_truth_security_gates_remain_fail_closed": true
+  }
+}
