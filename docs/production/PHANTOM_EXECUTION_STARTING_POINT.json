@@ -1,0 +1,23 @@
+{
+  "schema":"phantom.execution.starting-point.v2",
+  "owner_attribution":"Donald Long III / Phantom",
+  "canonical_authority":"Phantom",
+  "production_authority":"Phantom-owned physical substrate",
+  "third_party_production_authority":false,
+  "truth_rule":"NO_EVIDENCE_NO_CLAIM",
+  "starting_point":"Every Phantom project, subsystem, worker, capability, software release, and hardware program inherits this contract before implementation or promotion.",
+  "execution_states":["PLANNED","IMPLEMENTATION_READY","EXECUTE_IMPLEMENTED","VERIFIED","PROVEN","ACTIVE"],
+  "execution_implemented_definition":[
+    "canonical contract validated",
+    "implementation artifacts exist",
+    "authority boundary validated",
+    "third-party production authority disabled",
+    "execution entrypoint wired",
+    "failure behavior is fail-closed",
+    "verification path exists",
+    "physical claims remain evidence-gated"
+  ],
+  "lifecycle":["CREATE","BUILD","ENDORSE","CONFIGURE","WRITE","WIRE","EXECUTE","VERIFY","DEPLOY","PUBLIC_DEPLOYMENT_ACTIVE","INDEPENDENT_EXTERNAL_VERIFY","PUBLIC_LIVE_PROVEN","FOOTPRINT","CONTINUOUS_OPERATION"],
+  "failure_policy":{"recoverable":"auto-correct-retry-converge","human_babysitting":false,"truth_security_identity_authorization":"authoritative"},
+  "hard_boundaries":["NO_THIRD_PARTY_PRODUCTION_AUTHORITY","NO_EVIDENCE_NO_CLAIM","UNKNOWN_IS_NOT_ABSENT","UNREACHABLE_IS_NOT_ABSENT","ATTEMPTED_FIX_IS_NOT_RESOLVED","PUBLIC_DEPLOYMENT_ACTIVE_IS_NOT_PUBLIC_LIVE"]
+}
