@@ -1,0 +1,283 @@
+{
+  "schema": "phantom.project-pricing-registry.v2",
+  "owner": "Donald Long III / Phantom",
+  "authority": "Phantom",
+  "pricing_constitution": "PHANTOM_NATIVE_PRICING_ENGINE",
+  "currency": "USD",
+  "all_projects_inherit": true,
+  "projects": [
+    {
+      "name": "Phantom Mastermind",
+      "category": "AI control/intelligence",
+      "pricing": "FREE 0; PLUS 19.99; PRO 49.99; MAX 149.99; TEAM 59.99/user; ENTERPRISE custom",
+      "metering_model": "per-user + agent execution",
+      "price_status": "DERIVED_TARGET"
+    },
+    {
+      "name": "Phantom Pathway",
+      "category": "orchestration/deployment",
+      "pricing": "FREE 0; PRO 29; TEAM 79/user; ENTERPRISE custom",
+      "metering_model": "executions + environments",
+      "price_status": "DERIVED_TARGET"
+    },
+    {
+      "name": "Phantom Forge Engine",
+      "category": "developer platform",
+      "pricing": "FREE 0; PLUS 14.99; PRO 39.99; MAX 99.99; TEAM 49.99/user; ENTERPRISE custom",
+      "metering_model": "developer + compute usage",
+      "price_status": "DERIVED_TARGET"
+    },
+    {
+      "name": "Gadget Fabric",
+      "category": "capability/orchestration platform",
+      "pricing": "FREE 0; PRO 29.99; TEAM 69.99/user; ENTERPRISE custom",
+      "metering_model": "capability calls",
+      "price_status": "DERIVED_TARGET"
+    },
+    {
+      "name": "Phantom Footprints",
+      "category": "evidence/audit",
+      "pricing": "FREE 0; PRO 19.99; TEAM 49.99/user; ENTERPRISE custom",
+      "metering_model": "events + retention",
+      "price_status": "DERIVED_TARGET"
+    },
+    {
+      "name": "Phantom Insight",
+      "category": "consumer AI universe",
+      "pricing": "FREE 0; PLUS 12.99; PRO 24.99; MAX 59.99; TEAM 39.99/user; ENTERPRISE custom",
+      "metering_model": "AI + content usage",
+      "price_status": "DERIVED_TARGET"
+    },
+    {
+      "name": "Psychic PHIA",
+      "category": "personal AI guide",
+      "pricing": "FREE 0; PLUS 9.99; PRO 19.99; MAX 49.99",
+      "metering_model": "conversation/agent usage",
+      "price_status": "PUBLISHED_PHANTOM_TARGET"
+    },
+    {
+      "name": "Council of Insight",
+      "category": "multi-agent reasoning",
+      "pricing": "FREE 0; PLUS 14.99; PRO 34.99; MAX 79.99; TEAM 49.99/user",
+      "metering_model": "agent runs",
+      "price_status": "PUBLISHED_PHANTOM_TARGET"
+    },
+    {
+      "name": "User Realms",
+      "category": "personalized spaces",
+      "pricing": "FREE 0; PLUS 7.99; PRO 19.99; MAX 39.99; TEAM 29.99/user",
+      "metering_model": "storage + active realms",
+      "price_status": "PUBLISHED_PHANTOM_TARGET"
+    },
+    {
+      "name": "Guardian Journey",
+      "category": "guided experience",
+      "pricing": "FREE 0; PLUS 6.99; PRO 14.99; MAX 29.99",
+      "metering_model": "content + AI guidance",
+      "price_status": "PUBLISHED_PHANTOM_TARGET"
+    },
+    {
+      "name": "Realm Builder",
+      "category": "creation platform",
+      "pricing": "FREE 0; PLUS 12.99; PRO 29.99; MAX 79.99; TEAM 39.99/user",
+      "metering_model": "build/render usage",
+      "price_status": "PUBLISHED_PHANTOM_TARGET"
+    },
+    {
+      "name": "Phantom Life OS",
+      "category": "personal operating system",
+      "pricing": "FREE 0; PLUS 14.99; PRO 34.99; MAX 79.99; TEAM 49.99/user",
+      "metering_model": "automation + storage",
+      "price_status": "PUBLISHED_PHANTOM_TARGET"
+    },
+    {
+      "name": "Socrates",
+      "category": "critical-thinking engine",
+      "pricing": "FREE 0; PLUS 7.99; PRO 17.99; MAX 39.99",
+      "metering_model": "reasoning usage",
+      "price_status": "PUBLISHED_PHANTOM_TARGET"
+    },
+    {
+      "name": "Living Knowledge Universe",
+      "category": "knowledge/research",
+      "pricing": "FREE 0; PLUS 14.99; PRO 39.99; MAX 99.99; TEAM 59.99/user; ENTERPRISE custom",
+      "metering_model": "research volume + retrieval",
+      "price_status": "DERIVED_TARGET"
+    },
+    {
+      "name": "Phantom Promote",
+      "category": "business/promotion platform",
+      "pricing": "FREE 0; PRO 29.99; TEAM 99/user; ENTERPRISE custom",
+      "metering_model": "campaign/workflow volume",
+      "price_status": "DERIVED_TARGET"
+    },
+    {
+      "name": "Phantom Workforce",
+      "category": "agent workforce",
+      "pricing": "FREE 0; PRO 49.99; TEAM 149/user; ENTERPRISE custom",
+      "metering_model": "active workers + execution",
+      "price_status": "DERIVED_TARGET"
+    },
+    {
+      "name": "Three Kings",
+      "category": "research/engineering/development agents",
+      "pricing": "PRO 59.99; MAX 149.99; TEAM 199/user; ENTERPRISE custom",
+      "metering_model": "agent jobs + compute",
+      "price_status": "DERIVED_TARGET"
+    },
+    {
+      "name": "Master Mechanic",
+      "category": "repair/optimization worker",
+      "pricing": "PRO 29.99; MAX 79.99; TEAM 99/user; ENTERPRISE custom",
+      "metering_model": "diagnostic jobs",
+      "price_status": "DERIVED_TARGET"
+    },
+    {
+      "name": "Implementation Station",
+      "category": "implementation agent",
+      "pricing": "PRO 39.99; MAX 99.99; TEAM 149/user; ENTERPRISE custom",
+      "metering_model": "build jobs + compute",
+      "price_status": "DERIVED_TARGET"
+    },
+    {
+      "name": "PR/Merge Management",
+      "category": "engineering governance",
+      "pricing": "PRO 14.99; TEAM 39.99/user; ENTERPRISE custom",
+      "metering_model": "repos + workflow events",
+      "price_status": "DERIVED_TARGET"
+    },
+    {
+      "name": "Phantom Runtime",
+      "category": "runtime/compute",
+      "pricing": "FREE 0; PRO 19.99 + usage; TEAM 59.99/user + usage; ENTERPRISE custom",
+      "metering_model": "compute/storage/network",
+      "price_status": "DERIVED_TARGET"
+    },
+    {
+      "name": "Phantom Deployment Path",
+      "category": "deployment platform",
+      "pricing": "FREE 0; PRO 24.99 + usage; TEAM 79.99/user; ENTERPRISE custom",
+      "metering_model": "deployments + compute",
+      "price_status": "DERIVED_TARGET"
+    },
+    {
+      "name": "First-Party Scheduler",
+      "category": "scheduler/queues",
+      "pricing": "FREE 0; PRO 19.99 + jobs; TEAM 59.99/user + jobs; ENTERPRISE custom",
+      "metering_model": "job volume",
+      "price_status": "DERIVED_TARGET"
+    },
+    {
+      "name": "Execution Fabric",
+      "category": "execution infrastructure",
+      "pricing": "FREE 0; PRO 29.99 + compute; TEAM 89.99/user + compute; ENTERPRISE custom",
+      "metering_model": "compute/runtime",
+      "price_status": "DERIVED_TARGET"
+    },
+    {
+      "name": "Telemetry Fabric",
+      "category": "observability",
+      "pricing": "FREE 0; PRO 12.99/host; TEAM 24.99/host; ENTERPRISE custom",
+      "metering_model": "host/event/metric volume",
+      "price_status": "DERIVED_TARGET"
+    },
+    {
+      "name": "Evaluation/Proof Fabric",
+      "category": "testing/proof",
+      "pricing": "FREE 0; PRO 24.99; TEAM 69.99/user; ENTERPRISE custom",
+      "metering_model": "tests + evidence volume",
+      "price_status": "DERIVED_TARGET"
+    },
+    {
+      "name": "Performance Engine",
+      "category": "benchmarking",
+      "pricing": "FREE 0; PRO 29.99; MAX 79.99; TEAM 99.99/user; ENTERPRISE custom",
+      "metering_model": "benchmark runs/compute",
+      "price_status": "DERIVED_TARGET"
+    },
+    {
+      "name": "Self-Healing Convergence",
+      "category": "autonomous operations",
+      "pricing": "PRO 49.99; MAX 129.99; TEAM 199/user; ENTERPRISE custom",
+      "metering_model": "repair/execution volume",
+      "price_status": "DERIVED_TARGET"
+    },
+    {
+      "name": "Phantom Volt / Voltz",
+      "category": "premium electric mobility",
+      "pricing": "RESEARCH custom; PROTOTYPE custom; COMMERCIAL target $35,000-$75,000; ENTERPRISE custom",
+      "metering_model": "vehicle configuration/service",
+      "price_status": "DERIVED_TARGET"
+    },
+    {
+      "name": "VibeCharge X1 / Voltz Box",
+      "category": "energy technology",
+      "pricing": "RESEARCH custom; PROTOTYPE $2,500-$15,000; COMMERCIAL $799-$4,999; ENTERPRISE custom",
+      "metering_model": "hardware BOM/configuration",
+      "price_status": "DERIVED_TARGET"
+    },
+    {
+      "name": "Phantom Glass / HUD",
+      "category": "wearable/spatial hardware",
+      "pricing": "RESEARCH custom; PROTOTYPE $1,500-$5,000; COMMERCIAL target $799-$1,999; ENTERPRISE custom",
+      "metering_model": "hardware + software",
+      "price_status": "DERIVED_TARGET"
+    },
+    {
+      "name": "Phantom Git",
+      "category": "source control",
+      "pricing": "FREE 0; PRO 8.99/user; TEAM 19.99/user; ENTERPRISE custom",
+      "metering_model": "repositories/storage/CI",
+      "price_status": "DERIVED_TARGET"
+    },
+    {
+      "name": "Phantom Edge",
+      "category": "edge/networking",
+      "pricing": "FREE 0; PRO 19.99 + usage; TEAM 79.99 + usage; ENTERPRISE custom",
+      "metering_model": "requests/bandwidth/edge resources",
+      "price_status": "DERIVED_TARGET"
+    },
+    {
+      "name": "Phantom Host",
+      "category": "compute/hosting",
+      "pricing": "FREE 0; PRO 19.99 + usage; TEAM 59.99 + usage; ENTERPRISE custom",
+      "metering_model": "compute/storage/network",
+      "price_status": "DERIVED_TARGET"
+    },
+    {
+      "name": "Phantom Build",
+      "category": "development/build workspace",
+      "pricing": "FREE 0; PLUS 9.99; PRO 24.99; MAX 79.99; TEAM 39.99/user; ENTERPRISE custom",
+      "metering_model": "build minutes/storage/compute",
+      "price_status": "DERIVED_TARGET"
+    },
+    {
+      "name": "Phantom IP Sentinel",
+      "category": "IP protection/evidence",
+      "pricing": "FREE 0; PRO 19.99; TEAM 59.99/user; ENTERPRISE custom",
+      "metering_model": "protected artifacts + evidence retention",
+      "price_status": "DERIVED_TARGET"
+    }
+  ],
+  "rule": "Each project exposes only tiers appropriate to its capability profile; exact included limits are controlled by the pricing engine.",
+  "research_date": "2026-10-01",
+  "pricing_method": "PROJECT_SPECIFIC_MARKET_RESEARCH_PLUS_PHANTOM_COST_AND_CAPABILITY_MODEL",
+  "market_sources": [
+    "GitHub Copilot",
+    "Notion",
+    "Linear",
+    "Datadog",
+    "CrowdStrike",
+    "current XR/wearable market research"
+  ],
+  "global_rules": {
+    "all_projects_inherit_pricing_engine": true,
+    "prices_are_not_copied_from_competitors": true,
+    "weekly_market_review": true,
+    "material_change_review_required": true,
+    "no_silent_overage": true,
+    "customer_visible_metering": true,
+    "hardware_requires_bom_margin_validation": true,
+    "enterprise_custom": true
+  }
+}
