@@ -1,0 +1,14 @@
+{
+  "schema":"phantom.tool-fabric.v2",
+  "id":"PHANTOM-TOOL-FABRIC-2026-10-01",
+  "owner_attribution":"Donald Long III / Phantom",
+  "canonical_authority":"Phantom",
+  "truth_policy":"NO_EVIDENCE_NO_CLAIM",
+  "layers":["DISCOVERY","IDENTITY","AUTHORIZATION","BINDING","CONFIGURATION","INPUT","TRANSFORMATION","EXECUTION","OBSERVATION","VERIFICATION","EVIDENCE","RECOVERY","OPTIMIZATION","COMPOSITION","AUDIT"],
+  "capability_domains":["software engineering","build systems","runtime operations","source and artifact management","data ingestion and transformation","documents","images","audio","video","multimodal processing","research and knowledge","search and indexing","simulation","testing and fuzzing","performance benchmarking","security defense","authorized reverse engineering","cryptography and cryptanalysis research","networking","telemetry","automation","scheduling","workflow orchestration","payments and business operations","hardware design","embedded systems","robotics","energy systems","spatial computing","manufacturing and fabrication","IP provenance and evidence","deployment and rollback"],
+  "primitives":["read","write","create","update","delete","move","copy","hash","diff","merge","parse","encode","decode","compress","decompress","index","query","stream","compile","build","run","test","debug","profile","benchmark","simulate","inspect","trace","monitor","attest","verify","sign","snapshot","restore","package","release","deploy","rollback","repair","migrate","generate","transcode"],
+  "composition":{"tool_chains":true,"parallel_execution_when_safe":true,"dependency_graphs":true,"idempotency_required":true,"capability_contract_required":true,"authorization_before_execution":true,"evidence_after_execution":true},
+  "safety":{"least_privilege":true,"fail_closed":true,"no_unauthorized_access":true,"authorized_security_testing_only":true,"destructive_operations_require_explicit_authorization":true},
+  "continuous_evolution":{"discover_new_capabilities":true,"benchmark_before_promotion":true,"replace_weak_capability_when_verified_better_one_exists":true,"automatic_repair_for_recoverable_failures":true,"rollback_on_verified_regression":true},
+  "state_model":["DISCOVERED","BOUND","AUTHORIZED","IMPLEMENTED","VERIFIED","PROVEN","ACTIVE","DEGRADED","RECOVERING","RETIRED"]
+}
