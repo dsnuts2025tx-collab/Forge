@@ -1,0 +1,333 @@
+{
+  "schema": "phantom.master-manifest.v1",
+  "manifest_class": "SOVEREIGN_EXECUTION_SYSTEM",
+  "manifest_id": "PHANTOM-MASTER-2026-10-01",
+  "version": "1.0.0",
+  "owner_attribution": "Donald Long III / Phantom",
+  "canonical_authority": "Phantom",
+  "production_authority": "Phantom-owned physical substrate",
+  "third_party_production_authority": false,
+  "truth_policy": "NO_EVIDENCE_NO_CLAIM",
+
+  "mission": {
+    "purpose": "Define the authoritative identity, construction, execution, verification, production, recovery, and evidence contract for every Phantom system.",
+    "rule": "No subsystem outranks this manifest except explicit human ownership and safety/security truth gates.",
+    "inheritance": "Every Phantom project, product, worker, capability, release, runtime, infrastructure component, and hardware program inherits this manifest."
+  },
+
+  "authority": {
+    "owner": "Donald Long III / Phantom",
+    "canonical_control_plane": "Phantom",
+    "canonical_execution_authority": "Phantom Pathway",
+    "engineering_authority": "Phantom Forge Engine",
+    "reasoning_authority": "Phantom Mastermind",
+    "capability_authority": "Gadget Fabric",
+    "evidence_authority": "Phantom Footprints",
+    "runtime_authority": "Phantom Runtime",
+    "deployment_authority": "Phantom Deployment Path",
+    "third_party_authority": false,
+    "provider_lock_in": false,
+    "external_provider_can_promote": false,
+    "external_provider_can_set_public_live": false
+  },
+
+  "sovereignty": {
+    "canonical_source_authority": "Phantom Git",
+    "edge_authority": "Phantom Edge",
+    "compute_authority": "Phantom Host",
+    "build_authority": "Phantom Build",
+    "runtime_authority": "Phantom Runtime",
+    "scheduler_authority": "First-Party Scheduler",
+    "execution_fabric_authority": "Execution Fabric",
+    "telemetry_authority": "Telemetry Fabric",
+    "proof_authority": "Evaluation/Proof Fabric",
+    "performance_authority": "Performance Engine",
+    "recovery_authority": "Self-Healing Convergence"
+  },
+
+  "native_metadata": {
+    "authority": "Phantom Native Metadata Authority",
+    "schema": "phantom.native-metadata.v1",
+    "file_mode_is_authority": false,
+    "filesystem_mode_is_authority": false,
+    "source_control_mode_is_authority": false,
+    "ambient_platform_metadata_is_authority": false,
+    "external_provider_metadata_is_authority": false,
+    "artifact_identity": "SHA-256 content digest plus Phantom artifact identity",
+    "execution_boundary": "Phantom Native Shell Boundary",
+    "executable_bit_required": false
+  },
+
+  "identity": {
+    "project_identity_required": true,
+    "artifact_identity_required": true,
+    "release_identity_required": true,
+    "runtime_identity_required": true,
+    "host_identity_required": true,
+    "capability_identity_required": true,
+    "worker_identity_required": true,
+    "authority_identity_required": true,
+    "identity_collision_policy": "FAIL_CLOSED"
+  },
+
+  "lifecycle": {
+    "mandatory_order": [
+      "CREATE",
+      "BIND",
+      "ENDORSE",
+      "CONFIGURE",
+      "WRITE",
+      "WIRE",
+      "EXECUTE",
+      "VERIFY",
+      "DEPLOY",
+      "PUBLIC_DEPLOYMENT_ACTIVE",
+      "INDEPENDENT_EXTERNAL_VERIFY",
+      "PUBLIC_LIVE_PROVEN",
+      "FOOTPRINT",
+      "CONTINUOUS_OPERATION"
+    ],
+    "execution_states": [
+      "PLANNED",
+      "IMPLEMENTATION_READY",
+      "EXECUTE_IMPLEMENTED",
+      "VERIFIED",
+      "PROVEN",
+      "ACTIVE",
+      "DEGRADED",
+      "RECOVERING",
+      "ROLLED_BACK",
+      "RETIRED"
+    ],
+    "promotion_rule": "State advances only when its evidence requirements are satisfied."
+  },
+
+  "construction": {
+    "build_system": "Phantom Forge Engine",
+    "reproducible_builds": true,
+    "deterministic_artifact_identity": true,
+    "configuration_integrity_required": true,
+    "dependency_locking_required": true,
+    "supply_chain_provenance_required": true,
+    "generated_artifact_inventory_required": true,
+    "build_receipt_required": true
+  },
+
+  "binding": {
+    "bind_authority": "Phantom Pathway",
+    "required_gates": [
+      "project_starting_point",
+      "execution_starting_point",
+      "native_metadata",
+      "IP_provenance",
+      "green_gate",
+      "capability_fabric",
+      "sovereign_infrastructure",
+      "sovereign_bind"
+    ],
+    "partial_bind_is_valid": false,
+    "failed_bind_is_valid": false,
+    "binding_receipt_required": true
+  },
+
+  "capabilities": {
+    "registry_required": true,
+    "capability_identity_required": true,
+    "capability_contract_required": true,
+    "authorization_required": true,
+    "least_privilege": true,
+    "capability_discovery": "Gadget Fabric",
+    "unknown_capability_policy": "DENY",
+    "unbound_capability_policy": "DENY"
+  },
+
+  "execution": {
+    "entrypoint_required": true,
+    "native_shell_boundary": true,
+    "executable_bit_dependency": false,
+    "authority_check_before_execution": true,
+    "identity_check_before_execution": true,
+    "configuration_check_before_execution": true,
+    "evidence_check_before_claim": true,
+    "fail_closed": true,
+    "duplicate_worker_protection": true,
+    "leases_required_for_durable_work": true,
+    "idempotency_required": true,
+    "execution_receipt_required": true
+  },
+
+  "security": {
+    "authorization": "fail_closed",
+    "authentication": "required",
+    "identity_integrity": "required",
+    "configuration_integrity": "required",
+    "credential_authority": "Phantom",
+    "third_party_production_credentials": false,
+    "secret_exposure_policy": "DENY",
+    "tamper_detection": true,
+    "rollback_integrity": true
+  },
+
+  "runtime": {
+    "runtime_authority": "Phantom Runtime",
+    "persistent_runtime_required": true,
+    "health_required": true,
+    "readiness_required": true,
+    "liveness_required": true,
+    "resource_accounting_required": true,
+    "runtime_identity_attestation": true,
+    "crash_recovery": true,
+    "graceful_shutdown": true
+  },
+
+  "infrastructure": {
+    "compute": "Phantom Host",
+    "storage": "Phantom-owned storage",
+    "network": "Phantom-owned network",
+    "ingress": "Phantom Edge",
+    "dns": "Phantom Edge",
+    "tls": "Phantom Edge",
+    "scheduler": "First-Party Scheduler",
+    "resource_execution": "Execution Fabric",
+    "third_party_production_authority": false,
+    "physical_substrate_required_for_production_claims": true
+  },
+
+  "network": {
+    "hostname_identity_required": true,
+    "DNS_identity_required": true,
+    "TLS_identity_required": true,
+    "certificate_provenance_required": true,
+    "public_listener_identity_required": true,
+    "external_observation_required": true,
+    "network_identity_mismatch": "FAIL_CLOSED"
+  },
+
+  "evidence": {
+    "evidence_authority": "Phantom Footprints",
+    "immutable_receipts": true,
+    "content_digests": true,
+    "release_digest": true,
+    "configuration_digest": true,
+    "runtime_health_evidence": true,
+    "deployment_evidence": true,
+    "network_evidence": true,
+    "independent_external_verification": true,
+    "final_footprint": true,
+    "no_evidence_no_claim": true
+  },
+
+  "truth_gates": {
+    "NO_THIRD_PARTY_PRODUCTION_AUTHORITY": true,
+    "NO_THIRD_PARTY_CANONICAL_CONTROL_PLANE": true,
+    "NO_THIRD_PARTY_PRODUCTION_CREDENTIAL_AUTHORITY": true,
+    "NO_EVIDENCE_NO_CLAIM": true,
+    "UNKNOWN_IS_NOT_ABSENT": true,
+    "UNREACHABLE_IS_NOT_ABSENT": true,
+    "ATTEMPTED_FIX_IS_NOT_RESOLVED": true,
+    "WORKAROUND_IS_NOT_ELIMINATION": true,
+    "PUBLIC_DEPLOYMENT_ACTIVE_IS_NOT_PUBLIC_LIVE": true,
+    "PUBLIC_LIVE_REQUIRES_INDEPENDENT_EXTERNAL_PROOF": true
+  },
+
+  "recovery": {
+    "controller": "Self-Healing Convergence",
+    "recoverable_failure": "AUTO_CORRECT_RETRY_CONVERGE",
+    "retry_policy": "BOUNDED_WITH_BACKOFF",
+    "nonrecoverable_authority_failure": "FAIL_CLOSED",
+    "identity_failure": "FAIL_CLOSED",
+    "security_failure": "FAIL_CLOSED",
+    "truth_failure": "FAIL_CLOSED",
+    "rollback_available": true,
+    "rollback_receipt_required": true,
+    "human_babysitting_required": false
+  },
+
+  "performance": {
+    "authority": "Performance Engine",
+    "benchmark_required": true,
+    "latency_measurement": true,
+    "throughput_measurement": true,
+    "resource_measurement": true,
+    "queue_measurement": true,
+    "recovery_time_measurement": true,
+    "performance_claims_require_measurement": true
+  },
+
+  "workers": {
+    "authority": "Phantom Workforce",
+    "research": "Three Kings / Research",
+    "engineering": "Three Kings / Engineering",
+    "development": "Three Kings / Development",
+    "repair": "Master Mechanic",
+    "implementation": "Implementation Station",
+    "inspection": "Inspector Worker",
+    "integration": "Integration Workflow Master",
+    "merge": "PR/Merge Management",
+    "promotion": "Phantom Promote",
+    "worker_identity_required": true,
+    "worker_authorization_required": true,
+    "worker_receipt_required": true
+  },
+
+  "provenance": {
+    "owner_attribution_required": true,
+    "original_work_attribution_required": true,
+    "generated_work_must_be_distinguished": true,
+    "artifact_lineage_required": true,
+    "source_lineage_required": true,
+    "transformation_history_required": true,
+    "provenance_authority": "Phantom Footprints"
+  },
+
+  "deployment": {
+    "authority": "Phantom Deployment Path",
+    "third_party_deployment_authority": false,
+    "rollback_authority": "Phantom",
+    "deployment_receipt_required": true,
+    "release_identity_required": true,
+    "public_live_gate": "INDEPENDENT_EXTERNAL_VERIFY",
+    "public_live_claim_without_external_proof": "DENY"
+  },
+
+  "continuous_operation": {
+    "scheduler": "First-Party Scheduler",
+    "convergence": "Self-Healing Convergence",
+    "persistent_worker": true,
+    "duplicate_worker_lock": true,
+    "heartbeat_required": true,
+    "iteration_counter_required": true,
+    "blocker_record_required": true,
+    "last_action_record_required": true,
+    "automatic_recovery": true
+  },
+
+  "audit": {
+    "audit_authority": "Phantom Footprints",
+    "every_transition_receipted": true,
+    "every_promotion_receipted": true,
+    "every_rollback_receipted": true,
+    "every_external_proof_receipted": true,
+    "append_only_history": true,
+    "tamper_evidence": true
+  },
+
+  "promotion": {
+    "internal_implementation": "EXECUTE_IMPLEMENTED",
+    "software_verification": "VERIFIED",
+    "physical_proof": "PROVEN",
+    "production_state": "ACTIVE",
+    "public_live": "PUBLIC_LIVE_PROVEN",
+    "no_state_skipping": true,
+    "no_false_green": true
+  },
+
+  "system_contract": {
+    "forge_builds": true,
+    "mastermind_reasons": true,
+    "pathway_authorizes": true,
+    "verification_proves": true,
+    "production_evidence_decides": true,
+    "phantom_owns_control_plane": true
+  }
+}
