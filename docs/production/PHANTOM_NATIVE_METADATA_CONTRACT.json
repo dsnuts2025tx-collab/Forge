@@ -1,0 +1,12 @@
+{
+  "schema":"phantom.native-metadata.v1",
+  "owner_attribution":"Donald Long III / Phantom",
+  "canonical_authority":"Phantom",
+  "production_authority":"Phantom-owned physical substrate",
+  "third_party_production_authority":false,
+  "purpose":"Replace reliance on ambient third-party or filesystem metadata with Phantom-owned authoritative metadata.",
+  "principles":["PHANTOM_METADATA_IS_AUTHORITATIVE","FILE_MODE_IS_NOT_AUTHORITY","PATH_EXISTENCE_IS_NOT_AUTHORITY","SOURCE_CONTROL_METADATA_IS_NOT_RUNTIME_AUTHORITY","EXTERNAL_PROVIDER_METADATA_IS_NOT_PRODUCTION_AUTHORITY","NO_EVIDENCE_NO_CLAIM"],
+  "required_records":["project_identity","artifact_identity","capability_identity","execution_identity","configuration_identity","release_identity","authority_identity","evidence_identity","runtime_identity","lifecycle_identity"],
+  "execution_policy":{"interpreter":"Phantom Native Shell Boundary","executable_bit_required":false,"filesystem_mode_authoritative":false,"source_control_mode_authoritative":false,"allow_ambient_execution":false,"fail_closed":true},
+  "truth_policy":"NO_EVIDENCE_NO_CLAIM"
+}
