@@ -1,0 +1,15 @@
+{
+  "schema": "phantom.execute.everything.receipt.v1",
+  "owner": "Donald Long III / Phantom",
+  "authority": "Phantom",
+  "source_of_truth": "forge-engine-v2",
+  "canonical_commit": "04d8ca459298f172ff81f1681131f7626516ae35",
+  "state": "EXECUTE_IMPLEMENTED",
+  "scope": "ALL_ACCESSIBLE_PHANTOM_REPOSITORIES",
+  "control_app": "SYNCED",
+  "family_verifier": "BOUND",
+  "maintenance_gate": "BOUND",
+  "public_live": false,
+  "physical_device_execution": "NOT_CLAIMED",
+  "truth_policy": "NO_EVIDENCE_NO_CLAIM"
+}
