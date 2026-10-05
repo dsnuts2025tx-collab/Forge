@@ -1,0 +1,18 @@
+{
+  "schema": "phantom.control.app.sync.v1",
+  "owner": "Donald Long III / Phantom",
+  "authority": "Phantom",
+  "source_of_truth": "forge-engine-v2",
+  "synced_capability": "Phantom Control App / first-party AndroidIDE",
+  "control_app_state": "SOURCE_AND_BUILD_PROOF_TRIGGER_SYNCED",
+  "build_proof": "EVIDENCE_GATED",
+  "public_live": false,
+  "physical_device_execution": "NOT_CLAIMED",
+  "truth_policy": "NO_EVIDENCE_NO_CLAIM",
+  "synchronized_repositories": [
+    "dsnuts2025tx-collab/forge-engine-v2",
+    "dsnuts2025tx-collab/Forge",
+    "dsnuts2025tx-collab/v0-phantomvolt-tech"
+  ],
+  "sync_commit_source": "e85c3c0cc6aeac16e5de4ff173367ffc1c2491d0"
+}
