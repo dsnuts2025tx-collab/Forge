@@ -1,0 +1,35 @@
+{
+  "schema": "phantom.everywhere.execution.v1",
+  "owner_attribution": "Donald Long III / Phantom",
+  "canonical_authority": "Phantom",
+  "directive": "EXECUTE_EVERYTHING_EVERYWHERE_PHANTOM",
+  "scope": "ALL_ACCESSIBLE_PHANTOM_REPOSITORIES_AND_ARTIFACTS",
+  "repositories": [
+    "dsnuts2025tx-collab/forge-engine-v2",
+    "dsnuts2025tx-collab/Forge",
+    "dsnuts2025tx-collab/v0-phantomvolt-tech"
+  ],
+  "requirements": [
+    "Phantom owns canonical control authority",
+    "third-party production authority is forbidden",
+    "replace external platform categories with first-party Phantom implementations",
+    "propagate verified improvements across affected projects",
+    "continuously test, verify, repair, and reverify",
+    "preserve provenance and owner attribution",
+    "fail closed on security, identity, authorization, or truth-integrity failure"
+  ],
+  "lifecycle": [
+    "INVENTORY",
+    "DESIGN",
+    "BUILD",
+    "TEST",
+    "VERIFY",
+    "MIGRATE",
+    "CUTOVER",
+    "INDEPENDENT_PROOF",
+    "CONTINUOUS_OPERATION"
+  ],
+  "truth_rule": "NO_EVIDENCE_NO_CLAIM",
+  "physical_boundary": "Repository implementation does not prove physical infrastructure ownership or public-live operation.",
+  "status": "EXECUTE_IMPLEMENTED"
+}
