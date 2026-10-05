@@ -1,0 +1,14 @@
+{
+  "schema": "phantom.family.verifier.inheritance.v1",
+  "owner_attribution": "Donald Long III / Phantom",
+  "canonical_authority": "Phantom",
+  "inherited_from": "Phantom Family Verifier",
+  "state": "EXECUTE_IMPLEMENTED",
+  "scope": "ALL_PHANTOM_ARTIFACTS_IN_THIS_REPOSITORY",
+  "truth_policy": "NO_EVIDENCE_NO_CLAIM",
+  "fail_closed": true,
+  "independent_verification_required": true,
+  "physical_claims_require_physical_evidence": true,
+  "public_live_requires_independent_external_proof": true,
+  "rule": "This repository cannot self-promote unverified artifacts; verified evidence must be traceable to the canonical Phantom verification boundary."
+}
