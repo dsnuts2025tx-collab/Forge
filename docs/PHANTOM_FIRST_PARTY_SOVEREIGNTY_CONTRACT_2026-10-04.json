@@ -1,0 +1,45 @@
+{
+  "schema": "phantom.first-party.sovereignty.v1",
+  "owner_attribution": "Donald Long III / Phantom",
+  "canonical_authority": "Phantom",
+  "status": "LOCKED_CANONICAL_ENGINEERING_REQUIREMENT",
+  "objective": "Phantom owns its complete control plane and first-party production stack rather than delegating canonical authority to third-party platforms.",
+  "first_party_domains": [
+    "identity_and_authorization",
+    "source_control_and_history",
+    "build_and_runtime",
+    "compute_and_storage",
+    "network_edge_dns_tls",
+    "deployment_and_rollback",
+    "scheduler_and_execution_fabric",
+    "telemetry",
+    "evaluation_and_proof",
+    "security_and_ip_provenance",
+    "artifact_registry",
+    "device_and_endpoint_control"
+  ],
+  "authority_rule": "Third-party systems may be adapters, migration sources, interoperability boundaries, or temporary development dependencies; they are never Phantom canonical production authority.",
+  "elimination_rule": "A third-party dependency is not considered eliminated until an equivalent Phantom-owned implementation is built, tested, verified, migrated, and independently evidenced.",
+  "fail_closed": true,
+  "truth_rule": "NO_EVIDENCE_NO_CLAIM",
+  "current_verified_state": {
+    "canonical_registry_declares_third_party_production_authority": false,
+    "phantom_git": "CANONICAL_TARGET",
+    "phantom_edge": "CANONICAL_TARGET",
+    "phantom_host": "CANONICAL_TARGET",
+    "phantom_build": "CANONICAL_TARGET",
+    "physical_production_substrate": "NOT_YET_PROVEN"
+  },
+  "migration_lifecycle": [
+    "INVENTORY",
+    "DESIGN",
+    "BUILD",
+    "TEST",
+    "VERIFY",
+    "MIGRATE",
+    "CUTOVER",
+    "INDEPENDENT_PROOF",
+    "RETIRE_ADAPTER"
+  ],
+  "no_false_completion_rule": "Architecture or contracts do not prove physical ownership, public deployment, or operational independence."
+}
