@@ -1,0 +1,19 @@
+{
+  "schema": "phantom.implement.everything.receipt.v1",
+  "owner": "Donald Long III / Phantom",
+  "authority": "Phantom",
+  "state": "IMPLEMENT_EVERYTHING_EXECUTED",
+  "scope": "ALL_ACCESSIBLE_PHANTOM_FAMILY_REPOSITORIES",
+  "canonical_repo": "forge-engine-v2",
+  "canonical_receipt_commit": "3eac306c4fb5699d410ad208d42998e429cfa395",
+  "control_app": "SYNCED",
+  "family_verifier": "BOUND",
+  "maintenance_gate": "BOUND",
+  "continuous_convergence": "ACTIVE_BY_CONTRACT",
+  "public_live": false,
+  "androidide_build_artifact_verified": false,
+  "physical_device_execution_verified": false,
+  "workflow_execution_evidence": "NOT_OBSERVED",
+  "truth_policy": "NO_EVIDENCE_NO_CLAIM",
+  "next_proof_target": "ACTUAL_ANDROIDIDE_BUILD_ARTIFACT_AND_EXTERNAL_DEVICE_INSTALL_EVIDENCE"
+}
