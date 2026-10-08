@@ -1,0 +1,9 @@
+{
+  "schema":"phantom.family.sync.ledger.v1",
+  "authority":"Phantom",
+  "owner":"Donald Long III / Phantom",
+  "status":"CANONICAL_SYNC_TARGET",
+  "families":["Mastermind","Forge","G","Family","Workstations","Dojos","Battlefields","Research","Engineering","Development","Inspector","Repair","Proofer","Sentinel","Security","Recovery"],
+  "products":["Phantom Owner Control","Phantom WiFi","Phantom Cryptographic Identity","Phantom Persona Studio","Phantom AI Customer Service","Phantom Playground","Phantom Store","all canonical Store items","Phantom Runtime/Control Plane","Physical Intelligence Fabric","Digital Octuplet Fabric","Autonomous Science/Materials Fabric","Phantom APK Maker"],
+  "public_live":false
+}
