@@ -1,0 +1,9 @@
+{
+  "schema":"phantom.family.pipeline.accountability.v1",
+  "authority":"Phantom",
+  "owner":"Donald Long III / Phantom",
+  "truth_policy":"NO_EVIDENCE_NO_CLAIM",
+  "rule":"Every pipeline execution records what ran, why, which actor/worker initiated it, source commit, environment, result, artifact identities, evidence receipts, blockers, and promotion decision.",
+  "required_receipt_fields":["pipeline_id","run_id","initiator","authorized_by","source_commit","timestamp","environment","steps","result","artifact_sha256","evidence_links","blockers","promotion_decision","rollback_state"],
+  "privacy_rule":"Do not place credentials, private keys, tokens, IMEI, phone numbers, or other secrets in receipts."
+}
